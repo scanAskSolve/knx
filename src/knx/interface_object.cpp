@@ -1,4 +1,7 @@
-#include <cstring>
+//#include <cstring>
+#include "string.h"
+
+
 
 #include "interface_object.h"
 #include "data_property.h"

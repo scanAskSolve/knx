@@ -1,7 +1,10 @@
 #include "property.h"
 #include "bits.h"
 
-#include <cstring>
+//#include <cstring>
+#include "string.h"
+
+
 
 PropertyID Property::Id() const
 {

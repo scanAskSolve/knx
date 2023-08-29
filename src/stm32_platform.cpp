@@ -1,6 +1,6 @@
 #include "stm32_platform.h"
 
-#ifdef ARDUINO_ARCH_STM32
+#ifdef ARDUINO_ARCH_STM32F1
 #include <EEPROM.h>
 #include "knx/bits.h"
 

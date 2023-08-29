@@ -1,5 +1,8 @@
 #include "bits.h"
-#include <cstring> // for memcpy()
+//#include <cstring> // for memcpy()
+#include "string.h"
+
+
 
 const uint8_t* popByte(uint8_t& b, const uint8_t* data)
 {
@@ -21,7 +24,7 @@ void printHex(const char* suffix, const uint8_t *data, size_t length, bool newli
     {
         println();
     }
-}
+} 
 #endif
 
 const uint8_t* popWord(uint16_t& w, const uint8_t* data)

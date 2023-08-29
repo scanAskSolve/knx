@@ -1,11 +1,13 @@
 #pragma  once
 
-#include <cstddef>
-#include <cstdint>
+//#include <cstddef>
+//#include <cstdint>
 
-#if defined(__linux__)
-#include <arpa/inet.h>
-#elif defined(ARDUINO_ARCH_SAMD) || defined(ARDUINO_ARCH_RP2040) || defined(ARDUINO_ARCH_STM32) || defined (DeviceFamily_CC13X0)
+#include <stddef.h>
+#include <stdint.h>
+
+
+#if defined(ARDUINO_ARCH_STM32F1)
 #define getbyte(x,n) (*(((uint8_t*)&(x))+n))
 #define htons(x)  ( (getbyte(x,0)<<8) | getbyte(x,1) ) 
 #define htonl(x) ( (getbyte(x,0)<<24) | (getbyte(x,1)<<16) | (getbyte(x,2)<<8) | getbyte(x,3) )
@@ -25,15 +27,12 @@
 #define ABS(x)    ((x > 0) ? (x) : (-x))
 #endif
 
-#if defined(ARDUINO_ARCH_SAMD) || defined(ARDUINO_ARCH_RP2040) || defined(ARDUINO_ARCH_STM32)
+#if defined(ARDUINO_ARCH_STM32F1)
 #include <Arduino.h>
-#elif defined(ARDUINO_ARCH_ESP8266)
-#include <Arduino.h>
-#include <user_interface.h>
 #elif defined(ARDUINO_ARCH_ESP32)
 #include <Arduino.h>
 #include <esp_wifi.h>
-#else // Non-Arduino platforms
+/*#else // Non-Arduino platforms
 #define lowByte(val) ((val)&255)
 #define highByte(val) (((val) >> ((sizeof(val) - 1) << 3)) & 255)
 #define bitRead(val, bitno) (((val) >> (bitno)) & 1)
@@ -60,7 +59,7 @@ void pinMode(uint32_t dwPin, uint32_t dwMode);
 void digitalWrite(uint32_t dwPin, uint32_t dwVal);
 uint32_t digitalRead(uint32_t dwPin);
 typedef void (*voidFuncPtr)(void);
-void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode);
+void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode);*/
 #endif
 
 #ifndef KNX_NO_PRINT
@@ -88,10 +87,10 @@ void println(double);
 void println(void);
 
 void printHex(const char* suffix, const uint8_t *data, size_t length, bool newline = true);
-#else
+/*#else
 #define print(...)      do {} while(0)
 #define println(...)    do {} while(0)
-#define printHex(...)   do {} while(0)
+#define printHex(...)   do {} while(0)*/
 #endif
 
 const uint8_t* popByte(uint8_t& b, const uint8_t* data);

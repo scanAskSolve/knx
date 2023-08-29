@@ -1,8 +1,11 @@
 #include "knx_value.h"
 
-#include <cstring>
-#include <cstdlib>
-#include <ctime>
+//#include <cstring>
+#include "string.h"
+//#include <cstdlib>
+//#include <ctime>
+#include "stdlib.h"
+#include "time.h"
 
 KNXValue::KNXValue(bool value)
 {

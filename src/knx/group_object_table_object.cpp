@@ -1,4 +1,7 @@
-#include <cstring>
+//#include <cstring>
+#include "string.h"
+
+
 
 #include "group_object_table_object.h"
 #include "group_object.h"

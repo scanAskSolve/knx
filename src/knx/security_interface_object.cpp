@@ -1,7 +1,9 @@
 #include "config.h"
 #ifdef USE_DATASECURE
 
-#include <cstring>
+//#include <cstring>
+#include "string.h"
+
 #include "security_interface_object.h"
 #include "secure_application_layer.h"
 #include "bits.h"

@@ -15,7 +15,7 @@
 //#define DBG_TRACE
 
 // NCN5120
-//#define NCN5120
+#define NCN5120
 
 // services Host -> Controller :
 // internal commands, device specific

@@ -1,7 +1,11 @@
 #include "data_property.h"
 #include "bits.h"
 
-#include <cstring>
+//#include <cstring>
+#include "string.h"
+
+
+
 
 uint8_t DataProperty::read(uint16_t start, uint8_t count, uint8_t* data) const
 {

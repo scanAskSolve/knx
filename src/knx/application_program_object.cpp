@@ -3,7 +3,10 @@
 #include "data_property.h"
 #include "callback_property.h"
 #include "dptconvert.h"
-#include <cstring>
+//#include <cstring>
+#include "string.h"
+
+
 
 ApplicationProgramObject::ApplicationProgramObject(Memory& memory)
     : TableObject(memory)

@@ -1,5 +1,5 @@
 #pragma once
-#include <stdint.h>
+#include "stdint.h"
 #include "knx_types.h"
 #include "interface_object.h"
 

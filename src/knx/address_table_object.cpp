@@ -1,4 +1,7 @@
-#include <cstring>
+//#include <cstring>
+#include "string.h"
+
+
 
 #include "address_table_object.h"
 #include "bits.h"

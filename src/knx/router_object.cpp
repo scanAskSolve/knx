@@ -1,6 +1,9 @@
 #include "config.h"
 
-#include <cstring>
+//#include <cstring>
+#include "string.h"
+
+
 #include "router_object.h"
 #include "bits.h"
 #include "memory.h"

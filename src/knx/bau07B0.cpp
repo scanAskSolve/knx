@@ -3,8 +3,8 @@
 
 #include "bau07B0.h"
 #include "bits.h"
-#include <string.h>
-#include <stdio.h>
+#include "string.h"
+#include "stdio.h"
 
 using namespace std;
 

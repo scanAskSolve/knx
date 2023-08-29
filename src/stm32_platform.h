@@ -1,4 +1,4 @@
-#ifdef ARDUINO_ARCH_STM32
+#ifdef ARDUINO_ARCH_STM32F1
 #include "arduino_platform.h"
 
 class Stm32Platform : public ArduinoPlatform

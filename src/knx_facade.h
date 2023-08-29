@@ -3,55 +3,23 @@
 #include "knx/bits.h"
 #include "knx/config.h"
 #include "knx/bau07B0.h"
-#include "knx/bau091A.h"
-#include "knx/bau27B0.h"
-#include "knx/bau2920.h"
-#include "knx/bau57B0.h"
 
 #ifndef USERDATA_SAVE_SIZE
 #define USERDATA_SAVE_SIZE 0
 #endif
 
-#ifdef ARDUINO_ARCH_SAMD
-    #include "samd_platform.h"
-    #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
-        void buttonUp();
-    #endif
-#elif defined(ARDUINO_ARCH_RP2040)
-    #include "rp2040_arduino_platform.h"
-    #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
-        void buttonUp();
-    #endif
-#elif defined(ARDUINO_ARCH_ESP8266)
-    #include "esp_platform.h"
-    #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
-        void buttonUp();
-    #endif
-#elif defined(ARDUINO_ARCH_ESP32)
-#if !defined(LED_BUILTIN)
-    #define LED_BUILTIN 13
-#endif
+#ifdef ARDUINO_ARCH_ESP32
+	#if !defined(LED_BUILTIN)
+		#define LED_BUILTIN 13
+	#endif
     #include "esp32_platform.h"
     #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
         void buttonUp();
     #endif
-#elif defined(ARDUINO_ARCH_STM32)
+#elif defined(ARDUINO_ARCH_STM32F1)
     #include "stm32_platform.h"
     #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
         void buttonUp();
-    #endif
-#elif __linux__
-#if !defined(LED_BUILTIN)
-    #define LED_BUILTIN 0
-#endif
-    #include "linux_platform.h"
-#else
-#if !defined(LED_BUILTIN)
-    #define LED_BUILTIN 5 // see GPIO_PinConfig gpioPinConfigs[]
-#endif
-    #include "cc1310_platform.h"
-    #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
-        extern void buttonUp();
     #endif
 #endif
 
@@ -468,40 +436,7 @@ template <class P, class B> class KnxFacade : private SaveRestore
 };
 
 #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
-    #ifdef ARDUINO_ARCH_SAMD
-        // predefined global instance for TP or RF or TP/RF coupler
-        #if MASK_VERSION == 0x07B0
-            extern KnxFacade<SamdPlatform, Bau07B0> knx;
-        #elif MASK_VERSION == 0x27B0
-            extern KnxFacade<SamdPlatform, Bau27B0> knx;
-        #elif MASK_VERSION == 0x2920
-            extern KnxFacade<SamdPlatform, Bau2920> knx;
-        #else
-            #error "Mask version not supported on ARDUINO_ARCH_SAMD"
-        #endif
-    #elif defined(ARDUINO_ARCH_RP2040)
-        // predefined global instance for TP or RF or TP/RF coupler
-        #if MASK_VERSION == 0x07B0
-            extern KnxFacade<RP2040ArduinoPlatform, Bau07B0> knx;
-        #elif MASK_VERSION == 0x27B0
-            extern KnxFacade<RP2040ArduinoPlatform, Bau27B0> knx;
-        #elif MASK_VERSION == 0x2920
-            extern KnxFacade<RP2040ArduinoPlatform, Bau2920> knx;
-        #else
-            #error "Mask version not supported on ARDUINO_ARCH_RP2040"
-        #endif
-    #elif defined(ARDUINO_ARCH_ESP8266)
-        // predefined global instance for TP or IP or TP/IP coupler
-        #if MASK_VERSION == 0x07B0
-            extern KnxFacade<EspPlatform, Bau07B0> knx;
-        #elif MASK_VERSION == 0x57B0
-            extern KnxFacade<EspPlatform, Bau57B0> knx;
-        #elif MASK_VERSION == 0x091A
-            extern KnxFacade<EspPlatform, Bau091A> knx;
-        #else
-            #error "Mask version not supported on ARDUINO_ARCH_ESP8266"
-        #endif
-    #elif defined(ARDUINO_ARCH_ESP32)
+    #ifdef ARDUINO_ARCH_ESP32
         // predefined global instance for TP or IP or TP/IP coupler
         #if MASK_VERSION == 0x07B0
             extern KnxFacade<Esp32Platform, Bau07B0> knx;
@@ -512,7 +447,7 @@ template <class P, class B> class KnxFacade : private SaveRestore
         #else
             #error "Mask version not supported on ARDUINO_ARCH_ESP32"
         #endif
-    #elif defined(ARDUINO_ARCH_STM32)
+    #elif defined(ARDUINO_ARCH_STM32F1)
         // predefined global instance for TP only
         #if MASK_VERSION == 0x07B0
             extern KnxFacade<Stm32Platform, Bau07B0> knx;

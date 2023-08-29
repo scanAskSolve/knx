@@ -1,4 +1,7 @@
-#include <cstring>
+//#include <cstring>
+#include "string.h"
+
+
 #include "device_object.h"
 #include "bits.h"
 #include "data_property.h"

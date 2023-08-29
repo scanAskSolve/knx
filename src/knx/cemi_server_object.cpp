@@ -1,7 +1,10 @@
 #include "config.h"
 #ifdef USE_CEMI_SERVER
 
-#include <cstring>
+//#include <cstring>
+#include "string.h"
+
+
 #include "cemi_server_object.h"
 #include "bits.h"
 #include "data_property.h"

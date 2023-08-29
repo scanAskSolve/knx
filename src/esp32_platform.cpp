@@ -7,7 +7,7 @@
 #include "knx/bits.h"
 
 #ifndef KNX_SERIAL
-#define KNX_SERIAL Serial1
+#define KNX_SERIAL Serial2
 #endif
 
 Esp32Platform::Esp32Platform()
