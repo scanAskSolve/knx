@@ -9,7 +9,7 @@
 #ifndef KNX_NO_PRINT
 Stream* ArduinoPlatform::SerialDebug = &KNX_DEBUG_SERIAL;
 #endif
-
+//TEST
 ArduinoPlatform::ArduinoPlatform() : _knxSerial(nullptr)
 {
 }
