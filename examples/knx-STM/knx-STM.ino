@@ -1,13 +1,18 @@
 #include <knx.h>
 
+
+
+
 // create named references for easy access to group objects
 #define SWITCH1 knx.getGroupObject(1)
-
 long lastsend = 0;
 bool LED_S = 0;
 bool flag = 0;
+
+HardwareSerial Serial2(USART2);   // PA3  (RX)  PA2  (TX)
+
 void TEST_Function() {
-  long now = millis();
+  long now = HAL_GetTick();
   if ((now - lastsend) < 100) 
     return;
 
@@ -27,7 +32,7 @@ void TEST_Function() {
     bool LED_NOW = SWITCH1.value();
     if(LED_NOW != LED_S){
     LED_S = LED_NOW;
-    digitalWrite(27,LED_S);
+    digitalWrite(PB11,LED_S);
     //Serial.print("LED_S: ");
     //Serial.println(LED_S);
   }
@@ -38,10 +43,31 @@ void TEST_Function() {
 
 
 void setup() {
-  //Serial.begin(115200);
-  //ArduinoPlatform::SerialDebug = &Serial;
+  //Serial.setRx(PA10);
+  //Serial.setTx(PA9);
+  
+  Serial.begin(115200);
+  ArduinoPlatform::SerialDebug = &Serial;
+  
+ 
 
-  randomSeed(millis());
+
+    pinMode(PB11,OUTPUT);
+    //digitalWrite(27,knx.paramByte(0) && 0x80);
+
+    pinMode(PB11,OUTPUT);
+    /*digitalWrite(PB11,LOW);
+    delay(100);
+    digitalWrite(PB11,HIGH);
+    delay(100);
+    digitalWrite(PB11,LOW);
+    delay(100);
+    digitalWrite(PB11,HIGH);
+    delay(100);
+    digitalWrite(PB11,LOW);
+    delay(100);*/
+
+  randomSeed(HAL_GetTick());
 
 
   // read adress table, association table, groupobject table and parameters from eeprom
@@ -50,7 +76,7 @@ void setup() {
   // print values of parameters if device is already configured
   if (knx.configured()) {
     // register callback for reset GO
-   
+      Serial.println("configured START");
       //goCurrent.dataPointType(DPT_Value_Temp);
       //SWITCH.callback(switchCallback);
       //LED.dataPointType(DPT_Switch);
@@ -58,7 +84,7 @@ void setup() {
     /**/
 
     
-    /*
+    
     Serial.print("knx.paramByte(0): ");
     Serial.println(knx.paramByte(0));
     Serial.print("knx.paramByte(1): ");
@@ -68,24 +94,23 @@ void setup() {
     Serial.print("knx.paramByte(3): ");
     Serial.println(knx.paramByte(3));
     Serial.print("knx.paramByte(4): ");
-    Serial.println(knx.paramByte(4));*/
+    Serial.println(knx.paramByte(4));
 
-    pinMode(27,OUTPUT);
-    //digitalWrite(27,knx.paramByte(0) && 0x80);
-    digitalWrite(27,LOW);
+
   }
+  Serial.println("configured PASS");
 
   // pin or GPIO the programming led is connected to. Default is LED_BUILTIN
    knx.ledPin(LED_BUILTIN);
   // is the led active on HIGH or low? Default is LOW
    knx.ledPinActiveOn(HIGH);
   // pin or GPIO programming button is connected to. Default is 0
-   knx.buttonPin(0);
+   knx.buttonPin(PA0);
 
   // start the framework.
   knx.start();
   
-  //Serial.println("knx.start");
+  Serial.println("knx.start");
 }
 
 void loop() {

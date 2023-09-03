@@ -8,15 +8,7 @@
 #define USERDATA_SAVE_SIZE 0
 #endif
 
-#ifdef ARDUINO_ARCH_ESP32
-	#if !defined(LED_BUILTIN)
-		#define LED_BUILTIN 13
-	#endif
-    #include "esp32_platform.h"
-    #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
-        void buttonUp();
-    #endif
-#elif defined(ARDUINO_ARCH_STM32F1)
+#ifdef ARDUINO_ARCH_STM32
     #include "stm32_platform.h"
     #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
         void buttonUp();
@@ -436,18 +428,7 @@ template <class P, class B> class KnxFacade : private SaveRestore
 };
 
 #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
-    #ifdef ARDUINO_ARCH_ESP32
-        // predefined global instance for TP or IP or TP/IP coupler
-        #if MASK_VERSION == 0x07B0
-            extern KnxFacade<Esp32Platform, Bau07B0> knx;
-        #elif MASK_VERSION == 0x57B0
-            extern KnxFacade<Esp32Platform, Bau57B0> knx;
-        #elif MASK_VERSION == 0x091A
-            extern KnxFacade<Esp32Platform, Bau091A> knx;
-        #else
-            #error "Mask version not supported on ARDUINO_ARCH_ESP32"
-        #endif
-    #elif defined(ARDUINO_ARCH_STM32F1)
+    #ifdef ARDUINO_ARCH_STM32
         // predefined global instance for TP only
         #if MASK_VERSION == 0x07B0
             extern KnxFacade<Stm32Platform, Bau07B0> knx;

@@ -4,7 +4,7 @@
 
 #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
 
-    #if (defined(ARDUINO_ARCH_STM32F1) || defined(ARDUINO_ARCH_ESP32))
+    #if defined(ARDUINO_ARCH_STM32)
 
         // Only ESP8266 and ESP32 have this define. For all other platforms this is just empty.
         #ifndef ICACHE_RAM_ATTR
@@ -37,19 +37,7 @@
         }
     #endif
 
-    #ifdef ARDUINO_ARCH_ESP32
-        // predefined global instance for TP or IP or TP/IP coupler
-        #if MASK_VERSION == 0x07B0
-            KnxFacade<Esp32Platform, Bau07B0> knx(buttonEvent);
-        #elif MASK_VERSION == 0x57B0
-            KnxFacade<Esp32Platform, Bau57B0> knx(buttonEvent);
-        #elif MASK_VERSION == 0x091A
-            KnxFacade<Esp32Platform, Bau091A> knx(buttonEvent);
-        #else
-            #error "Mask version not supported on ARDUINO_ARCH_ESP32"
-        #endif
-
-    #elif defined(ARDUINO_ARCH_STM32F1)
+    #ifdef ARDUINO_ARCH_STM32
         #if MASK_VERSION == 0x07B0
             KnxFacade<Stm32Platform, Bau07B0> knx(buttonEvent);
         #else

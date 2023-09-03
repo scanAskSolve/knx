@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 
-#if defined(ARDUINO_ARCH_STM32F1)
+#if defined(ARDUINO_ARCH_STM32)
 #define getbyte(x,n) (*(((uint8_t*)&(x))+n))
 #define htons(x)  ( (getbyte(x,0)<<8) | getbyte(x,1) ) 
 #define htonl(x) ( (getbyte(x,0)<<24) | (getbyte(x,1)<<16) | (getbyte(x,2)<<8) | getbyte(x,3) )
@@ -26,41 +26,7 @@
 #ifndef ABS
 #define ABS(x)    ((x > 0) ? (x) : (-x))
 #endif
-
-#if defined(ARDUINO_ARCH_STM32F1)
 #include <Arduino.h>
-#elif defined(ARDUINO_ARCH_ESP32)
-#include <Arduino.h>
-#include <esp_wifi.h>
-/*#else // Non-Arduino platforms
-#define lowByte(val) ((val)&255)
-#define highByte(val) (((val) >> ((sizeof(val) - 1) << 3)) & 255)
-#define bitRead(val, bitno) (((val) >> (bitno)) & 1)
-
-// print functions are implemented in the platform files
-#define DEC 10
-#define HEX 16
-
-#define INPUT (0x0)
-#define OUTPUT (0x1)
-#define INPUT_PULLUP (0x2)
-#define INPUT_PULLDOWN (0x3)
-
-#define LOW (0x0)
-#define HIGH (0x1)
-#define CHANGE 2
-#define FALLING 3
-#define RISING 4
-
-void delay(uint32_t millis);
-void delayMicroseconds (unsigned int howLong);
-uint32_t millis();
-void pinMode(uint32_t dwPin, uint32_t dwMode);
-void digitalWrite(uint32_t dwPin, uint32_t dwVal);
-uint32_t digitalRead(uint32_t dwPin);
-typedef void (*voidFuncPtr)(void);
-void attachInterrupt(uint32_t pin, voidFuncPtr callback, uint32_t mode);*/
-#endif
 
 #ifndef KNX_NO_PRINT
 void print(const char[]);
