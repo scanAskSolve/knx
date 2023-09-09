@@ -20,10 +20,10 @@ class Platform
   public:
     virtual ~Platform() {}
     // ip config
-    virtual uint32_t currentIpAddress();
+    /*virtual uint32_t currentIpAddress();
     virtual uint32_t currentSubnetMask();
     virtual uint32_t currentDefaultGateway();
-    virtual void macAddress(uint8_t* data);
+    virtual void macAddress(uint8_t* data);*/
 
     // unique serial number
     virtual uint32_t uniqueSerialNumber();
@@ -51,9 +51,9 @@ class Platform
     virtual size_t readBytesUart(uint8_t* buffer, size_t length);
 
     // SPI
-    virtual void setupSpi();
+    /*virtual void setupSpi();
     virtual void closeSpi();
-    virtual int readWriteSpi(uint8_t *data, size_t len);
+    virtual int readWriteSpi(uint8_t *data, size_t len);*/
 
     //Memory
 

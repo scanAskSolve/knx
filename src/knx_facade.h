@@ -10,9 +10,9 @@
 
 #ifdef ARDUINO_ARCH_STM32
     #include "stm32_platform.h"
-    #ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
+    /*#ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
         void buttonUp();
-    #endif
+    #endif*/
 #endif
 
 #ifndef KNX_LED

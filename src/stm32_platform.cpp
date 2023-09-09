@@ -1,3 +1,7 @@
+//#include "main.h"
+//#include "stm32f1xx_hal.h"
+
+
 #include "stm32_platform.h"
 
 #ifdef ARDUINO_ARCH_STM32
@@ -21,7 +25,8 @@ Stm32Platform::Stm32Platform( HardwareSerial* s) : ArduinoPlatform(s)
 
 Stm32Platform::~Stm32Platform()
 {
-    delete [] _eepromPtr;
+        //delete [] _eepromPtr;
+	free(_eepromPtr);	
 }
 
 uint32_t Stm32Platform::uniqueSerialNumber()

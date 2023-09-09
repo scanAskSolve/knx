@@ -41,3 +41,4 @@ class ArduinoPlatform : public Platform
   protected:
     HardwareSerial* _knxSerial;
 };
+

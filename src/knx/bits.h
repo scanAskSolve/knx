@@ -53,10 +53,6 @@ void println(double);
 void println(void);
 
 void printHex(const char* suffix, const uint8_t *data, size_t length, bool newline = true);
-/*#else
-#define print(...)      do {} while(0)
-#define println(...)    do {} while(0)
-#define printHex(...)   do {} while(0)*/
 #endif
 
 const uint8_t* popByte(uint8_t& b, const uint8_t* data);

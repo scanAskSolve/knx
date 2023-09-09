@@ -7,6 +7,7 @@
 #include "bits.h"
 #include "simple_map.h"
 
+
 class DeviceObject;
 class SecurityInterfaceObject;
 class AssociationTableObject;

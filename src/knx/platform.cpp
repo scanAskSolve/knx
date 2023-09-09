@@ -18,7 +18,7 @@ void Platform::NonVolatileMemoryType(NvMemoryType type)
 {
     _memoryType = type;
 }
-
+/*
 void Platform::setupSpi()
 {}
 
@@ -28,7 +28,7 @@ void Platform::closeSpi()
 int Platform::readWriteSpi(uint8_t *data, size_t len)
 {
     return 0;
-}
+}*/
 
 size_t Platform::readBytesUart(uint8_t *buffer, size_t length)
 {
@@ -61,7 +61,7 @@ void Platform::closeUart()
 void Platform::setupUart()
 {}
 
-uint32_t Platform::currentIpAddress()
+/*uint32_t Platform::currentIpAddress()
 {
     return 0x01020304;
 }
@@ -77,7 +77,7 @@ uint32_t Platform::currentDefaultGateway()
 }
 
 void Platform::macAddress(uint8_t *data)
-{}
+{}*/
 
 uint32_t Platform::uniqueSerialNumber()
 {
