@@ -427,7 +427,7 @@ template <class P, class B> class KnxFacade : private SaveRestore
     }
 };
 
-#ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
+//#ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
     #ifdef ARDUINO_ARCH_STM32
         // predefined global instance for TP only
         #if MASK_VERSION == 0x07B0
@@ -437,5 +437,6 @@ template <class P, class B> class KnxFacade : private SaveRestore
         #endif
     #else // Non-Arduino platforms and Linux platform
         // no predefined global instance
+        #error "no predefined global instance"
     #endif
-#endif // KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
+//#endif // KNX_NO_AUTOMATIC_GLOBAL_INSTANCE

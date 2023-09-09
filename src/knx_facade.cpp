@@ -1,26 +1,27 @@
 #include "knx_facade.h"
-
 #include "knx/bits.h"
 
-#ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
+
+#ifndef PROG_BTN_PRESS_MIN_MILLIS
+	#define PROG_BTN_PRESS_MIN_MILLIS 50
+#endif
+
+#ifndef PROG_BTN_PRESS_MAX_MILLIS
+	#define PROG_BTN_PRESS_MAX_MILLIS 500
+#endif
+
+
+
+//#ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
 
     #if defined(ARDUINO_ARCH_STM32)
 
         // Only ESP8266 and ESP32 have this define. For all other platforms this is just empty.
-        #ifndef ICACHE_RAM_ATTR
-            #define ICACHE_RAM_ATTR
-        #endif
-
-        #ifndef PROG_BTN_PRESS_MIN_MILLIS
-            #define PROG_BTN_PRESS_MIN_MILLIS 50
-        #endif
-
-        #ifndef PROG_BTN_PRESS_MAX_MILLIS
-            #define PROG_BTN_PRESS_MAX_MILLIS 500
-        #endif
-
-
-        ICACHE_RAM_ATTR void buttonEvent()
+        //#ifndef ICACHE_RAM_ATTR
+            //#define ICACHE_RAM_ATTR
+        //#endif
+		//ICACHE_RAM_ATTR void buttonEvent()
+        void buttonEvent()
         {
             static uint32_t lastEvent=0;
             static uint32_t lastPressed=0;
@@ -45,6 +46,8 @@
         #endif
     #else // Non-Arduino platforms and Linux platform
         // no predefined global instance
+        #error "no predefined global instance"
     #endif
 
-#endif // KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
+
+//#endif // KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
