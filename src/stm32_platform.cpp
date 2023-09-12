@@ -12,12 +12,20 @@
 #define KNX_SERIAL Serial2
 #endif
 
+
+
+/*
 Stm32Platform::Stm32Platform()
 #ifndef KNX_NO_DEFAULT_UART
     : ArduinoPlatform(&KNX_SERIAL)
 #endif
 {
+}*/
+
+Stm32Platform::Stm32Platform(): ArduinoPlatform(&KNX_SERIAL)
+{
 }
+
 
 Stm32Platform::Stm32Platform( HardwareSerial* s) : ArduinoPlatform(s)
 {

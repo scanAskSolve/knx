@@ -1,7 +1,4 @@
-#include <knx.h>
-
-
-
+#include <knx_facade.h>
 
 // create named references for easy access to group objects
 #define SWITCH1 knx.getGroupObject(1)
@@ -33,8 +30,8 @@ void TEST_Function() {
     if(LED_NOW != LED_S){
     LED_S = LED_NOW;
     digitalWrite(PB11,LED_S);
-    //Serial.print("LED_S: ");
-    //Serial.println(LED_S);
+    Serial.print("LED_S: ");
+    Serial.println(LED_S);
   }
 
     
@@ -48,26 +45,9 @@ void setup() {
   
   Serial.begin(115200);
   ArduinoPlatform::SerialDebug = &Serial;
-  
- 
+  pinMode(PB11,OUTPUT);
 
-
-    pinMode(PB11,OUTPUT);
-    //digitalWrite(27,knx.paramByte(0) && 0x80);
-
-    pinMode(PB11,OUTPUT);
-    /*digitalWrite(PB11,LOW);
-    delay(100);
-    digitalWrite(PB11,HIGH);
-    delay(100);
-    digitalWrite(PB11,LOW);
-    delay(100);
-    digitalWrite(PB11,HIGH);
-    delay(100);
-    digitalWrite(PB11,LOW);
-    delay(100);*/
-
-  randomSeed(HAL_GetTick());
+  //randomSeed(HAL_GetTick());
 
 
   // read adress table, association table, groupobject table and parameters from eeprom
@@ -99,17 +79,16 @@ void setup() {
 
   }
   Serial.println("configured PASS");
-
+  
   // pin or GPIO the programming led is connected to. Default is LED_BUILTIN
-   knx.ledPin(LED_BUILTIN);
+   knx.SetledPin(LED_BUILTIN);
   // is the led active on HIGH or low? Default is LOW
    knx.ledPinActiveOn(HIGH);
   // pin or GPIO programming button is connected to. Default is 0
-   knx.buttonPin(PA0);
+   knx.SetbuttonPin(PA0);
 
   // start the framework.
   knx.start();
-  
   Serial.println("knx.start");
 }
 

@@ -34,20 +34,20 @@ typedef void (*ProgLedOffCallback)();
 template <class P, class B> class KnxFacade : private SaveRestore
 {
   public:
-    KnxFacade() : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr)
+    /*KnxFacade() : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr)
     {
         manufacturerId(0xfa);
         bauNumber(platform().uniqueSerialNumber());
         _bau.addSaveRestore(this);
-    }
+    }*/
 
-    KnxFacade(B& bau) : _bau(bau)
+    /*KnxFacade(B& bau) : _bau(bau)
     {
         _platformPtr = static_cast<P*>(&bau.platform());
         manufacturerId(0xfa);
         bauNumber(platform().uniqueSerialNumber());
         _bau.addSaveRestore(this);
-    }
+    }*/
 
     KnxFacade(IsrFunctionPtr buttonISRFunction) : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr)
     {
@@ -60,10 +60,12 @@ template <class P, class B> class KnxFacade : private SaveRestore
     virtual ~KnxFacade()
     {
         if (_bauPtr)
-            delete _bauPtr;
+            //delete _bauPtr;
+            free(_bauPtr);
 
         if (_platformPtr)
-            delete _platformPtr;
+            //delete _platformPtr;
+			free(_platformPtr);
     }
 
     P& platform()
@@ -86,12 +88,12 @@ template <class P, class B> class KnxFacade : private SaveRestore
         _bau.enabled(value);
     }
 
-    bool progMode()
+    bool GetprogMode()
     {
         return _bau.deviceObject().progMode();
     }
 
-    void progMode(bool value)
+    void SetprogMode(bool value)
     {
         _bau.deviceObject().progMode(value);
     }
@@ -127,12 +129,12 @@ template <class P, class B> class KnxFacade : private SaveRestore
         _ledPinActiveOn = value;
     }
 
-    uint32_t ledPin()
+    uint32_t GetledPin()
     {
         return _ledPin;
     }
 
-    void ledPin(uint32_t value)
+    void SetledPin(uint32_t value)
     {
         _ledPin = value;
     }
@@ -148,12 +150,12 @@ template <class P, class B> class KnxFacade : private SaveRestore
     }
 
   
-    int32_t buttonPin()
+    int32_t GetbuttonPin()
     {
         return _buttonPin;
     }
 
-    void buttonPin(int32_t value)
+    void SetbuttonPin(int32_t value)
     {
         _buttonPin = value;
     }
@@ -175,9 +177,9 @@ template <class P, class B> class KnxFacade : private SaveRestore
 
     void loop()
     {
-        if (progMode() != _progLedState)
+        if (GetprogMode() != _progLedState)
         {
-            _progLedState = progMode();
+            _progLedState = GetprogMode();
             if (_progLedState)
             {
                 println("progmode on");
@@ -191,7 +193,7 @@ template <class P, class B> class KnxFacade : private SaveRestore
         }
         if (_toggleProgMode)
         {
-            progMode(!progMode());
+            SetprogMode(!GetprogMode());
             _toggleProgMode = false;
         }
         _bau.loop();
@@ -225,10 +227,10 @@ template <class P, class B> class KnxFacade : private SaveRestore
     void start()
     {
         if (_progLedOffCallback == 0 || _progLedOnCallback == 0)
-            pinMode(ledPin(), OUTPUT);
+            pinMode(GetledPin(), OUTPUT);
 
         progLedOff();
-        pinMode(buttonPin(), INPUT_PULLUP);
+        pinMode(GetbuttonPin(), INPUT_PULLUP);
 
         if (_progButtonISRFuncPtr && _buttonPin >= 0)
         {
@@ -413,7 +415,7 @@ template <class P, class B> class KnxFacade : private SaveRestore
     void progLedOn()
     {
         if (_progLedOnCallback == 0)
-            digitalWrite(ledPin(), _ledPinActiveOn);
+            digitalWrite(GetledPin(), _ledPinActiveOn);
         else
             _progLedOnCallback();
     }
@@ -421,7 +423,7 @@ template <class P, class B> class KnxFacade : private SaveRestore
     void progLedOff()
     {
         if (_progLedOffCallback == 0)
-            digitalWrite(ledPin(), HIGH - _ledPinActiveOn);
+            digitalWrite(GetledPin(), HIGH - _ledPinActiveOn);
         else
             _progLedOffCallback();
     }
