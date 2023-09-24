@@ -11,7 +11,7 @@
 class Bau07B0 : public BauSystemBDevice, public ITpUartCallBacks
 {
   public:
-    Bau07B0(Platform& platform);
+    Bau07B0(Platform_C& platform);
     void loop() override;
     bool enabled() override;
     void enabled(bool value) override;

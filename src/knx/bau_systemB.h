@@ -9,19 +9,19 @@
 #include "transport_layer.h"
 #include "network_layer.h"
 #include "data_link_layer.h"
-#include "platform.h"
+#include "platform_c.h"
 #include "memory.h"
 
 class BauSystemB : protected BusAccessUnit
 {
   public:
-    BauSystemB(Platform& platform);
+    BauSystemB(Platform_C& platform);
     virtual void loop() = 0;
     virtual bool configured() = 0;
     virtual bool enabled() = 0;
     virtual void enabled(bool value) = 0;
 
-    Platform& platform();
+    Platform_C& platform();
     ApplicationProgramObject& parameters();
     DeviceObject& deviceObject();
 
@@ -112,7 +112,7 @@ class BauSystemB : protected BusAccessUnit
     Memory _memory;
     DeviceObject _deviceObj;
     ApplicationProgramObject _appProgram;
-    Platform& _platform;
+    Platform_C& _platform;
     RestartState _restartState = Idle;
     SecurityControl _restartSecurity;
     uint32_t _restartDelay = 0;

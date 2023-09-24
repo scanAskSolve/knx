@@ -3,7 +3,7 @@
 
 #include "tpuart_data_link_layer.h"
 #include "bits.h"
-#include "platform.h"
+#include "platform_c.h"
 #include "device_object.h"
 #include "address_table_object.h"
 #include "cemi_frame.h"
@@ -536,7 +536,7 @@ void TpUartDataLinkLayer::stopChip()
 
 TpUartDataLinkLayer::TpUartDataLinkLayer(DeviceObject& devObj,
                                          NetworkLayerEntity &netLayerEntity,
-                                         Platform& platform,
+                                         Platform_C& platform,
                                          ITpUartCallBacks& cb)
     : DataLinkLayer(devObj, netLayerEntity, platform),
       _cb(cb)
@@ -632,7 +632,7 @@ bool TpUartDataLinkLayer::sendSingleFrameByte()
         {
             _oldIdx = idx;
             cmd[0] = U_L_DATA_OFFSET_REQ | idx;
-            _platform.writeUart(cmd, 1);
+            _platform.writeUartArray(cmd, 1);
         }
 
         if (_TxByteCnt != _sendBufferLength - 1)
@@ -645,7 +645,7 @@ bool TpUartDataLinkLayer::sendSingleFrameByte()
         print(cmd[1], HEX);
 #endif
 
-        _platform.writeUart(cmd, 2);
+        _platform.writeUartArray(cmd, 2);
         _TxByteCnt++;
     }
     

@@ -22,7 +22,7 @@ class TpUartDataLinkLayer : public DataLinkLayer
 
   public:
     TpUartDataLinkLayer(DeviceObject& devObj, NetworkLayerEntity& netLayerEntity,
-                        Platform& platform, ITpUartCallBacks& cb);
+                        Platform_C& platform, ITpUartCallBacks& cb);
 
     void loop();
     void enabled(bool value);

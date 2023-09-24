@@ -1,4 +1,4 @@
-#include "knx/platform.h"
+#include "knx/platform_c.h"
 
 #include "Arduino.h"
 
@@ -8,7 +8,7 @@
 	#endif
 //#endif
 
-class ArduinoPlatform : public Platform
+class ArduinoPlatform : public Platform_C
 {
   public:
     ArduinoPlatform();

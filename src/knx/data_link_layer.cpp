@@ -1,12 +1,12 @@
 #include "data_link_layer.h"
 
 #include "bits.h"
-#include "platform.h"
+#include "platform_c.h"
 #include "device_object.h"
 #include "cemi_server.h"
 #include "cemi_frame.h"
 
-DataLinkLayer::DataLinkLayer(DeviceObject& devObj, NetworkLayerEntity& netLayerEntity, Platform& platform) :
+DataLinkLayer::DataLinkLayer(DeviceObject& devObj, NetworkLayerEntity& netLayerEntity, Platform_C& platform) :
     _deviceObject(devObj), _networkLayerEntity(netLayerEntity), _platform(platform)
 {
 }

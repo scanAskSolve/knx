@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 
-BauSystemBCoupler::BauSystemBCoupler(Platform& platform) :
+BauSystemBCoupler::BauSystemBCoupler(Platform_C& platform) :
     BauSystemB(platform),
     _platform(platform),
 #ifdef USE_DATASECURE

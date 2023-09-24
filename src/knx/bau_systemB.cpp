@@ -14,7 +14,7 @@ enum NmReadSerialNumberType
 static constexpr auto kFunctionPropertyResultBufferMaxSize = 64;
 static constexpr auto kRestartProcessTime = 3;
 
-BauSystemB::BauSystemB(Platform& platform): _memory(platform, _deviceObj),
+BauSystemB::BauSystemB(Platform_C& platform): _memory(platform, _deviceObj),
      _appProgram(_memory),
     _platform(platform)
 {
@@ -31,7 +31,7 @@ void BauSystemB::writeMemory()
     _memory.writeMemory();
 }
 
-Platform& BauSystemB::platform()
+Platform_C& BauSystemB::platform()
 {
     return _platform;
 }

@@ -13,13 +13,13 @@
 #include "transport_layer.h"
 #include "network_layer_device.h"
 #include "data_link_layer.h"
-#include "platform.h"
+#include "platform_c.h"
 #include "memory.h"
 
 class BauSystemBDevice : public BauSystemB
 {
   public:
-    BauSystemBDevice(Platform& platform);
+    BauSystemBDevice(Platform_C& platform);
     void loop() override;
     bool configured() override;
     GroupObjectTableObject& groupObjectTable();
