@@ -23,8 +23,8 @@ class ArduinoPlatform : public Platform
     virtual void setupUart();
     virtual void closeUart();
     virtual int uartAvailable();
-    virtual size_t writeUart(const uint8_t data);
-    virtual size_t writeUart(const uint8_t* buffer, size_t size);
+    virtual size_t writeUart_data(const uint8_t data);
+    virtual size_t writeUart_buffer(const uint8_t* buffer, size_t size);
     virtual int readUart();
     virtual size_t readBytesUart(uint8_t* buffer, size_t length);
 

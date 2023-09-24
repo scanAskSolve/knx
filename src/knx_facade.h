@@ -31,6 +31,8 @@ typedef void (*IsrFunctionPtr)();
 typedef void (*ProgLedOnCallback)();
 typedef void (*ProgLedOffCallback)();
 
+//template <class P, class B> class KnxFacade : private SaveRestore
+
 template <class P, class B> class KnxFacade : private SaveRestore
 {
   public:

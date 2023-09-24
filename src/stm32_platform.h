@@ -9,7 +9,7 @@ public:
     ~Stm32Platform();
 
     // unique serial number
-    uint32_t uniqueSerialNumber() override;
+    uint32_t uniqueSerialNumber();
 
     // basic stuff
     void restart();

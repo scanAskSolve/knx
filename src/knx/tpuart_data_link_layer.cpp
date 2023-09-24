@@ -331,7 +331,7 @@ void TpUartDataLinkLayer::loop()
 
                             // Hint: We can send directly here, this doesn't disturb other transmissions
                             // We don't have to update _lastByteTxTime because after U_ACK_REQ the timing is not so tight
-                            _platform.writeUart(c);
+                            _platform.writeUart_data(c);
                         }
                         _rxState = RX_L_DATA;
                     }
@@ -496,7 +496,7 @@ bool TpUartDataLinkLayer::resetChip()
 {
     if(_waitConfirmStartTime > 0) return false;
     uint8_t cmd = U_RESET_REQ;
-    _platform.writeUart(cmd);
+    _platform.writeUart_data(cmd);
     
     int resp = _platform.readUart();
     if (resp == U_RESET_IND)
@@ -524,7 +524,7 @@ void TpUartDataLinkLayer::stopChip()
 {
 #ifdef NCN5120
     uint8_t cmd = U_STOP_MODE_REQ;
-    _platform.writeUart(cmd);
+    _platform.writeUart_data(cmd);
     while (true)
     {
         int resp = _platform.readUart();
@@ -565,7 +565,7 @@ void TpUartDataLinkLayer::enabled(bool value)
         _platform.setupUart();
 
         uint8_t cmd = U_RESET_REQ;
-        _platform.writeUart(cmd);
+        _platform.writeUart_data(cmd);
         _waitConfirmStartTime = millis();
         bool flag = false;
 
@@ -632,7 +632,7 @@ bool TpUartDataLinkLayer::sendSingleFrameByte()
         {
             _oldIdx = idx;
             cmd[0] = U_L_DATA_OFFSET_REQ | idx;
-            _platform.writeUart(cmd, 1);
+            _platform.writeUart_buffer(cmd, 1);
         }
 
         if (_TxByteCnt != _sendBufferLength - 1)
@@ -645,7 +645,7 @@ bool TpUartDataLinkLayer::sendSingleFrameByte()
         print(cmd[1], HEX);
 #endif
 
-        _platform.writeUart(cmd, 2);
+        _platform.writeUart_buffer(cmd, 2);
         _TxByteCnt++;
     }
     

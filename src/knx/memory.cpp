@@ -143,14 +143,14 @@ void Memory::writeMemory()
     bufferPos = pushByteArray(_deviceObject.hardwareType(), LEN_HARDWARE_TYPE, bufferPos);
     bufferPos = pushWord(_deviceObject.version(), bufferPos);
 
-    flashPos = _platform.writeNonVolatileMemory(flashPos, buffer, bufferPos - buffer);
+    flashPos = _platform.writeNonVolatileMemory_Arrary(flashPos, buffer, bufferPos - buffer);
 
     print("save saveRestores ");
     println(_saveCount);
     for (int i = 0; i < _saveCount; i++)
     {
         bufferPos = _saveRestores[i]->save(buffer);
-        flashPos = _platform.writeNonVolatileMemory(flashPos, buffer, bufferPos - buffer);
+        flashPos = _platform.writeNonVolatileMemory_Arrary(flashPos, buffer, bufferPos - buffer);
     }
 
     print("save tableobjs ");
@@ -173,7 +173,7 @@ void Memory::writeMemory()
         else
             bufferPos = pushWord(0, bufferPos);
 
-        flashPos = _platform.writeNonVolatileMemory(flashPos, buffer, bufferPos - buffer);
+        flashPos = _platform.writeNonVolatileMemory_Arrary(flashPos, buffer, bufferPos - buffer);
     }
     
     _platform.commitNonVolatileMemory();
@@ -276,7 +276,7 @@ void Memory::freeMemory(uint8_t* ptr)
 
 void Memory::writeMemory(uint32_t relativeAddress, size_t size, uint8_t* data)
 {
-    _platform.writeNonVolatileMemory(relativeAddress, data, size);
+    _platform.writeNonVolatileMemory_Arrary(relativeAddress, data, size);
 }
 
 

@@ -70,14 +70,14 @@ int ArduinoPlatform::uartAvailable()
 }
 
 
-size_t ArduinoPlatform::writeUart(const uint8_t data)
+size_t ArduinoPlatform::writeUart_data(const uint8_t data)
 {
     //printHex("<p", &data, 1);
     return _knxSerial->write(data);
 }
 
 
-size_t ArduinoPlatform::writeUart(const uint8_t *buffer, size_t size)
+size_t ArduinoPlatform::writeUart_buffer(const uint8_t *buffer, size_t size)
 {
     //printHex("<p", buffer, size);
     return _knxSerial->write(buffer, size);

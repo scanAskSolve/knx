@@ -60,7 +60,7 @@
 // Do not perform conversion from KNXValue(const char*) to other types, it mainly avoids the expensive strtod
 //#define KNX_NO_STRTOx_CONVERSION
 // Do not print messages
-//#define KNX_NO_PRINT
+#define KNX_NO_PRINT
 //#define KNX_PRINT_DISABLE
 // Do not use SPI (Arduino variants)
 #define KNX_NO_SPI
