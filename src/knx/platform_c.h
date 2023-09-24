@@ -64,8 +64,8 @@ typedef struct Platform_C
      size_t (*getNonVolatileMemorySize)();
      void (*commitNonVolatileMemory)();
     // address is relative to start of nonvolatile memory
-     uint32_t writeNonVolatileMemory(uint32_t relativeAddress, uint8_t* buffer, size_t size);
-     uint32_t writeNonVolatileMemory(uint32_t relativeAddress, uint8_t value, size_t repeat);
+     uint32_t (*writeNonVolatileMemoryWithBuffer)(uint32_t relativeAddress, uint8_t* buffer, size_t size);
+     uint32_t (*writeNonVolatileMemoryWithValue)(uint32_t relativeAddress, uint8_t value, size_t repeat);
 
     NvMemoryType_C NonVolatileMemoryType();
     void NonVolatileMemoryType(NvMemoryType_C type);
