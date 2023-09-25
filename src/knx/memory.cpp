@@ -13,17 +13,17 @@ Memory::~Memory()
 
 void Memory::readMemory()
 {
-    println("readMemory");
+    //**//println("readMemory");
 
     uint8_t* flashStart = _platform.getNonVolatileMemoryStart();
     size_t flashSize = _platform.getNonVolatileMemorySize();
     if (flashStart == nullptr)
     {
-        println("no user flash available;");
+        //**//println("no user flash available;");
         return;
     }
 
-    printHex("RESTORED ", flashStart, _metadataSize);
+    //**//printHex("RESTORED ", flashStart, _metadataSize);
 
     uint16_t metadataBlockSize = alignToPageSize(_metadataSize);
 
@@ -63,54 +63,54 @@ void Memory::readMemory()
         } 
         else 
         {
-            println("manufacturerId or hardwareType are different");
-            print("expexted manufacturerId: ");
-            print(_deviceObject.manufacturerId(), HEX);
-            print(", stored manufacturerId: ");
-            println(manufacturerId, HEX);
-            print("expexted hardwareType: ");
-            printHex("", _deviceObject.hardwareType(), LEN_HARDWARE_TYPE);
-            print(", stored hardwareType: ");
-            printHex("", hardwareType, LEN_HARDWARE_TYPE);
-            println("");
+            //**//println("manufacturerId or hardwareType are different");
+            //**//print("expexted manufacturerId: ");
+            //**//print(_deviceObject.manufacturerId(), HEX);
+            //**//print(", stored manufacturerId: ");
+            //**//println(manufacturerId, HEX);
+            //**//print("expexted hardwareType: ");
+            //**//printHex("", _deviceObject.hardwareType(), LEN_HARDWARE_TYPE);
+            //**//print(", stored hardwareType: ");
+            //**//printHex("", hardwareType, LEN_HARDWARE_TYPE);
+            //**//println("");
         }
     } 
     else 
     {
-        println("DataObject api changed, any data stored in flash is invalid.");
-        print("expexted DataObject api version: ");
-        print(_deviceObject.apiVersion, HEX);
-        print(", stored api version: ");
-        println(apiVersion, HEX);
+        //**//println("DataObject api changed, any data stored in flash is invalid.");
+        //**//print("expexted DataObject api version: ");
+        //**//print(_deviceObject.apiVersion, HEX);
+        //**//print(", stored api version: ");
+        //**//println(apiVersion, HEX);
     }
 
     if (versionCheck == FlashAllInvalid)
     {
-        println("ETS has to reprogram PA and application!");
+        //**//println("ETS has to reprogram PA and application!");
         return;
     }
 
-    println("restoring data from flash...");
-    print("saverestores ");
-    println(_saveCount);
+    //**//println("restoring data from flash...");
+    //**//print("saverestores ");
+    //**//println(_saveCount);
     for (int i = 0; i < _saveCount; i++)
     {
-        println(flashStart - buffer);
-        println(".");
+        //**//println(flashStart - buffer);
+        //**//println(".");
         buffer = _saveRestores[i]->restore(buffer);
     }
-    println("restored saveRestores");
+    //**//println("restored saveRestores");
     if (versionCheck == FlashTablesInvalid) 
     {
-        println("TableObjects are referring to an older firmware version and are not loaded");
+        //**//println("TableObjects are referring to an older firmware version and are not loaded");
         return;
     }
-    print("tableObjs ");
-    println(_tableObjCount);
+    //**//print("tableObjs ");
+    //**//println(_tableObjCount);
     for (int i = 0; i < _tableObjCount; i++)
     {
-        println(flashStart - buffer);
-        println(".");
+        //**//println(flashStart - buffer);
+        //**//println(".");
         buffer = _tableObjects[i]->restore(buffer);
         uint16_t memorySize = 0;
         buffer = popWord(memorySize, buffer);
@@ -121,7 +121,7 @@ void Memory::readMemory()
         // this works because TableObject saves a relative addr and restores it itself
         addNewUsedBlock(_tableObjects[i]->_data, memorySize);
     }
-    println("restored Tableobjects");
+    //**//println("restored Tableobjects");
 }
 
 void Memory::writeMemory()
@@ -145,16 +145,16 @@ void Memory::writeMemory()
 
     flashPos = _platform.writeNonVolatileMemory_Arrary(flashPos, buffer, bufferPos - buffer);
 
-    print("save saveRestores ");
-    println(_saveCount);
+    //**//print("save saveRestores ");
+    //**//println(_saveCount);
     for (int i = 0; i < _saveCount; i++)
     {
         bufferPos = _saveRestores[i]->save(buffer);
         flashPos = _platform.writeNonVolatileMemory_Arrary(flashPos, buffer, bufferPos - buffer);
     }
 
-    print("save tableobjs ");
-    println(_tableObjCount);
+    //**//print("save tableobjs ");
+    //**//println(_tableObjCount);
     for (int i = 0; i < _tableObjCount; i++)
     {
         bufferPos = _tableObjects[i]->save(buffer);
@@ -165,7 +165,7 @@ void Memory::writeMemory()
             MemoryBlock* block = findBlockInList(_usedList, _tableObjects[i]->_data);
             if (block == nullptr)
             {
-                println("_data of TableObject not in _usedList");
+                //**//println("_data of TableObject not in _usedList");
                 _platform.fatalError();
             }
             bufferPos = pushWord(block->size, bufferPos);
@@ -227,7 +227,7 @@ uint8_t* Memory::allocMemory(size_t size)
     }
     if (!blockToUse)
     {
-        println("No available non volatile memory!");
+        //**//println("No available non volatile memory!");
         _platform.fatalError();
     }
 
@@ -267,7 +267,7 @@ void Memory::freeMemory(uint8_t* ptr)
     }
     if(!found)
     {
-        println("freeMemory for not used pointer called");
+        //**//println("freeMemory for not used pointer called");
         _platform.fatalError();
     }
     removeFromUsedList(block);
@@ -302,7 +302,7 @@ MemoryBlock* Memory::removeFromList(MemoryBlock* head, MemoryBlock* item)
 
     if (!head || !item)
     {
-        println("invalid parameters of Memory::removeFromList");
+        //**//println("invalid parameters of Memory::removeFromList");
         _platform.fatalError();
     }
 
@@ -321,7 +321,7 @@ MemoryBlock* Memory::removeFromList(MemoryBlock* head, MemoryBlock* item)
 
     if (!found)
     {
-        println("tried to remove block from list not in it");
+        //**//println("tried to remove block from list not in it");
         _platform.fatalError();
     }
     item->next = nullptr;
@@ -442,13 +442,13 @@ void Memory::addNewUsedBlock(uint8_t* address, size_t size)
 
     if (smallerFreeBlock == nullptr)
     {
-        println("addNewUsedBlock: no smallerBlock found");
+        //**//println("addNewUsedBlock: no smallerBlock found");
         _platform.fatalError();
     }
 
     if ((smallerFreeBlock->address + smallerFreeBlock->size) < (address + size))
     {
-        println("addNewUsedBlock: found block can't contain new block");
+        //**//println("addNewUsedBlock: found block can't contain new block");
         _platform.fatalError();
     }
 

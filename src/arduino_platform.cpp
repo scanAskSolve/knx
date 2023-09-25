@@ -8,11 +8,11 @@
 
 
 
-
-
+//**//
+/*
 #ifndef KNX_PRINT_DISABLE
 	Stream* ArduinoPlatform::SerialDebug = &KNX_DEBUG_SERIAL;
-#endif
+#endif*/
 
 ArduinoPlatform::ArduinoPlatform() : _knxSerial(nullptr)
 {
@@ -129,6 +129,7 @@ int ArduinoPlatform::readWriteSpi(uint8_t *data, size_t len)
 #endif*/
 
 //#ifndef KNX_NO_PRINT
+/*
 void printUint64(uint64_t value, int base = DEC)
   {
   #ifndef KNX_PRINT_DISABLE
@@ -145,195 +146,195 @@ void printUint64(uint64_t value, int base = DEC)
     } while (n > 0);
 
      print(str);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void print(const char* s)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(s);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 void print(char c)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(c);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void print(unsigned char num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(num);
-	#endif // KNX_NO_PRINT
+	#endif
 }
 
 void print(unsigned char num, int base)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(num, base);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void print(int num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(num);
-	#endif // KNX_NO_PRINT
+	#endif
 }
 
 void print(int num, int base)
 {
 	#ifndef  KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(num, base);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void print(unsigned int num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(num);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void print(unsigned int num, int base)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(num, base);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void print(long num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(num);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void print(long num, int base)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(num, base);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void print(unsigned long num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(num);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void print(unsigned long num, int base)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(num, base);
-	#endif // KNX_NO_PRINT
+	#endif
 }
 
 void print(unsigned long long num)
 {
 	#ifndef KNX_PRINT_DISABLE
     printUint64(num);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void print(unsigned long long num, int base)
 {
 	#ifndef KNX_PRINT_DISABLE
     printUint64(num, base);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void print(double num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->print(num);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(const char* s)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(s);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(char c)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(c);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(unsigned char num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(num);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(unsigned char num, int base)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(num, base);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(int num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(num);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(int num, int base)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(num, base);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(unsigned int num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(num);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(unsigned int num, int base)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(num, base);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(long num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(num);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(long num, int base)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(num, base);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(unsigned long num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(num);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(unsigned long num, int base)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(num, base);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(unsigned long long num)
@@ -341,7 +342,7 @@ void println(unsigned long long num)
 	#ifndef KNX_PRINT_DISABLE
     printUint64(num);
     println("");
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(unsigned long long num, int base)
@@ -349,20 +350,20 @@ void println(unsigned long long num, int base)
 	#ifndef KNX_PRINT_DISABLE
     printUint64(num, base);
     println("");
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(double num)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println(num);
-	#endif // KNX_NO_PRINT
+	#endif 
 }
 
 void println(void)
 {
 	#ifndef KNX_PRINT_DISABLE
     ArduinoPlatform::SerialDebug->println();
-	#endif // KNX_NO_PRINT
-}
-//#endif // KNX_NO_PRINT
+	#endif 
+}*/
+//#endif 

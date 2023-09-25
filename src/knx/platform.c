@@ -1,6 +1,6 @@
 
 #include "platform.h"
-//#include "bits.h"
+#include "bits.h"
 
 //#include <cstring>
 #include "string.h"
@@ -263,7 +263,7 @@ void loadEraseblockContaining(uint32_t relativeAddress)
     if (blockNum < 0)
     {
         //**//println("loadEraseblockContaining could not get valid eraseblock number");
-        //fatalError();
+        fatalError();
     }
 
     if (blockNum != _bufferedEraseblockNumber && _bufferedEraseblockNumber >= 0)

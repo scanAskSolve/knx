@@ -193,8 +193,8 @@ uint16_t SecurityInterfaceObject::saveSize()
 
 void SecurityInterfaceObject::setSecurityMode(bool enabled)
 {
-    print("Security mode set to: ");
-    println(enabled ? "enabled" : "disabled");
+    //**//print("Security mode set to: ");
+    //**//println(enabled ? "enabled" : "disabled");
     _securityModeEnabled = enabled;
 }
 
@@ -205,19 +205,19 @@ bool SecurityInterfaceObject::isSecurityModeEnabled()
 
 void SecurityInterfaceObject::clearFailureLog()
 {
-    println("clearFailureLog()");
+    //**//println("clearFailureLog()");
 }
 
 void SecurityInterfaceObject::getFailureCounters(uint8_t* data)
 {
     memset(data, 0, 8);
-    println("getFailureCounters()");
+    //**//println("getFailureCounters()");
 }
 
 uint8_t SecurityInterfaceObject::getFromFailureLogByIndex(uint8_t index, uint8_t* data, uint8_t maxDataLen)
 {
-    print("getFromFailureLogByIndex(): Index: ");
-    println(index);
+    //**//print("getFromFailureLogByIndex(): Index: ");
+    //**//println(index);
     return 0;
 }
 
@@ -356,7 +356,7 @@ void SecurityInterfaceObject::masterReset(EraseCode eraseCode, uint8_t channel)
     if (eraseCode == FactoryReset)
     {
         // TODO handle different erase codes
-        println("Factory reset of security interface object requested.");
+        //**//println("Factory reset of security interface object requested.");
         setSecurityMode(false);
         property(PID_TOOL_KEY)->write(1, 1, _fdsk);
     }

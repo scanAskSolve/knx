@@ -3,9 +3,9 @@
 #include "Arduino.h"
 
 //#ifdef KNX_PRINT_ENABLE
-	#ifndef KNX_DEBUG_SERIAL
-		#define KNX_DEBUG_SERIAL Serial
-	#endif
+	//**//#ifndef KNX_DEBUG_SERIAL
+		//**//#define KNX_DEBUG_SERIAL Serial
+	//**//#endif
 //#endif
 
 class ArduinoPlatform : public Platform
@@ -36,10 +36,10 @@ class ArduinoPlatform : public Platform
     int readWriteSpi (uint8_t *data, size_t len) override;
     
 #endif*/
-#ifndef KNX_PRINT_DISABLE
+//**//#ifndef KNX_PRINT_DISABLE
 
-    static Stream* SerialDebug;
-#endif
+    //**//static Stream* SerialDebug;
+//**//#endif
 
   protected:
     HardwareSerial* _knxSerial;

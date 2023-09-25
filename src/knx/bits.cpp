@@ -10,8 +10,9 @@ const uint8_t* popByte(uint8_t& b, const uint8_t* data)
     data += 1;
     return data;
 }
+//**//
 
-
+/*
 void printHex(const char* suffix, const uint8_t *data, size_t length, bool newline)
 {
     #ifndef KNX_PRINT_DISABLE
@@ -26,7 +27,7 @@ void printHex(const char* suffix, const uint8_t *data, size_t length, bool newli
         println();
     }
 	#endif
-} 
+} */
 
 
 const uint8_t* popWord(uint16_t& w, const uint8_t* data)

@@ -25,7 +25,7 @@ class TPDU
     APDU& apdu();
 
     CemiFrame& frame();
-    void printPDU();
+    //**//void printPDU();
 
   protected:
     TPDU(uint8_t* data, CemiFrame& frame);

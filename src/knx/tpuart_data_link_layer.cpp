@@ -175,13 +175,13 @@ void TpUartDataLinkLayer::loop()
                     {
                         if (_platform.uartAvailable() > OVERRUN_COUNT)
                         {
-                            print("input buffer overrun: "); println(_platform.uartAvailable());
+                            //**//print("input buffer overrun: "); println(_platform.uartAvailable());
                             enterRxWaitEOP();
                             break;
                         }
                         rxByte = _platform.readUart();
 #ifdef DBG_TRACE
-                        print(rxByte, HEX);
+                        //**//print(rxByte, HEX);
 #endif
                         _lastByteRxTime = millis();
 
@@ -196,7 +196,7 @@ void TpUartDataLinkLayer::loop()
                             _convert = true;
                             _rxState = RX_L_ADDR;
 #ifdef DBG_TRACE
-                            println("RLS");
+                            //**//println("RLS");
 #endif
                             break;
                         }
@@ -207,7 +207,7 @@ void TpUartDataLinkLayer::loop()
                             _convert = false;
                             _rxState = RX_L_ADDR;
 #ifdef DBG_TRACE
-                            println("RLX");
+                            //**//println("RLX");
 #endif
                             break;
                         }
@@ -220,66 +220,66 @@ void TpUartDataLinkLayer::loop()
                         else if (rxByte == L_POLL_DATA_IND)
                         {
                             // not sure if this can happen
-                            println("got L_POLL_DATA_IND");
+                            //**//println("got L_POLL_DATA_IND");
                         }
                         else if ((rxByte & L_ACKN_MASK) == L_ACKN_IND)
                         {
                             // this can only happen in bus monitor mode
-                            println("got L_ACKN_IND");
+                            //**//println("got L_ACKN_IND");
                         }
                         else if (rxByte == U_RESET_IND)
                         {
-                            println("got U_RESET_IND");
+                            //**//println("got U_RESET_IND");
                         }
                         else if ((rxByte & U_STATE_IND) == U_STATE_IND)
                         {
-                            print("got U_STATE_IND:");
-                            if (rxByte & 0x80) print (" SC");
-                            if (rxByte & 0x40) print (" RE");
-                            if (rxByte & 0x20) print (" TE");
-                            if (rxByte & 0x10) print (" PE");
-                            if (rxByte & 0x08) print (" TW");
-                            println();
+                            //**//print("got U_STATE_IND:");
+                            //**//if (rxByte & 0x80) print (" SC");
+                            //**//if (rxByte & 0x40) print (" RE");
+                            //**//if (rxByte & 0x20) print (" TE");
+                            //**//if (rxByte & 0x10) print (" PE");
+                            //**//if (rxByte & 0x08) print (" TW");
+                            //**//println();
                         }
                         else if ((rxByte & U_FRAME_STATE_MASK) == U_FRAME_STATE_IND)
                         {
-                            print("got U_FRAME_STATE_IND: 0x");
-                            print(rxByte, HEX);
-                            println();
+                            //**//print("got U_FRAME_STATE_IND: 0x");
+                            //**//print(rxByte, HEX);
+                            //**//println();
                         }
                         else if ((rxByte & U_CONFIGURE_MASK) == U_CONFIGURE_IND)
                         {
-                            print("got U_CONFIGURE_IND: 0x");
-                            print(rxByte, HEX);
-                            println();
+                            //**//print("got U_CONFIGURE_IND: 0x");
+                            //**//print(rxByte, HEX);
+                            //**//println();
                         }
                         else if (rxByte == U_FRAME_END_IND)
                         {
-                            println("got U_FRAME_END_IND");
+                            //**//println("got U_FRAME_END_IND");
                         }
                         else if (rxByte == U_STOP_MODE_IND)
                         {
-                            println("got U_STOP_MODE_IND");
+                            //**//println("got U_STOP_MODE_IND");
                         }
                         else if (rxByte == U_SYSTEM_STAT_IND)
                         {
-                            print("got U_SYSTEM_STAT_IND: 0x");
+                            //**//print("got U_SYSTEM_STAT_IND: 0x");
                             while (true)
                             {
                                 int tmp = _platform.readUart();
                                 if (tmp < 0)
                                     continue;
 
-                                print(tmp, HEX);
+                                //**//print(tmp, HEX);
                                 break;
                             }
-                            println();
+                            //**//println();
                         }
                         else
                         {
-                            print("got UNEXPECTED: 0x");
-                            print(rxByte, HEX);
-                            println();
+                            //**//print("got UNEXPECTED: 0x");
+                            //**//print(rxByte, HEX);
+                            //**//println();
                         }
                     }
                     break;
@@ -287,7 +287,7 @@ void TpUartDataLinkLayer::loop()
                     if (millis() - _lastByteRxTime > EOPR_TIMEOUT)
                     {
                         _rxState = RX_WAIT_START;
-                        println("EOPR @ RX_L_ADDR");
+                        //**//println("EOPR @ RX_L_ADDR");
                         break;
                     }
                     if (!_platform.uartAvailable())
@@ -295,7 +295,7 @@ void TpUartDataLinkLayer::loop()
                     _lastByteRxTime = millis();
                     rxByte = _platform.readUart();
 #ifdef DBG_TRACE
-                    print(rxByte, HEX);
+                    //**//print(rxByte, HEX);
 #endif
                     buffer[_RxByteCnt++] = rxByte;
                     _xorSum ^= rxByte;
@@ -342,11 +342,11 @@ void TpUartDataLinkLayer::loop()
                     _lastByteRxTime = millis();
                     rxByte = _platform.readUart();
 #ifdef DBG_TRACE
-                    print(rxByte, HEX);
+                    //**//print(rxByte, HEX);
 #endif
                     if (_RxByteCnt == MAX_KNX_TELEGRAM_SIZE - 2)
                     {
-                        println("invalid telegram size");
+                        //**//println("invalid telegram size");
                         enterRxWaitEOP();
                     }
                     else
@@ -373,18 +373,18 @@ void TpUartDataLinkLayer::loop()
                                 if (runTime > (OVERRUN_COUNT*14)/10)
                                 {
                                     // complain when the runtime was long than the OVERRUN_COUNT allows
-                                    print("processing received frame took: "); print(runTime); println(" ms");
+                                    //**//print("processing received frame took: "); print(runTime); println(" ms");
                                 }
 #endif
                             }
                             _rxState = RX_WAIT_START;
 #ifdef DBG_TRACE
-                            println("RX_WAIT_START");
+                            //**//println("RX_WAIT_START");
 #endif
                         }
                         else
                         {
-                            println("frame with invalid crc ignored");
+                            //**//println("frame with invalid crc ignored");
                             enterRxWaitEOP();
                         }
                     }
@@ -399,7 +399,7 @@ void TpUartDataLinkLayer::loop()
                         // found a gap
                         _rxState = RX_WAIT_START;
 #ifdef DBG_TRACE
-                        println("RX_WAIT_START");
+                        //**//println("RX_WAIT_START");
 #endif
                         break;
                     }
@@ -410,7 +410,7 @@ void TpUartDataLinkLayer::loop()
                     }
                     break;
                 default:
-                    println("invalid _rxState");
+                    //**//println("invalid _rxState");
                     enterRxWaitEOP();
                     break;
             }
@@ -418,7 +418,7 @@ void TpUartDataLinkLayer::loop()
 
         // Check for spurios DATA_CONN message
         if (dataConnMsg && _txState != TX_WAIT_CONN) {
-            println("unexpected L_DATA_CON");
+            //**//println("unexpected L_DATA_CON");
         }
 
         switch (_txState)
@@ -429,7 +429,7 @@ void TpUartDataLinkLayer::loop()
                     loadNextTxFrame();
                     _txState = TX_FRAME;
 #ifdef DBG_TRACE
-                    println("TX_FRAME");
+                    //**//println("TX_FRAME");
 #endif
                 }
                 break;
@@ -441,7 +441,7 @@ void TpUartDataLinkLayer::loop()
                         _waitConfirmStartTime = millis();
                         _txState = TX_WAIT_CONN;
 #ifdef DBG_TRACE
-                        println("TX_WAIT_CONN");
+                        //**//println("TX_WAIT_CONN");
 #endif
                     }
                     else
@@ -461,7 +461,7 @@ void TpUartDataLinkLayer::loop()
                 }
                 else if (millis() - _waitConfirmStartTime > CONFIRM_TIMEOUT)
                 {
-                    println("L_DATA_CON not received within expected time");
+                    //**//println("L_DATA_CON not received within expected time");
                     uint8_t cemiBuffer[MAX_KNX_TELEGRAM_SIZE];
                     cemiBuffer[0] = 0x29;
                     cemiBuffer[1] = 0;
@@ -472,7 +472,7 @@ void TpUartDataLinkLayer::loop()
                     _sendBufferLength = 0;
                     _txState = TX_IDLE;
 #ifdef DBG_TRACE
-                    println("TX_IDLE");
+                    //**//println("TX_IDLE");
 #endif
                 }
                 break;
@@ -587,13 +587,13 @@ void TpUartDataLinkLayer::enabled(bool value)
         if (flag)
         {
             _enabled = true;
-            print("ownaddr ");
-            println(_deviceObject.individualAddress(), HEX);
+            //**//print("ownaddr ");
+            //**//println(_deviceObject.individualAddress(), HEX);
         }
         else
         {
             _enabled = false;
-            println("ERROR, TPUART not responding");
+            //**//println("ERROR, TPUART not responding");
         }
         return;
     }
@@ -642,7 +642,7 @@ bool TpUartDataLinkLayer::sendSingleFrameByte()
 
         cmd[1] = _sendBuffer[_TxByteCnt];
 #ifdef DBG_TRACE
-        print(cmd[1], HEX);
+        //**//print(cmd[1], HEX);
 #endif
 
         _platform.writeUart_buffer(cmd, 2);

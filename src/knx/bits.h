@@ -29,6 +29,7 @@
 #include <Arduino.h>
 
 //#ifndef KNX_NO_PRINT
+/*
 void print(const char[]);
 void print(char);
 void print(unsigned char, int = DEC);
@@ -54,7 +55,7 @@ void println(void);
 
 void printHex(const char* suffix, const uint8_t *data, size_t length, bool newline = true);
 //#endif
-
+*/
 const uint8_t* popByte(uint8_t& b, const uint8_t* data);
 const uint8_t* popWord(uint16_t& w, const uint8_t* data);
 const uint8_t* popInt(uint32_t& i, const uint8_t* data);

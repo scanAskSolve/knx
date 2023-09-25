@@ -462,7 +462,7 @@ void RouterObject::masterReset(EraseCode eraseCode, uint8_t channel)
     if (eraseCode == FactoryReset)
     {
         // TODO: handle different erase codes
-        println("Factory reset of router object with filter table requested.");
+        //**//println("Factory reset of router object with filter table requested.");
     }
 }
 

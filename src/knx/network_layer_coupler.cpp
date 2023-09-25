@@ -142,13 +142,13 @@ void NetworkLayerCoupler::sendMsgHopCount(AckType ack, AddressType addrType, uin
 
     // Use other interface
     uint8_t interfaceIndex = (sourceInterfaceIndex == kSecondaryIfIndex) ? kPrimaryIfIndex : kSecondaryIfIndex;
-    if (sourceInterfaceIndex == 0)
-        print("Routing from P->S: ");
-    else
-        print("Routing from S->P: ");
-    print(source, HEX); print(" -> "); print(destination, HEX);
-    print(" - ");
-    npdu.frame().apdu().printPDU();
+    //**//if (sourceInterfaceIndex == 0)
+        //**//print("Routing from P->S: ");
+    //**//else
+        //**//print("Routing from S->P: ");
+    //**//print(source, HEX); print(" -> "); print(destination, HEX);
+    //**//print(" - ");
+    //**//npdu.frame().apdu().printPDU();
     _netLayerEntities[interfaceIndex].sendDataRequest(npdu, ack, destination, source, priority, addrType, broadcastType);
 }
 
@@ -316,7 +316,7 @@ void NetworkLayerCoupler::dataIndication(AckType ack, AddressType addrType, uint
         return;
     }
 
-    println("Unhandled routing case! Should not happen!");
+    //**//println("Unhandled routing case! Should not happen!");
 }
 
 void NetworkLayerCoupler::dataConfirm(AckType ack, AddressType addrType, uint16_t destination, FrameFormat format, Priority priority, uint16_t source, NPDU& npdu, bool status, uint8_t srcIfIdx)

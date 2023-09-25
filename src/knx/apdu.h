@@ -37,7 +37,7 @@ class APDU
     /**
      * Print the contents of the APDU to console.
      */
-    void printPDU();
+    //**//void printPDU();
 	
 
   protected:

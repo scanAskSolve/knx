@@ -184,12 +184,12 @@ template <class P, class B> class KnxFacade : private SaveRestore
             _progLedState = GetprogMode();
             if (_progLedState)
             {
-                println("progmode on");
+                //**//println("progmode on");
                 progLedOn();
             }
             else
             {
-                println("progmode off");
+                //**//println("progmode off");
                 progLedOff();
             }
         }

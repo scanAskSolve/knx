@@ -42,12 +42,12 @@ void CemiServer::dataConfirmationToTunnel(CemiFrame& frame)
 
     frame.messageCode(L_data_con);
 
-    print("L_data_con: src: ");
-    print(frame.sourceAddress(), HEX);
-    print(" dst: ");
-    print(frame.destinationAddress(), HEX);
+    //**//print("L_data_con: src: ");
+    //**//print(frame.sourceAddress(), HEX);
+    //**//print(" dst: ");
+    //**//print(frame.destinationAddress(), HEX);
 
-    printHex(" frame: ", frame.data(), frame.dataLength());
+    //**//printHex(" frame: ", frame.data(), frame.dataLength());
 
     _usbTunnelInterface.sendCemiFrame(frame);
 
@@ -77,12 +77,12 @@ void CemiServer::dataIndicationToTunnel(CemiFrame& frame)
 
     CemiFrame tmpFrame(data, sizeof(data));
 
-    print("L_data_ind: src: ");
-    print(tmpFrame.sourceAddress(), HEX);
-    print(" dst: ");
-    print(tmpFrame.destinationAddress(), HEX);
+    //**//print("L_data_ind: src: ");
+    //**//print(tmpFrame.sourceAddress(), HEX);
+    //**//print(" dst: ");
+    //**//print(tmpFrame.destinationAddress(), HEX);
 
-    printHex(" frame: ", tmpFrame.data(), tmpFrame.dataLength());
+    //**//printHex(" frame: ", tmpFrame.data(), tmpFrame.dataLength());
     tmpFrame.apdu().type();
 
     _usbTunnelInterface.sendCemiFrame(tmpFrame);
@@ -134,12 +134,12 @@ void CemiServer::frameReceived(CemiFrame& frame)
                 }
             }
 
-            print("L_data_req: src: ");
-            print(frame.sourceAddress(), HEX);
-            print(" dst: ");
-            print(frame.destinationAddress(), HEX);
+            //**//print("L_data_req: src: ");
+            //**//print(frame.sourceAddress(), HEX);
+            //**//print(" dst: ");
+            //**//print(frame.destinationAddress(), HEX);
 
-            printHex(" frame: ", frame.data(), frame.dataLength());
+            //**//printHex(" frame: ", frame.data(), frame.dataLength());
 
             _dataLinkLayer->dataRequestFromTunnel(frame);
             break;
@@ -147,7 +147,7 @@ void CemiServer::frameReceived(CemiFrame& frame)
 
         case M_PropRead_req:
         {
-            print("M_PropRead_req: ");
+            //**//print("M_PropRead_req: ");
             
             uint16_t objectType;
             popWord(objectType, &frame.data()[1]);
@@ -158,16 +158,16 @@ void CemiServer::frameReceived(CemiFrame& frame)
             uint8_t* data = nullptr;
             uint32_t dataSize = 0;
 
-            print("ObjType: ");
-            print(objectType, DEC);
-            print(" ObjInst: ");
-            print(objectInstance, DEC);
-            print(" PropId: ");
-            print(propertyId, DEC);
-            print(" NoE: ");
-            print(numberOfElements, DEC);
-            print(" startIdx: ");
-            print(startIndex, DEC);
+            //**//print("ObjType: ");
+            //**//print(objectType, DEC);
+            //**//print(" ObjInst: ");
+            //**//print(objectInstance, DEC);
+            //**//print(" PropId: ");
+            //**//print(propertyId, DEC);
+            //**//print(" NoE: ");
+            //**//print(numberOfElements, DEC);
+            //**//print(" startIdx: ");
+            //**//print(startIndex, DEC);
 
             // propertyValueRead() allocates memory for the data! Needs to be deleted again!
             _bau.propertyValueRead((ObjectType)objectType, objectInstance, propertyId, numberOfElements, startIndex, &data, dataSize);
@@ -192,8 +192,8 @@ void CemiServer::frameReceived(CemiFrame& frame)
 
             if (data && dataSize && numberOfElements)
             {
-                printHex(" <- data: ", data, dataSize);
-                println("");
+                //**//printHex(" <- data: ", data, dataSize);
+                //**//println("");
 
                 // Prepare positive response
                 uint8_t responseData[7 + dataSize];
@@ -214,8 +214,8 @@ void CemiServer::frameReceived(CemiFrame& frame)
                 responseData[7] = Void_DP; // Set cEMI error code
                 responseData[5] = 0; // Set Number of elements to zero
 
-                printHex(" <- error: ", &responseData[7], 1);
-                println("");
+                //**//printHex(" <- error: ", &responseData[7], 1);
+                //**//println("");
 
                 CemiFrame responseFrame(responseData, sizeof(responseData));
                 responseFrame.messageCode(M_PropRead_con);
@@ -226,7 +226,7 @@ void CemiServer::frameReceived(CemiFrame& frame)
 
         case M_PropWrite_req:
         {
-            print("M_PropWrite_req: "); 
+            //**//print("M_PropWrite_req: "); 
 
             uint16_t objectType;
             popWord(objectType, &frame.data()[1]);
@@ -237,18 +237,18 @@ void CemiServer::frameReceived(CemiFrame& frame)
             uint8_t* requestData = &frame.data()[7];
             uint32_t requestDataSize = frame.dataLength() - 7;
 
-            print("ObjType: ");
-            print(objectType, DEC);
-            print(" ObjInst: ");
-            print(objectInstance, DEC);
-            print(" PropId: ");
-            print(propertyId, DEC);
-            print(" NoE: ");
-            print(numberOfElements, DEC);
-            print(" startIdx: ");
-            print(startIndex, DEC);
+            //**//print("ObjType: ");
+            //**//print(objectType, DEC);
+            //**//print(" ObjInst: ");
+            //**//print(objectInstance, DEC);
+            //**//print(" PropId: ");
+            //**//print(propertyId, DEC);
+            //**//print(" NoE: ");
+            //**//print(numberOfElements, DEC);
+            //**//print(" startIdx: ");
+            //**//print(startIndex, DEC);
 
-            printHex(" -> data: ", requestData, requestDataSize);
+            //**//printHex(" -> data: ", requestData, requestDataSize);
 
             // Patch request for device address in device object
             if (((ObjectType) objectType == OT_DEVICE) && 
@@ -258,8 +258,8 @@ void CemiServer::frameReceived(CemiFrame& frame)
                 // Temporarily store new cEMI client address in memory
                 // We also be sent back if the client requests it again
                 _clientAddress = (_clientAddress & 0xFF00) | requestData[0];
-                print("cEMI client address: ");
-                println(_clientAddress, HEX);
+                //**//print("cEMI client address: ");
+                //**//println(_clientAddress, HEX);
             }
             else if (((ObjectType) objectType == OT_DEVICE) && 
                              (propertyId == PID_SUBNET_ADDR) &&
@@ -268,8 +268,8 @@ void CemiServer::frameReceived(CemiFrame& frame)
                 // Temporarily store new cEMI client address in memory
                 // We also be sent back if the client requests it again
                 _clientAddress = (_clientAddress & 0x00FF) | (requestData[0] << 8);
-                print("cEMI client address: ");
-                println(_clientAddress, HEX);
+                //**//print("cEMI client address: ");
+                //**//println(_clientAddress, HEX);
             }            
             else
             {
@@ -282,7 +282,7 @@ void CemiServer::frameReceived(CemiFrame& frame)
                 uint8_t responseData[7];
                 memcpy(responseData, frame.data(), sizeof(responseData));
 
-                println(" <- no error");
+                //**//println(" <- no error");
 
                 CemiFrame responseFrame(responseData, sizeof(responseData));
                 responseFrame.messageCode(M_PropWrite_con);
@@ -296,8 +296,8 @@ void CemiServer::frameReceived(CemiFrame& frame)
                 responseData[7] = Illegal_Command; // Set cEMI error code
                 responseData[5] = 0; // Set Number of elements to zero
 
-                printHex(" <- error: ", &responseData[7], 1);
-                println("");
+                //**//printHex(" <- error: ", &responseData[7], 1);
+                //**//println("");
 
                 CemiFrame responseFrame(responseData, sizeof(responseData));
                 responseFrame.messageCode(M_PropWrite_con);
@@ -308,19 +308,19 @@ void CemiServer::frameReceived(CemiFrame& frame)
 
         case M_FuncPropCommand_req:
         {
-            println("M_FuncPropCommand_req not implemented");  
+            //**//println("M_FuncPropCommand_req not implemented");  
             break;
         }
 
         case M_FuncPropStateRead_req:
         {
-            println("M_FuncPropStateRead_req not implemented");  
+            //**//println("M_FuncPropStateRead_req not implemented");  
             break;
         }
 
         case M_Reset_req:
         {
-            println("M_Reset_req: sending M_Reset_ind");  
+            //**//println("M_Reset_req: sending M_Reset_ind");  
             // A real device reset does not work for USB or KNXNET/IP.
             // Thus, M_Reset_ind is NOT mandatory for USB and KNXNET/IP.
             // We just save all data to the EEPROM

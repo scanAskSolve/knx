@@ -113,8 +113,8 @@ CemiFrame& TPDU::frame()
     return _frame;
 }
 
-void TPDU::printPDU()
-{
+//**//void TPDU::printPDU()
+//**//{
 /*    print.print("TPDU: ");
     print.print(type(), HEX, 2);
     print.print("    ");
@@ -124,4 +124,4 @@ void TPDU::printPDU()
         print.print(_data[i], HEX, 2);
     }
     print.println()*/;
-}
+//**//}

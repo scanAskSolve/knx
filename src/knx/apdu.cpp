@@ -37,8 +37,9 @@ uint8_t APDU::length() const
 {
     return _frame.npdu().octetCount();
 }
+//**//
 
-
+/*
 void APDU::printPDU()
 {
     print("APDU: ");
@@ -51,5 +52,5 @@ void APDU::printPDU()
         print(_data[i], HEX);
     }
     println();
-}
+}*/
 

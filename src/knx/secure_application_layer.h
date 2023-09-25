@@ -75,7 +75,7 @@ class SecureApplicationLayer :  public ApplicationLayer
         {
             if ((cmpAddr.addrType == AddrType::unknown) || (addrType == AddrType::unknown))
             {
-                println("Unknown address type detected!");
+                //**//println("Unknown address type detected!");
                 return false;
             }
             return (cmpAddr.addr == addr) && (cmpAddr.addrType == addrType);

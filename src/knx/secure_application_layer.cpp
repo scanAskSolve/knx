@@ -42,7 +42,7 @@ void SecureApplicationLayer::dataGroupIndication(HopCountType hopType, Priority 
     if (_addrTab == nullptr)
         return;
 
-    println("dataGroupIndication");
+    //**//println("dataGroupIndication");
 
     if (apdu.type() == SecureService)
     {
@@ -67,7 +67,7 @@ void SecureApplicationLayer::dataGroupIndication(HopCountType hopType, Priority 
 
 void SecureApplicationLayer::dataGroupConfirm(AckType ack, HopCountType hopType, Priority priority,  uint16_t tsap, APDU& apdu, bool status)
 {
-    println("dataGroupConfirm");
+    //**//println("dataGroupConfirm");
 
     if (apdu.type() == SecureService)
     {
@@ -98,7 +98,7 @@ void SecureApplicationLayer::dataGroupConfirm(AckType ack, HopCountType hopType,
 
 void SecureApplicationLayer::dataBroadcastIndication(HopCountType hopType, Priority priority, uint16_t source, APDU& apdu)
 {
-    println("dataBroadcastIndication");
+    //**//println("dataBroadcastIndication");
 
     if (apdu.type() == SecureService)
     {
@@ -123,7 +123,7 @@ void SecureApplicationLayer::dataBroadcastIndication(HopCountType hopType, Prior
 
 void SecureApplicationLayer::dataBroadcastConfirm(AckType ack, HopCountType hopType, Priority priority, APDU& apdu, bool status)
 {
-    println("dataBroadcastConfirm");
+    //**//println("dataBroadcastConfirm");
 
     if (apdu.type() == SecureService)
     {
@@ -153,7 +153,7 @@ void SecureApplicationLayer::dataBroadcastConfirm(AckType ack, HopCountType hopT
 
 void SecureApplicationLayer::dataSystemBroadcastIndication(HopCountType hopType, Priority priority, uint16_t source, APDU& apdu)
 {
-    println("dataSystemBroadcastIndication");
+    //**//println("dataSystemBroadcastIndication");
 
     if (apdu.type() == SecureService)
     {
@@ -178,7 +178,7 @@ void SecureApplicationLayer::dataSystemBroadcastIndication(HopCountType hopType,
 
 void SecureApplicationLayer::dataSystemBroadcastConfirm(HopCountType hopType, Priority priority, APDU& apdu, bool status)
 {
-    println("dataSystemBroadcastConfirm");
+    //**//println("dataSystemBroadcastConfirm");
 
     if (apdu.type() == SecureService)
     {
@@ -209,7 +209,7 @@ void SecureApplicationLayer::dataSystemBroadcastConfirm(HopCountType hopType, Pr
 
 void SecureApplicationLayer::dataIndividualIndication(HopCountType hopType, Priority priority, uint16_t source, APDU& apdu)
 {
-    println("dataIndividualIndication");
+    //**//println("dataIndividualIndication");
 
     if (apdu.type() == SecureService)
     {
@@ -234,7 +234,7 @@ void SecureApplicationLayer::dataIndividualIndication(HopCountType hopType, Prio
 
 void SecureApplicationLayer::dataIndividualConfirm(AckType ack, HopCountType hopType, Priority priority, uint16_t source, APDU& apdu, bool status)
 {
-    println("dataIndividualConfirm");
+    //**//println("dataIndividualConfirm");
 
     if (apdu.type() == SecureService)
     {
@@ -267,7 +267,7 @@ void SecureApplicationLayer::dataIndividualConfirm(AckType ack, HopCountType hop
 
 void SecureApplicationLayer::dataConnectedIndication(Priority priority, uint16_t tsap, APDU& apdu)
 {
-    println("dataConnectedIndication");
+    //**//println("dataConnectedIndication");
 
     if (apdu.type() == SecureService)
     {
@@ -303,7 +303,7 @@ void SecureApplicationLayer::dataGroupRequest(AckType ack, HopCountType hopType,
     if (_addrTab == nullptr)
         return;
 
-    println("dataGroupRequest");
+    //**//println("dataGroupRequest");
 
     if (secCtrl.dataSecurity != DataSecurity::None)
     {
@@ -326,7 +326,7 @@ void SecureApplicationLayer::dataGroupRequest(AckType ack, HopCountType hopType,
 
 void SecureApplicationLayer::dataBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, APDU& apdu, const SecurityControl& secCtrl)
 {
-    println("dataBroadcastRequest");
+    //**//println("dataBroadcastRequest");
 
     if (secCtrl.dataSecurity != DataSecurity::None)
     {
@@ -350,7 +350,7 @@ void SecureApplicationLayer::dataBroadcastRequest(AckType ack, HopCountType hopT
 
 void SecureApplicationLayer::dataSystemBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, APDU& apdu, const SecurityControl& secCtrl)
 {
-    println("dataSystemBroadcastRequest");
+    //**//println("dataSystemBroadcastRequest");
 
     if (secCtrl.dataSecurity != DataSecurity::None)
     {
@@ -374,7 +374,7 @@ void SecureApplicationLayer::dataSystemBroadcastRequest(AckType ack, HopCountTyp
 
 void SecureApplicationLayer::dataIndividualRequest(AckType ack, HopCountType hopType, Priority priority, uint16_t destination, APDU& apdu, const SecurityControl& secCtrl)
 {
-    println("dataIndividualRequest");
+    //**//println("dataIndividualRequest");
 
     if (secCtrl.dataSecurity != DataSecurity::None)
     {
@@ -397,7 +397,7 @@ void SecureApplicationLayer::dataIndividualRequest(AckType ack, HopCountType hop
 
 void SecureApplicationLayer::dataConnectedRequest(uint16_t tsap, Priority priority, APDU& apdu, const SecurityControl &secCtrl)
 {
-    println("dataConnectedRequest");
+    //**//println("dataConnectedRequest");
 
     if (secCtrl.dataSecurity != DataSecurity::None)
     {
@@ -595,7 +595,7 @@ void SecureApplicationLayer::sendSyncRequest(uint16_t dstAddr, bool dstAddrIsGro
 {
     if (secCtrl.dataSecurity != DataSecurity::AuthConf)
     {
-        println("sync.req is always sent with auth+conf!");
+        //**//println("sync.req is always sent with auth+conf!");
         return;
     }
 
@@ -618,13 +618,13 @@ void SecureApplicationLayer::sendSyncRequest(uint16_t dstAddr, bool dstAddrIsGro
             tpci |= 0x40 | _transportLayer->getTpciSeqNum(); // get next TPCI sequence number for MAC calculation from TL (T_DATA_CONNECTED)
         }
     }
-    print("sendSyncRequest: TPCI: ");
-    println(tpci, HEX);
+    //**//print("sendSyncRequest: TPCI: ");
+    //**//println(tpci, HEX);
 
     if(secure(request.data() + APDU_LPDU_DIFF, kSecureSyncRequest, _deviceObj.individualAddress(), dstAddr, dstAddrIsGroupAddr, tpci, asdu, sizeof(asdu), secCtrl, systemBcast))
     {
-        println("SyncRequest: ");
-        request.apdu().printPDU();
+        //**//println("SyncRequest: ");
+        //**//request.apdu().printPDU();
 
         if (_syncReqBroadcastOutgoing)
         {
@@ -649,7 +649,7 @@ void SecureApplicationLayer::sendSyncRequest(uint16_t dstAddr, bool dstAddrIsGro
     }
     else
     {
-        println("SyncRequest: failure during encryption");
+        //**//println("SyncRequest: failure during encryption");
     }
 }
 
@@ -657,7 +657,7 @@ void SecureApplicationLayer::sendSyncResponse(uint16_t dstAddr, bool dstAddrIsGr
 {
     if (secCtrl.dataSecurity != DataSecurity::AuthConf)
     {
-        println("sync.res is always sent with auth+conf!");
+        //**//println("sync.res is always sent with auth+conf!");
         return;
     }
 
@@ -678,15 +678,15 @@ void SecureApplicationLayer::sendSyncResponse(uint16_t dstAddr, bool dstAddrIsGr
             tpci |= 0x40 | _transportLayer->getTpciSeqNum(); // get next TPCI sequence number for MAC calculation from TL (T_DATA_CONNECTED)
         }
     }
-    print("sendSyncResponse: TPCI: ");
-    println(tpci, HEX);
+    //**//print("sendSyncResponse: TPCI: ");
+    //**//println(tpci, HEX);
 
     if(secure(response.data() + APDU_LPDU_DIFF, kSecureSyncResponse, _deviceObj.individualAddress(), dstAddr, dstAddrIsGroupAddr, tpci, asdu, sizeof(asdu), secCtrl, systemBcast))
     {
         _lastSyncRes = millis();
 
-        println("SyncResponse: ");
-        response.apdu().printPDU();
+        //**//println("SyncResponse: ");
+        //**//response.apdu().printPDU();
 
         if (_syncReqBroadcastIncoming)
         {
@@ -708,13 +708,13 @@ void SecureApplicationLayer::sendSyncResponse(uint16_t dstAddr, bool dstAddrIsGr
     }
     else
     {
-        println("SyncResponse: failure during encryption");
+        //**//println("SyncResponse: failure during encryption");
     }
 }
 
 void SecureApplicationLayer::receivedSyncRequest(uint16_t srcAddr, uint16_t dstAddr, bool dstAddrIsGroupAddr, const SecurityControl &secCtrl, uint8_t* seqNum, uint64_t challenge, bool systemBcast)
 {
-    println("Received SyncRequest:");
+    //**//println("Received SyncRequest:");
 
     uint64_t nextRemoteSeqNum = sixBytesToUInt64(seqNum);
     uint64_t nextSeqNum = 1 + lastValidSequenceNumber(secCtrl.toolAccess, srcAddr);
@@ -737,13 +737,13 @@ void SecureApplicationLayer::receivedSyncRequest(uint16_t srcAddr, uint16_t dstA
 
 void SecureApplicationLayer::receivedSyncResponse(uint16_t remote, const SecurityControl &secCtrl, uint8_t* plainApdu)
 {
-    println("Received SyncResponse:");
+    //**//println("Received SyncResponse:");
 
     if (_syncReqBroadcastOutgoing)
     {
         if (_pendingOutgoingSyncRequests.get(GrpAddr(0)) == nullptr)
         {
-            println("Cannot handle sync.res without pending sync.req! (broadcast/systembroadcast)");
+            //**//println("Cannot handle sync.res without pending sync.req! (broadcast/systembroadcast)");
             return;
         }
     }
@@ -751,7 +751,7 @@ void SecureApplicationLayer::receivedSyncResponse(uint16_t remote, const Securit
     {
         if (_pendingOutgoingSyncRequests.get(IndAddr(remote)) == nullptr)
         {
-            println("Cannot handle sync.res without pending sync.req!");
+            //**//println("Cannot handle sync.res without pending sync.req!");
             return;
         }
     }
@@ -793,7 +793,7 @@ bool SecureApplicationLayer::decrypt(uint8_t* plainApdu, uint16_t plainApduLengt
 
     if (systemBroadcast != systemBcast)
     {
-        println("SBC flag in SCF does not match actual communication mode!");
+        //**//println("SBC flag in SCF does not match actual communication mode!");
     }
 
     secCtrl.toolAccess = toolAccess;
@@ -806,8 +806,8 @@ bool SecureApplicationLayer::decrypt(uint8_t* plainApdu, uint16_t plainApduLengt
     const uint8_t* key = dstAddrIsGroupAddr && (dstAddr != 0) ? securityKey(dstAddr, dstAddrIsGroupAddr) : toolAccess ? _secIfObj.toolKey() : securityKey(srcAddr, false);
     if (key == nullptr)
     {
-        print("Error: No key found. toolAccess: ");
-        println(toolAccess ? "true" : "false");
+        //**//print("Error: No key found. toolAccess: ");
+        //**//println(toolAccess ? "true" : "false");
         return false;
     }
 
@@ -830,10 +830,10 @@ bool SecureApplicationLayer::decrypt(uint8_t* plainApdu, uint16_t plainApduLengt
             if (receivedSeqNumber < expectedSeqNumber)
             {
                 // security failure
-                print("security failure: received seqNum: ");
-                print(receivedSeqNumber, HEX);
-                print(" < expected seqNum: ");
-                print(expectedSeqNumber, HEX);
+                //**//print("security failure: received seqNum: ");
+                //**//print(receivedSeqNumber, HEX);
+                //**//print(" < expected seqNum: ");
+                //**//print(expectedSeqNumber, HEX);
                 return false;
             }
         }
@@ -863,7 +863,7 @@ bool SecureApplicationLayer::decrypt(uint8_t* plainApdu, uint16_t plainApduLengt
         uint64_t *challenge = _pendingOutgoingSyncRequests.get(IndAddr(srcAddr));
         if (challenge == nullptr)
         {
-            println("Cannot find matching challenge for source address!");
+            //**//println("Cannot find matching challenge for source address!");
             return false;
         }
 
@@ -910,11 +910,11 @@ bool SecureApplicationLayer::decrypt(uint8_t* plainApdu, uint16_t plainApduLengt
         if (calculatedMac != mac)
         {
             // security failure
-            print("security failure(auth): calculated MAC: ");
-            print(calculatedMac, HEX);
-            print(" != received MAC: ");
-            print(mac, HEX);
-            println("\n");
+            //**//print("security failure(auth): calculated MAC: ");
+            //**//print(calculatedMac, HEX);
+            //**//print(" != received MAC: ");
+            //**//print(mac, HEX);
+            //**//println("\n");
 
             return false;
         }
@@ -959,11 +959,11 @@ bool SecureApplicationLayer::decrypt(uint8_t* plainApdu, uint16_t plainApduLengt
         if (calculatedMac != decryptedMac)
         {
             // security failure
-            print("security failure(conf+auth): calculated MAC: ");
-            print(calculatedMac, HEX);
-            print(" != decrypted MAC: ");
-            print(decryptedMac, HEX);
-            println("\n");
+            //**//print("security failure(conf+auth): calculated MAC: ");
+            //**//print(calculatedMac, HEX);
+            //**//print(" != decrypted MAC: ");
+            //**//print(decryptedMac, HEX);
+            //**//println("\n");
 
             return false;
         }
@@ -988,22 +988,22 @@ bool SecureApplicationLayer::decrypt(uint8_t* plainApdu, uint16_t plainApduLengt
         {
             if (srcAddr == _deviceObj.individualAddress())
             {
-                print("Update our next ");
-                print(toolAccess ? "tool access" : "");
-                print(" seq from ");
-                print(srcAddr, HEX);
-                print(" -> (+1) ");
-                println(receivedSeqNumber,HEX);
+                //**//print("Update our next ");
+                //**//print(toolAccess ? "tool access" : "");
+                //**//print(" seq from ");
+                //**//print(srcAddr, HEX);
+                //**//print(" -> (+1) ");
+                //**//println(receivedSeqNumber,HEX);
                 updateSequenceNumber(toolAccess, receivedSeqNumber + 1);
             }
             else
             {
-                print("Update last valid ");
-                print(toolAccess ? "tool access" : "");
-                print(" seq from ");
-                print(srcAddr, HEX);
-                print(" -> ");
-                println(receivedSeqNumber, HEX);
+                //**//print("Update last valid ");
+                //**//print(toolAccess ? "tool access" : "");
+                //**//print(" seq from ");
+                //**//print(srcAddr, HEX);
+                //**//print(" -> ");
+                //**//println(receivedSeqNumber, HEX);
                 updateLastValidSequence(toolAccess, srcAddr, receivedSeqNumber);
             }
         }
@@ -1016,16 +1016,16 @@ bool SecureApplicationLayer::decodeSecureApdu(APDU& secureApdu, APDU& plainApdu,
 {
     // Decode secure APDU
 
-    println("decodeSecureApdu: Secure APDU: ");
-    secureApdu.printPDU();
+    //**//println("decodeSecureApdu: Secure APDU: ");
+    //**//secureApdu.printPDU();
 
     uint16_t srcAddress = secureApdu.frame().sourceAddress();
     uint16_t dstAddress = secureApdu.frame().destinationAddress();
     bool isDstAddrGroupAddr = secureApdu.frame().addressType() == GroupAddress;
     bool isSystemBroadcast = secureApdu.frame().systemBroadcast();
     uint8_t tpci = secureApdu.frame().data()[TPDU_LPDU_DIFF]; // FIXME: when cEMI class is refactored, there might be additional info fields in cEMI [fixed TPDU_LPDU_DIFF]
-    print("decodeSecureApdu: TPCI: ");
-    println(tpci, HEX);
+    //**//print("decodeSecureApdu: TPCI: ");
+    //**//println(tpci, HEX);
     // Note:
     // The TPCI is also included in the MAC calculation to provide authenticity for this field.
     // However, a secure APDU (with a MAC) is only included in transport layer PDUs T_DATA_GROUP, T_DATA_TAG_GROUP, T_DATA_INDIVIDUAL, T_DATA_CONNECTED
@@ -1039,8 +1039,8 @@ bool SecureApplicationLayer::decodeSecureApdu(APDU& secureApdu, APDU& plainApdu,
     // We are starting from TPCI octet (including): plainApdu.frame().data()+APDU_LPDU_DIFF
     if (decrypt(plainApdu.frame().data()+APDU_LPDU_DIFF, plainApdu.length()+1, srcAddress, dstAddress, isDstAddrGroupAddr, tpci, secureApdu.data()+1, secCtrl, isSystemBroadcast))
     {
-        println("decodeSecureApdu: Plain APDU: ");
-        plainApdu.frame().apdu().printPDU();
+        //**//println("decodeSecureApdu: Plain APDU: ");
+        //**//plainApdu.frame().apdu().printPDU();
 
         return true;
     }
@@ -1058,12 +1058,12 @@ bool SecureApplicationLayer::secure(uint8_t* buffer, uint16_t service, uint16_t 
     {
         if (!confidentiality)
         {
-            println("Error: tool access requires auth+conf security");
+            //**//println("Error: tool access requires auth+conf security");
             return false;
         }
         if (dstAddrIsGroupAddr && dstAddr != 0)
         {
-            println("Error: tool access requires individual address");
+            //**//println("Error: tool access requires individual address");
             return false;
         }
     }
@@ -1071,8 +1071,8 @@ bool SecureApplicationLayer::secure(uint8_t* buffer, uint16_t service, uint16_t 
     const uint8_t* key = toolAccess ? _secIfObj.toolKey() : securityKey(dstAddr, dstAddrIsGroupAddr);
     if (key == nullptr)
     {
-        print("Error: No key found. toolAccess: ");
-        println(toolAccess ? "true" : "false");
+        //**//print("Error: No key found. toolAccess: ");
+        //**//println(toolAccess ? "true" : "false");
         return false;
     }
 
@@ -1095,7 +1095,7 @@ bool SecureApplicationLayer::secure(uint8_t* buffer, uint16_t service, uint16_t 
 
     uint64_t seqSend = nextSequenceNumber(toolAccess);
     if (seqSend == 0)
-        println("0 is not a valid sequence number");
+        //**//println("0 is not a valid sequence number");
 
     uint8_t seq[6];
     sixBytesFromUInt64(seqSend, seq);
@@ -1126,7 +1126,7 @@ bool SecureApplicationLayer::secure(uint8_t* buffer, uint16_t service, uint16_t 
         uint64_t *challenge = _pendingIncomingSyncRequests.get(remote);
         if (challenge == nullptr)
         {
-            println("Cannot send sync.res without corresponding sync.req");
+            //**//println("Cannot send sync.res without corresponding sync.req");
             return false;
         }
         else
@@ -1196,8 +1196,8 @@ bool SecureApplicationLayer::secure(uint8_t* buffer, uint16_t service, uint16_t 
         pBuf = pushByteArray(apdu, apduLength, pBuf);          // Plain APDU
         pBuf = pushInt(tmpMac, pBuf);                          // MAC
 
-        print("MAC: ");
-        println(tmpMac, HEX);
+        //**//print("MAC: ");
+        //**//println(tmpMac, HEX);
     }
 
     return true;
@@ -1207,8 +1207,8 @@ bool SecureApplicationLayer::createSecureApdu(APDU& plainApdu, APDU& secureApdu,
 {
     // Create secure APDU
 
-    println("createSecureApdu: Plain APDU: ");
-    plainApdu.printPDU();
+    //**//println("createSecureApdu: Plain APDU: ");
+    //**//plainApdu.printPDU();
 
     uint16_t srcAddress = plainApdu.frame().sourceAddress();
     uint16_t dstAddress = plainApdu.frame().destinationAddress();
@@ -1219,8 +1219,8 @@ bool SecureApplicationLayer::createSecureApdu(APDU& plainApdu, APDU& secureApdu,
     {
         tpci |= 0x40 | _transportLayer->getTpciSeqNum(); // get next TPCI sequence number for MAC calculation from TL (T_DATA_CONNECTED)
     }
-    print("createSecureApdu: TPCI: ");
-    println(tpci, HEX);
+    //**//print("createSecureApdu: TPCI: ");
+    //**//println(tpci, HEX);
     // Note:
     // The TPCI is also included in the MAC calculation to provide authenticity for this field.
     // However, a secure APDU (with a MAC) is only included in transport layer PDUs T_DATA_GROUP, T_DATA_TAG_GROUP, T_DATA_INDIVIDUAL, T_DATA_CONNECTED
@@ -1234,16 +1234,16 @@ bool SecureApplicationLayer::createSecureApdu(APDU& plainApdu, APDU& secureApdu,
     // We are starting from TPCI octet (including): plainApdu.frame().data()+APDU_LPDU_DIFF
     if(secure(secureApdu.frame().data()+APDU_LPDU_DIFF, kSecureDataPdu, srcAddress, dstAddress, isDstAddrGroupAddr, tpci, plainApdu.frame().data()+APDU_LPDU_DIFF, plainApdu.length()+1, secCtrl, isSystemBroadcast))
     {
-        print("Update our next ");
-        print(secCtrl.toolAccess ? "tool access" : "");
-        print(" seq from ");
-        print(srcAddress, HEX);
-        print(" -> (+1) ");
-        println(nextSequenceNumber(secCtrl.toolAccess),HEX);
+        //**//print("Update our next ");
+        //**//print(secCtrl.toolAccess ? "tool access" : "");
+        //**//print(" seq from ");
+        //**//print(srcAddress, HEX);
+        //**//print(" -> (+1) ");
+        //**//println(nextSequenceNumber(secCtrl.toolAccess),HEX);
         updateSequenceNumber(secCtrl.toolAccess, nextSequenceNumber(secCtrl.toolAccess) + 1);
 
-        println("createSecureApdu: Secure APDU: ");
-        secureApdu.frame().apdu().printPDU();
+        //**//println("createSecureApdu: Secure APDU: ");
+        //**//secureApdu.frame().apdu().printPDU();
 
         return true;
     }
