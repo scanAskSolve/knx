@@ -116,7 +116,7 @@ void ApplicationLayer::dataBroadcastIndication(HopCountType hopType, Priority pr
         case IndividualAddressWrite:
         {
             uint16_t newAddress;
-            popWord(&newAddress, data + 1);
+            popWord(newAddress, data + 1);
             _bau.individualAddressWriteIndication(hopType, secCtrl, newAddress);
             break;
         }
@@ -135,7 +135,7 @@ void ApplicationLayer::dataBroadcastIndication(HopCountType hopType, Priority pr
         case IndividualAddressSerialNumberResponse:
         {
             uint16_t domainAddress;
-            popWord(&domainAddress, data + 7);
+            popWord(domainAddress, data + 7);
             _bau.individualAddressSerialNumberReadAppLayerConfirm(hopType, secCtrl, data + 1, apdu.frame().sourceAddress(),
                 domainAddress);
             break;
@@ -144,7 +144,7 @@ void ApplicationLayer::dataBroadcastIndication(HopCountType hopType, Priority pr
         {
             uint8_t* knxSerialNumber = &data[1];
             uint16_t newIndividualAddress;
-            popWord(&newIndividualAddress, &data[7]);
+            popWord(newIndividualAddress, &data[7]);
             _bau.individualAddressSerialNumberWriteIndication(priority, hopType, secCtrl, newIndividualAddress, knxSerialNumber);
             break;
         }
@@ -168,7 +168,7 @@ void ApplicationLayer::dataBroadcastConfirm(AckType ack, HopCountType hopType, P
         case IndividualAddressWrite:
         {
             uint16_t newAddress;
-            popWord(&newAddress, data + 1);
+            popWord(newAddress, data + 1);
             _bau.individualAddressWriteLocalConfirm(ack, hopType, secCtrl, newAddress, status);
             break;
         }
@@ -184,14 +184,14 @@ void ApplicationLayer::dataBroadcastConfirm(AckType ack, HopCountType hopType, P
         case IndividualAddressSerialNumberResponse:
         {
             uint16_t domainAddress;
-            popWord(&domainAddress, data + 7);
+            popWord(domainAddress, data + 7);
             _bau.individualAddressSerialNumberReadResponseConfirm(ack, hopType, secCtrl, data + 1, domainAddress, status);
             break;
         }
         case IndividualAddressSerialNumberWrite:
         {
             uint16_t newAddress;
-            popWord(&newAddress, data + 7);
+            popWord(newAddress, data + 7);
             _bau.individualAddressSerialNumberWriteLocalConfirm(ack, hopType, secCtrl, data + 1, newAddress, status);
             break;
         }
@@ -218,10 +218,10 @@ void ApplicationLayer::dataSystemBroadcastIndication(HopCountType hopType, Prior
             uint16_t objectType;
             uint16_t propertyId;
             uint8_t testInfo[2];
-            popWord(&objectType, data + 1);
-            popWord(&propertyId, data + 3);
-            popByte(&testInfo[0], data + 4);
-            popByte(&testInfo[1], data + 5);
+            popWord(objectType, data + 1);
+            popWord(propertyId, data + 3);
+            popByte(testInfo[0], data + 4);
+            popByte(testInfo[1], data + 5);
             propertyId = (propertyId >> 4) & 0x0FFF;;
             testInfo[0] &= 0x0F;
             _bau.systemNetworkParameterReadIndication(priority, hopType, secCtrl, objectType, propertyId, testInfo, sizeof(testInfo));
@@ -262,10 +262,10 @@ void ApplicationLayer::dataSystemBroadcastConfirm(HopCountType hopType, Priority
             uint16_t objectType;
             uint16_t propertyId;
             uint8_t testInfo[2];
-            popWord(&objectType, data + 1);
-            popWord(&propertyId, data + 3);
-            popByte(&testInfo[0], data + 4);
-            popByte(&testInfo[1], data + 5);
+            popWord(objectType, data + 1);
+            popWord(propertyId, data + 3);
+            popByte(testInfo[0], data + 4);
+            popByte(testInfo[1], data + 5);
             propertyId = (propertyId >> 4) & 0x0FFF;;
             testInfo[0] &= 0x0F;
             _bau.systemNetworkParameterReadLocalConfirm(priority, hopType, secCtrl, objectType, propertyId, testInfo, sizeof(testInfo), status);
@@ -1012,7 +1012,7 @@ void ApplicationLayer::individualIndication(HopCountType hopType, Priority prior
         case PropertyValueRead:
         {
             uint16_t startIndex;
-            popWord(&startIndex, data + 3);
+            popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueReadIndication(priority, hopType, tsap, secCtrl, data[1], data[2], data[3] >> 4, startIndex);
             break;
@@ -1020,7 +1020,7 @@ void ApplicationLayer::individualIndication(HopCountType hopType, Priority prior
         case PropertyValueResponse:
         {
             uint16_t startIndex;
-            popWord(&startIndex, data + 3);
+            popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueReadAppLayerConfirm(priority, hopType, tsap, secCtrl, data[1], data[2], data[3] >> 4,
                 startIndex, data + 5, apdu.length() - 5);
@@ -1029,7 +1029,7 @@ void ApplicationLayer::individualIndication(HopCountType hopType, Priority prior
         case PropertyValueWrite:
         {
             uint16_t startIndex;
-            popWord(&startIndex, data + 3);
+            popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueWriteIndication(priority, hopType, tsap, secCtrl, data[1], data[2], data[3] >> 4,
                 startIndex, data + 5, apdu.length() - 5);
@@ -1184,7 +1184,7 @@ void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Prio
         case PropertyValueRead:
         {
             uint16_t startIndex;
-            popWord(&startIndex, data + 3);
+            popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueReadLocalConfirm(ack, priority, hopType, tsap, secCtrl, data[1], data[2], data[3] >> 4,
                 startIndex, status);
@@ -1193,7 +1193,7 @@ void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Prio
         case PropertyValueResponse:
         {
             uint16_t startIndex;
-            popWord(&startIndex, data + 3);
+            popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueReadResponseConfirm(ack, priority, hopType, tsap, secCtrl, data[1], data[2], data[3] >> 4,
                 startIndex, data + 5, apdu.length() - 5, status);
@@ -1202,7 +1202,7 @@ void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Prio
         case PropertyValueWrite:
         {
             uint16_t startIndex;
-            popWord(&startIndex, data + 3);
+            popWord(startIndex, data + 3);
             startIndex &= 0xfff;
             _bau.propertyValueWriteLocalConfirm(ack, priority, hopType, tsap, secCtrl, data[1], data[2], data[3] >> 4,
                 startIndex, data + 5, apdu.length() - 5, status);

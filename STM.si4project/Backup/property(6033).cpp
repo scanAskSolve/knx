@@ -135,7 +135,7 @@ uint8_t Property::read(uint16_t& value) const
     uint8_t count = read(1, 1, data);
     if (count > 0)
     {
-        popWord(&value, data);
+        popWord(value, data);
     }
     return count;
 }
@@ -150,7 +150,7 @@ uint8_t Property::read(uint32_t& value) const
     uint8_t count = read(1, 1, data);
     if (count > 0)
     {
-        popInt(&value, data);
+        popInt(value, data);
     }
     return count;
 }

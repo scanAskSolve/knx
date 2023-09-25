@@ -106,7 +106,7 @@ uint8_t* DeviceObject::save(uint8_t* buffer)
 
 const uint8_t* DeviceObject::restore(const uint8_t* buffer)
 {
-    buffer = popWord(&_ownAddress, buffer);
+    buffer = popWord(_ownAddress, buffer);
     return InterfaceObject::restore(buffer);
 }
 
@@ -181,7 +181,7 @@ void DeviceObject::progMode(bool value)
 uint16_t DeviceObject::manufacturerId()
 {
     uint16_t manufacturerId;
-    popWord(&manufacturerId, propertyData(PID_SERIAL_NUMBER));
+    popWord(manufacturerId, propertyData(PID_SERIAL_NUMBER));
     return manufacturerId;
 }
 
@@ -196,7 +196,7 @@ void DeviceObject::manufacturerId(uint16_t value)
 uint32_t DeviceObject::bauNumber()
 {
     uint32_t bauNumber;
-    popInt(&bauNumber, propertyData(PID_SERIAL_NUMBER) + 2);
+    popInt(bauNumber, propertyData(PID_SERIAL_NUMBER) + 2);
     return bauNumber;
 }
 

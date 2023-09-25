@@ -56,9 +56,9 @@ void println(void);
 void printHex(const char* suffix, const uint8_t *data, size_t length, bool newline = true);
 //#endif
 */
-const uint8_t* popByte(uint8_t* b, const uint8_t* data);
-const uint8_t* popWord(uint16_t* w, const uint8_t* data);
-const uint8_t* popInt(uint32_t* i, const uint8_t* data);
+const uint8_t* popByte(uint8_t& b, const uint8_t* data);
+const uint8_t* popWord(uint16_t& w, const uint8_t* data);
+const uint8_t* popInt(uint32_t& i, const uint8_t* data);
 const uint8_t* popByteArray(uint8_t* dst, uint32_t size, const uint8_t* data);
 uint8_t* pushByte(uint8_t b, uint8_t* data);
 uint8_t* pushWord(uint16_t w, uint8_t* data);

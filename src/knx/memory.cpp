@@ -30,16 +30,16 @@ void Memory::readMemory()
     _freeList = new MemoryBlock(flashStart + metadataBlockSize, flashSize - metadataBlockSize);
 
     uint16_t apiVersion = 0;
-    const uint8_t* buffer = popWord(apiVersion, flashStart);
+    const uint8_t* buffer = popWord(&apiVersion, flashStart);
 
     uint16_t manufacturerId = 0;
-    buffer = popWord(manufacturerId, buffer);
+    buffer = popWord(&manufacturerId, buffer);
 
     uint8_t hardwareType[LEN_HARDWARE_TYPE] = {0};
     buffer = popByteArray(hardwareType, LEN_HARDWARE_TYPE, buffer);
 
     uint16_t version = 0;
-    buffer = popWord(version, buffer);
+    buffer = popWord(&version, buffer);
 
     VersionCheckResult versionCheck = FlashAllInvalid;
 
@@ -113,7 +113,7 @@ void Memory::readMemory()
         //**//println(".");
         buffer = _tableObjects[i]->restore(buffer);
         uint16_t memorySize = 0;
-        buffer = popWord(memorySize, buffer);
+        buffer = popWord(&memorySize, buffer);
 
         if (memorySize == 0)
             continue;

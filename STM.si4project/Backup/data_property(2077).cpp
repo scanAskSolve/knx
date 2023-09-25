@@ -124,7 +124,7 @@ uint16_t DataProperty::saveSize()
 const uint8_t* DataProperty::restore(const uint8_t* buffer)
 {
     uint16_t elements = 0;
-    buffer = popWord(&elements, buffer);
+    buffer = popWord(elements, buffer);
 
     if (elements != _currentElements)
     {

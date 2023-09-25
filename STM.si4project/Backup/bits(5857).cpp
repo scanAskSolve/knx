@@ -4,9 +4,9 @@
 
 
 
-const uint8_t* popByte(uint8_t *b, const uint8_t* data)
+const uint8_t* popByte(uint8_t& b, const uint8_t* data)
 {
-    *b = *data;
+    b = *data;
     data += 1;
     return data;
 }
@@ -30,16 +30,16 @@ void printHex(const char* suffix, const uint8_t *data, size_t length, bool newli
 } */
 
 
-const uint8_t* popWord(uint16_t* w, const uint8_t* data)
+const uint8_t* popWord(uint16_t& w, const uint8_t* data)
 {
-    *w = getWord(data);
+    w = getWord(data);
     data += 2;
     return data;
 }
 
-const uint8_t* popInt(uint32_t* i, const uint8_t* data)
+const uint8_t* popInt(uint32_t& i, const uint8_t* data)
 {
-    *i = getInt(data);
+    i = getInt(data);
     data += 4;
     return data;
 }
