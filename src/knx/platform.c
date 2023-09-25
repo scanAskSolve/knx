@@ -1,8 +1,6 @@
-#include "bits.h"
 
 #include "platform.h"
-
-
+//#include "bits.h"
 
 //#include <cstring>
 #include "string.h"
@@ -12,6 +10,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+
 
 
 NvMemoryType _memoryType;
@@ -252,13 +251,19 @@ uint32_t writeNonVolatileMemory_value(uint32_t relativeAddress, uint8_t value, s
     }
 }
 
+uint32_t getEraseBlockNumberOf(uint32_t relativeAddress)
+{
+    return relativeAddress / (flashEraseBlockSize() * flashPageSize());
+}
+
+
 void loadEraseblockContaining(uint32_t relativeAddress)
 {
     int32_t blockNum = getEraseBlockNumberOf(relativeAddress);
     if (blockNum < 0)
     {
-        println("loadEraseblockContaining could not get valid eraseblock number");
-        fatalError();
+        //**//println("loadEraseblockContaining could not get valid eraseblock number");
+        //fatalError();
     }
 
     if (blockNum != _bufferedEraseblockNumber && _bufferedEraseblockNumber >= 0)
@@ -266,12 +271,6 @@ void loadEraseblockContaining(uint32_t relativeAddress)
 
     bufferEraseBlock(blockNum);
 }
-
-uint32_t getEraseBlockNumberOf(uint32_t relativeAddress)
-{
-    return relativeAddress / (flashEraseBlockSize() * flashPageSize());
-}
-
 
 void writeBufferedEraseBlock()
 {

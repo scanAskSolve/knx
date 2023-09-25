@@ -91,8 +91,8 @@ typedef struct Platform
 
   // -------------------------------------------------------------------------------------------------------
 	
-    uint32_t (*getEraseBlockNumberOf)(uint32_t relativeAddress);
     void (*loadEraseblockContaining)(uint32_t relativeAddress);
+    uint32_t (*getEraseBlockNumberOf)(uint32_t relativeAddress);
     // writes _eraseblockBuffer to flash
      void (*writeBufferedEraseBlock)();
     // copies a EraseBlock into the _eraseblockBuffer
