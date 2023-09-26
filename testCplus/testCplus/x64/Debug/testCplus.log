@@ -1,0 +1,12 @@
+﻿  Animal.c
+C:\Users\b1043\source\repos\testCplus\testCplus\Animal.h(6,1): error C2016: C requires that a struct or union have at least one member
+C:\Users\b1043\source\repos\testCplus\testCplus\Animal.c(7,12): error C2039: 'name': is not a member of 'Animal'
+C:\Users\b1043\source\repos\testCplus\testCplus\Animal.h(4,16): message : see declaration of 'Animal'
+C:\Users\b1043\source\repos\testCplus\testCplus\Animal.c(8,17): error C2039: 'name': is not a member of 'Animal'
+C:\Users\b1043\source\repos\testCplus\testCplus\Animal.h(4,16): message : see declaration of 'Animal'
+C:\Users\b1043\source\repos\testCplus\testCplus\Animal.c(8,9): error C2198: 'free': too few arguments for call
+C:\Users\b1043\source\repos\testCplus\testCplus\Animal.c(10,8): error C2039: 'name': is not a member of 'Animal'
+C:\Users\b1043\source\repos\testCplus\testCplus\Animal.h(4,16): message : see declaration of 'Animal'
+C:\Users\b1043\source\repos\testCplus\testCplus\Animal.c(14,15): error C2039: 'name': is not a member of 'Animal'
+C:\Users\b1043\source\repos\testCplus\testCplus\Animal.h(4,16): message : see declaration of 'Animal'
+C:\Users\b1043\source\repos\testCplus\testCplus\Animal.c(14,5): warning C4033: 'getName' must return a value
