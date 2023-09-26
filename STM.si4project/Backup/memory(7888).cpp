@@ -14,11 +14,9 @@ Memory::~Memory()
 void Memory::readMemory()
 {
     //**//println("readMemory");
-    
-    uint8_t* flashStart = _platform.getNonVolatileMemoryStart();
-    size_t flashSize = _platform.getNonVolatileMemorySize();
-	//uint8_t* flashStart = nullptr;
-    //size_t flashSize = 0;
+
+    //uint8_t* flashStart = _platform.getNonVolatileMemoryStart();
+    //size_t flashSize = _platform.getNonVolatileMemorySize();
     if (flashStart == nullptr)
     {
         //**//println("no user flash available;");

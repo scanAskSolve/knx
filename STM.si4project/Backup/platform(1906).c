@@ -24,16 +24,15 @@ bool _bufferedEraseblockDirty;
 
 
 
-NvMemoryType (*Get_NonVolatileMemoryType)()
+NvMemoryType Get_NonVolatileMemoryType()
 {
     return _memoryType;
 }
 
-void (*Set_NonVolatileMemoryType)(NvMemoryType type)
+void Set_NonVolatileMemoryType(NvMemoryType type)
 {
     _memoryType = type;
 }
-
 /*
 void Platform_setupSpi()
 {}
@@ -46,35 +45,35 @@ int Platform_readWriteSpi(uint8_t *data, size_t len)
     return 0;
 }*/
 
-size_t (*readBytesUart)(uint8_t *buffer, size_t length)
+size_t readBytesUart(uint8_t *buffer, size_t length)
 {
     return 0;
 }
 
-int (*readUart)()
+int readUart()
 {
     return -1;
 }
 
-size_t (*writeUart_buffer)(const uint8_t *buffer, size_t size)
+size_t writeUart_buffer(const uint8_t *buffer, size_t size)
 {
     return 0;
 }
 
-size_t (*writeUart_data)(const uint8_t data)
+size_t writeUart_data(const uint8_t data)
 {
     return 0;
 }
 
-int (*uartAvailable)()
+int uartAvailable()
 {
     return 0;
 }
 
-void (*closeUart)()
+void closeUart()
 {}
 
-void (*setupUart)()
+void setupUart()
 {}
 
 /*uint32_t Platform_currentIpAddress()
@@ -95,68 +94,68 @@ uint32_t Platform_currentDefaultGateway()
 void Platform_macAddress(uint8_t *data)
 {}*/
 
-uint32_t (*uniqueSerialNumber)()
+uint32_t uniqueSerialNumber()
 {
     return 0x01020304;
 }
 
-void (*setupMultiCast)(uint32_t addr, uint16_t port)
+void setupMultiCast(uint32_t addr, uint16_t port)
 {}
 
-void (*closeMultiCast)()
+void closeMultiCast()
 {}
 
-bool (*sendBytesMultiCast)(uint8_t *buffer, uint16_t len)
+bool sendBytesMultiCast(uint8_t *buffer, uint16_t len)
 {
     return false;
 }
 
-bool (*sendBytesUniCast)(uint32_t addr, uint16_t port, uint8_t* buffer, uint16_t len)
+bool sendBytesUniCast(uint32_t addr, uint16_t port, uint8_t* buffer, uint16_t len)
 {
     return false;
 }
 
-int (*readBytesMultiCast)(uint8_t *buffer, uint16_t maxLen)
+int readBytesMultiCast(uint8_t *buffer, uint16_t maxLen)
 {
     return 0;
 }
 
-size_t (*flashEraseBlockSize)()
+size_t flashEraseBlockSize()
 {
     return 0;
 }
 
-size_t (*flashPageSize)()
+size_t flashPageSize()
 {
     // align to 32bit as default for Eeprom Emulation plattforms
     return 4;
 }
 
-uint8_t * (&userFlashStart)()
+uint8_t * userFlashStart()
 {
     return NULL;
 }
 
-size_t (*userFlashSizeEraseBlocks)()
+size_t userFlashSizeEraseBlocks()
 {
     return 0;
 }
 
-void (*flashErase)(uint16_t eraseBlockNum)
+void flashErase(uint16_t eraseBlockNum)
 {}
 
-void (*flashWritePage)(uint16_t pageNumber, uint8_t* data)
+void flashWritePage(uint16_t pageNumber, uint8_t* data)
 {}
 
-uint8_t * (&getEepromBuffer)(uint32_t size)
+uint8_t * getEepromBuffer(uint32_t size)
 {
     return NULL;
 }
 
-void (*commitToEeprom)()
+void commitToEeprom()
 {}
 
-uint8_t* (&getNonVolatileMemoryStart)()
+uint8_t* getNonVolatileMemoryStart()
 {
     if(_memoryType == Flash)
         return userFlashStart();
@@ -164,7 +163,7 @@ uint8_t* (&getNonVolatileMemoryStart)()
         return getEepromBuffer(KNX_FLASH_SIZE);
 }
 
-size_t (*getNonVolatileMemorySize)()
+size_t getNonVolatileMemorySize()
 {
     if(_memoryType == Flash)
         return userFlashSizeEraseBlocks() * flashEraseBlockSize() * flashPageSize();
@@ -172,7 +171,7 @@ size_t (*getNonVolatileMemorySize)()
         return KNX_FLASH_SIZE;
 }
 
-void (*commitNonVolatileMemory)()
+void commitNonVolatileMemory()
 {
     if(_memoryType == Flash)
     {
@@ -191,7 +190,7 @@ void (*commitNonVolatileMemory)()
     }
 }
 
-uint32_t (*writeNonVolatileMemory_Arrary)(uint32_t relativeAddress, uint8_t* buffer, size_t size)
+uint32_t writeNonVolatileMemory_Arrary(uint32_t relativeAddress, uint8_t* buffer, size_t size)
 {
     if(_memoryType == Flash)
     {
@@ -223,7 +222,7 @@ uint32_t (*writeNonVolatileMemory_Arrary)(uint32_t relativeAddress, uint8_t* buf
 
 // writes value repeat times into flash starting at relativeAddress
 // returns next free relativeAddress
-uint32_t (*writeNonVolatileMemory_value)(uint32_t relativeAddress, uint8_t value, size_t repeat)
+uint32_t writeNonVolatileMemory_value(uint32_t relativeAddress, uint8_t value, size_t repeat)
 {
     if(_memoryType == Flash)
     {
@@ -252,13 +251,13 @@ uint32_t (*writeNonVolatileMemory_value)(uint32_t relativeAddress, uint8_t value
     }
 }
 
-uint32_t (*getEraseBlockNumberOf)(uint32_t relativeAddress)
+uint32_t getEraseBlockNumberOf(uint32_t relativeAddress)
 {
     return relativeAddress / (flashEraseBlockSize() * flashPageSize());
 }
 
 
-void (*loadEraseblockContaining)(uint32_t relativeAddress)
+void loadEraseblockContaining(uint32_t relativeAddress)
 {
     int32_t blockNum = getEraseBlockNumberOf(relativeAddress);
     if (blockNum < 0)
@@ -273,7 +272,7 @@ void (*loadEraseblockContaining)(uint32_t relativeAddress)
     bufferEraseBlock(blockNum);
 }
 
-void (*writeBufferedEraseBlock)()
+void writeBufferedEraseBlock()
 {
     if(_bufferedEraseblockNumber > -1 && _bufferedEraseblockDirty)
     {
@@ -289,7 +288,7 @@ void (*writeBufferedEraseBlock)()
 }
 
 
-void (*bufferEraseBlock)(int32_t eraseBlockNumber)
+void bufferEraseBlock(int32_t eraseBlockNumber)
 {
     if(_bufferedEraseblockNumber == eraseBlockNumber)
         return;

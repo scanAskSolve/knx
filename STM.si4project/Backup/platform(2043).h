@@ -57,11 +57,11 @@ typedef struct Platform
     //
     // --- changes to the UserMemory are written directly into the address space starting at getEepromBuffer
     // --- commitToEeprom must save this to a non-volatile area if neccessary
-     uint8_t* (&getEepromBuffer)(uint32_t size);
+     uint8_t* (*getEepromBuffer)(uint32_t size);
      void (*commitToEeprom)();
     // -------------------------------------------------------------------------------------------------------
 
-     uint8_t* (&getNonVolatileMemoryStart)();
+     uint8_t* (*getNonVolatileMemoryStart)();
      size_t (*getNonVolatileMemorySize)();
      void (*commitNonVolatileMemory)();
     // address is relative to start of nonvolatile memory
@@ -80,7 +80,7 @@ typedef struct Platform
     // size of one EraseBlock in pages
      size_t (*flashEraseBlockSize)();
     // start of user flash aligned to start of an erase block
-     uint8_t* (&userFlashStart)();
+     uint8_t* (*userFlashStart)();
     // size of the user flash in EraseBlocks
      size_t (*userFlashSizeEraseBlocks)();
     //relativ to userFlashStart

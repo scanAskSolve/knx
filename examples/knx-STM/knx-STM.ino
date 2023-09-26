@@ -62,7 +62,7 @@ void setup() {
 
   //randomSeed(HAL_GetTick());
 
-
+  delay(1000);
   // read adress table, association table, groupobject table and parameters from eeprom
   knx.readMemory();
   
