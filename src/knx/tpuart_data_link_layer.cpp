@@ -4,6 +4,7 @@
 #include "tpuart_data_link_layer.h"
 #include "bits.h"
 #include "platform.h"
+
 #include "device_object.h"
 #include "address_table_object.h"
 #include "cemi_frame.h"
@@ -536,7 +537,7 @@ void TpUartDataLinkLayer::stopChip()
 
 TpUartDataLinkLayer::TpUartDataLinkLayer(DeviceObject& devObj,
                                          NetworkLayerEntity &netLayerEntity,
-                                         Platform& platform,
+                                         ArduinoPlatform& platform,
                                          ITpUartCallBacks& cb)
     : DataLinkLayer(devObj, netLayerEntity, platform),
       _cb(cb)

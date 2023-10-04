@@ -4,7 +4,7 @@
 
 #include "bits.h"
 
-Memory::Memory(Platform& platform, DeviceObject& deviceObject)
+Memory::Memory(ArduinoPlatform& platform, DeviceObject& deviceObject)
     : _platform(platform), _deviceObject(deviceObject)
 {}
 

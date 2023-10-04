@@ -3,6 +3,7 @@
 #include "config.h"
 #ifdef USE_TP
 
+#include "arduino_platform.h"
 #include <stdint.h>
 #include "data_link_layer.h"
 
@@ -22,7 +23,7 @@ class TpUartDataLinkLayer : public DataLinkLayer
 
   public:
     TpUartDataLinkLayer(DeviceObject& devObj, NetworkLayerEntity& netLayerEntity,
-                        Platform& platform, ITpUartCallBacks& cb);
+                        ArduinoPlatform& platform, ITpUartCallBacks& cb);
 
     void loop();
     void enabled(bool value);

@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 
-BauSystemBDevice::BauSystemBDevice(Platform& platform) :
+BauSystemBDevice::BauSystemBDevice(ArduinoPlatform& platform) :
     BauSystemB(platform),
     _addrTable(_memory),
     _assocTable(_memory), _groupObjTable(_memory),
