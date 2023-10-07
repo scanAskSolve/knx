@@ -10,7 +10,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "save_restore.h"
+//#include "save_restore.h"
 
 /** The data type of a property. */
 enum PropertyDataType
@@ -256,8 +256,8 @@ struct PropertyDescription
     uint16_t MaxElements;
     uint8_t Access;
 };
-
-class Property : public SaveRestore
+//class Property : public SaveRestore
+class Property
 {
   public:
     Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access);
@@ -281,6 +281,12 @@ class Property : public SaveRestore
     uint8_t write(uint16_t position, uint16_t value);
     uint8_t write(uint32_t value);
     uint8_t write(const uint8_t* value);
+
+	virtual uint8_t* save(uint8_t* buffer);
+	virtual const uint8_t* restore(const uint8_t* buffer);
+	virtual uint16_t saveSize();
+
+	
   protected:
     PropertyID _id;
     bool _writeEnable;

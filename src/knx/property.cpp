@@ -222,3 +222,21 @@ void Property::state(uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t
     (void)resultData;
     resultLength = 0;
 }
+
+
+uint8_t* Property::save(uint8_t* buffer)
+{
+	return buffer;
+}
+const uint8_t* Property::restore(const uint8_t* buffer)
+{
+	return buffer;
+}
+
+
+uint16_t Property::saveSize()
+{
+	return 0;
+}
+
+
