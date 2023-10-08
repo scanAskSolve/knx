@@ -3,9 +3,13 @@
 #include "config.h"
 #ifdef USE_TP
 
+#include "device_object.h"
 #include "arduino_platform.h"
+#include "knx_types.h"
+#include "cemi_frame.h"
+#include "network_layer_entity.h"
 #include <stdint.h>
-#include "data_link_layer.h"
+// #include "data_link_layer.h"
 
 #define MAX_KNX_TELEGRAM_SIZE 263
 
@@ -16,10 +20,11 @@ public:
     virtual bool isAckRequired(uint16_t address, bool isGrpAddr) = 0;
 };
 
-class TpUartDataLinkLayer : public DataLinkLayer
+// class TpUartDataLinkLayer : public DataLinkLayer
+class TpUartDataLinkLayer
 {
-    using DataLinkLayer::_deviceObject;
-    using DataLinkLayer::_platform;
+    // using DataLinkLayer::_deviceObject;
+    // using DataLinkLayer::_platform;
 
   public:
     TpUartDataLinkLayer(DeviceObject& devObj, NetworkLayerEntity& netLayerEntity,
@@ -28,8 +33,19 @@ class TpUartDataLinkLayer : public DataLinkLayer
     void loop();
     void enabled(bool value);
     bool enabled() const;
-    DptMedium mediumType() const override;
+    DptMedium mediumType() const;
 
+    DeviceObject& _deviceObject;
+    NetworkLayerEntity& _networkLayerEntity;
+    ArduinoPlatform& _platform;
+
+    void dataRequest(AckType ack, AddressType addrType, uint16_t destinationAddr, uint16_t sourceAddr, FrameFormat format,
+                     Priority priority, NPDU& npdu);
+    void systemBroadcastRequest(AckType ack, FrameFormat format, Priority priority, NPDU& npdu, uint16_t sourceAddr);
+    bool sendTelegram(NPDU& npdu, AckType ack, uint16_t destinationAddr, AddressType addrType, uint16_t sourceAddr, FrameFormat format, Priority priority, SystemBroadcast systemBroadcast);
+    void dataConReceived(CemiFrame& frame, bool success);
+    void frameReceived(CemiFrame& frame);
+    
   private:
     bool _enabled = false;
     uint8_t* _sendBuffer = 0;

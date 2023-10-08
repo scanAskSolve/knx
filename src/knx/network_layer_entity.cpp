@@ -1,19 +1,20 @@
 #include "network_layer.h"
 #include "network_layer_entity.h"
 #include "tpdu.h"
-#include "data_link_layer.h"
+// #include "data_link_layer.h"
+#include "tpuart_data_link_layer.h"
 #include "bits.h"
 
 NetworkLayerEntity::NetworkLayerEntity(NetworkLayer &netLayer, uint8_t entityIndex) : _netLayer(netLayer), _entityIndex(entityIndex)
 {
 }
 
-void NetworkLayerEntity::dataLinkLayer(DataLinkLayer& layer)
+void NetworkLayerEntity::dataLinkLayer(TpUartDataLinkLayer& layer)
 {
     _dataLinkLayer = &layer;
 }
 
-DataLinkLayer& NetworkLayerEntity::dataLinkLayer()
+TpUartDataLinkLayer& NetworkLayerEntity::dataLinkLayer()
 {
     return *_dataLinkLayer;
 }
