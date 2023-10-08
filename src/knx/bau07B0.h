@@ -7,8 +7,8 @@
 #include "tpuart_data_link_layer.h"
 #include "cemi_server.h"
 #include "cemi_server_object.h"
-
-class Bau07B0 : public BauSystemBDevice, public ITpUartCallBacks
+//class Bau07B0 : public BauSystemBDevice, public ITpUartCallBacks
+class Bau07B0 : public BauSystemBDevice
 {
   public:
     Bau07B0(ArduinoPlatform& platform);
@@ -21,7 +21,7 @@ class Bau07B0 : public BauSystemBDevice, public ITpUartCallBacks
     InterfaceObject* getInterfaceObject(ObjectType objectType, uint8_t objectInstance);
 
     // For TP1 only
-    bool isAckRequired(uint16_t address, bool isGrpAddr) override;
+    virtual bool isAckRequired(uint16_t address, bool isGrpAddr);
 
   private:
     TpUartDataLinkLayer _dlLayer;
