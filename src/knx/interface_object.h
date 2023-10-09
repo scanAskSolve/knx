@@ -60,7 +60,8 @@ enum ObjectType
 /**
  * This class represents and interface object. See section 4 of @cite knx:3/4/1.
  */
-class InterfaceObject : public SaveRestore
+ //class InterfaceObject : public SaveRestore
+class InterfaceObject
 {
   public:
     /**
@@ -183,9 +184,9 @@ class InterfaceObject : public SaveRestore
      */
     const Property* property(PropertyID id) const;
 
-    uint8_t* save(uint8_t* buffer) override;
-    const uint8_t* restore(const uint8_t* buffer) override;
-    uint16_t saveSize() override;
+    virtual uint8_t* save(uint8_t* buffer);
+    virtual const uint8_t* restore(const uint8_t* buffer);
+    virtual uint16_t saveSize();
 
   protected:
     /**

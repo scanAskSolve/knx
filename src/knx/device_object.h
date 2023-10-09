@@ -4,7 +4,7 @@
 
 #define LEN_HARDWARE_TYPE 6
 
-class DeviceObject: public InterfaceObject
+class DeviceObject: public InterfaceObject, public SaveRestore
 {
 public:
     // increase this version anytime DeviceObject-API changes 
