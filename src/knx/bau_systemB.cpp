@@ -55,49 +55,49 @@ uint8_t BauSystemB::checkmasterResetValidity(EraseCode eraseCode, uint8_t channe
     {
         case EraseCode::ConfirmedRestart:
         {
-            	println("Confirmed restart requested.");
+            println("Confirmed restart requested.");
             return successCode;
         }
         case EraseCode::ResetAP:
         {
             // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            	println("ResetAP requested. Not implemented yet.");
+            println("ResetAP requested. Not implemented yet.");
             return successCode;
         }
         case EraseCode::ResetIA:
         {
             // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            	println("ResetIA requested. Not implemented yet.");
+            println("ResetIA requested. Not implemented yet.");
             return successCode;
         }
         case EraseCode::ResetLinks:
         {
             // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            	println("ResetLinks requested. Not implemented yet.");
+            println("ResetLinks requested. Not implemented yet.");
             return successCode;
         }
         case EraseCode::ResetParam:
         {
             // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            	println("ResetParam requested. Not implemented yet.");
+            println("ResetParam requested. Not implemented yet.");
             return successCode;
         }
         case EraseCode::FactoryReset:
         {
             // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            	println("Factory reset requested. type: with IA");
+            println("Factory reset requested. type: with IA");
             return successCode;
         }
         case EraseCode::FactoryResetWithoutIA:
         {
             // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            	println("Factory reset requested. type: without IA");
+            println("Factory reset requested. type: without IA");
             return successCode;
         }
         default:
         {
-            	print("Unhandled erase code: ");
-            	println(eraseCode, HEX);
+            print("Unhandled erase code: ");
+            println(eraseCode, HEX);
             return invalidEraseCode;
         }
     }
@@ -156,7 +156,7 @@ void BauSystemB::restartRequestIndication(Priority priority, HopCountType hopTyp
 {
     if (restartType == RestartType::BasicRestart)
     {
-        	println("Basic restart requested");
+        println("Basic restart requested");
         if (_beforeRestart != 0)
             _beforeRestart();
     }
@@ -171,7 +171,7 @@ void BauSystemB::restartRequestIndication(Priority priority, HopCountType hopTyp
     else
     {
         // Cannot happen as restartType is just one bit
-        	println("Unhandled restart type.");
+        println("Unhandled restart type.");
         _platform.fatalError();
     }
 

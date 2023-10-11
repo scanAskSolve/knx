@@ -12,7 +12,6 @@
 
 
 
-
 //#ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
 
     #if defined(ARDUINO_ARCH_STM32)

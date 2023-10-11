@@ -33,12 +33,10 @@ class APDU
      * Get the length of the APDU. (This is actually the octet count of the NPDU.)
      */
     uint8_t length() const;
-
     /**
      * Print the contents of the APDU to console.
      */
     void printPDU();
-	
 
   protected:
     /**

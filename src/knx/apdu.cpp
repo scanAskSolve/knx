@@ -38,7 +38,6 @@ uint8_t APDU::length() const
     return _frame.npdu().octetCount();
 }
 
-
 void APDU::printPDU()
 {
     print("APDU: ");
@@ -52,4 +51,3 @@ void APDU::printPDU()
     }
     println();
 }
-

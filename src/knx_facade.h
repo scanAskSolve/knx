@@ -1,4 +1,4 @@
-//#pragma once
+#pragma once
 
 #include "knx/bits.h"
 #include "knx/config.h"
@@ -34,20 +34,20 @@ typedef void (*ProgLedOffCallback)();
 template <class P, class B> class KnxFacade : private SaveRestore
 {
   public:
-    //KnxFacade() : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr)
-    //{
-    //    manufacturerId(0xfa);
-    //    bauNumber(platform().uniqueSerialNumber());
-    //    _bau.addSaveRestore(this);
-    //}
+    /*KnxFacade() : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr)
+    {
+        manufacturerId(0xfa);
+        bauNumber(platform().uniqueSerialNumber());
+        _bau.addSaveRestore(this);
+    }*/
 
-    //KnxFacade(B& bau) : _bau(bau)
-    //{
-    //    _platformPtr = static_cast<P*>(&bau.platform());
-    //    manufacturerId(0xfa);
-    //    bauNumber(platform().uniqueSerialNumber());
-    //    _bau.addSaveRestore(this);
-    //}
+    /*KnxFacade(B& bau) : _bau(bau)
+    {
+        _platformPtr = static_cast<P*>(&bau.platform());
+        manufacturerId(0xfa);
+        bauNumber(platform().uniqueSerialNumber());
+        _bau.addSaveRestore(this);
+    }*/
 
     KnxFacade(IsrFunctionPtr buttonISRFunction) : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr)
     {
@@ -78,7 +78,7 @@ template <class P, class B> class KnxFacade : private SaveRestore
         return _bau;
     }
 
-    bool enabled_State()
+    bool enabled()
     {
         return _bau.enabled();
     }
