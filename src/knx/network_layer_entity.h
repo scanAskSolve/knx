@@ -4,7 +4,8 @@
 #include "knx_types.h"
 #include "npdu.h"
 
-class DataLinkLayer;
+
+class TpUartDataLinkLayer;
 class NetworkLayer;
 
 class NetworkLayerEntity
@@ -15,8 +16,8 @@ class NetworkLayerEntity
   public:
     NetworkLayerEntity(NetworkLayer &netLayer, uint8_t entityIndex);
 
-    void dataLinkLayer(DataLinkLayer& layer);
-    DataLinkLayer& dataLinkLayer();
+    void dataLinkLayer(TpUartDataLinkLayer& layer);
+    TpUartDataLinkLayer& dataLinkLayer();
 
     DptMedium mediumType() const;
 
@@ -36,7 +37,7 @@ class NetworkLayerEntity
     // From network layer
     void sendDataRequest(NPDU& npdu, AckType ack, uint16_t destination, uint16_t source, Priority priority, AddressType addrType, SystemBroadcast systemBroadcast);
 
-    DataLinkLayer* _dataLinkLayer = 0;
+    TpUartDataLinkLayer* _dataLinkLayer = 0;
     NetworkLayer& _netLayer;
     uint8_t _entityIndex;
 };

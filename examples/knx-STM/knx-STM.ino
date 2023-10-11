@@ -52,20 +52,19 @@ void setup() {
  
 
 
-    pinMode(PB11,OUTPUT);
     //digitalWrite(27,knx.paramByte(0) && 0x80);
 
-    pinMode(PB11,OUTPUT);
-    /*digitalWrite(PB11,LOW);
-    delay(100);
-    digitalWrite(PB11,HIGH);
-    delay(100);
-    digitalWrite(PB11,LOW);
-    delay(100);
-    digitalWrite(PB11,HIGH);
-    delay(100);
-    digitalWrite(PB11,LOW);
-    delay(100);*/
+    pinMode(PC13,OUTPUT);
+    digitalWrite(PC13,LOW);
+    delay(1000);
+    digitalWrite(PC13,HIGH);
+    delay(1000);
+    digitalWrite(PC13,LOW);
+    delay(1000);
+    digitalWrite(PC13,HIGH);
+    delay(1000);
+    digitalWrite(PC13,LOW);
+    delay(1000);
 
   randomSeed(HAL_GetTick());
 

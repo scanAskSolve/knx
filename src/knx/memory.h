@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include "save_restore.h"
-#include "platform.h"
+#include "arduino_platform.h"
 #include "device_object.h"
 #include "table_object.h"
 
@@ -36,7 +36,7 @@ typedef VersionCheckResult (*VersionCheckCallback)(uint16_t manufacturerId, uint
 class Memory
 {
 public:
-    Memory(Platform& platform, DeviceObject& deviceObject);
+    Memory(ArduinoPlatform& platform, DeviceObject& deviceObject);
     virtual ~Memory();
     void readMemory();
     void writeMemory();
@@ -69,7 +69,7 @@ public:
     void saveBufferdEraseBlock();
 
     VersionCheckCallback _versionCheckCallback = 0;
-    Platform& _platform;
+    ArduinoPlatform& _platform;
     DeviceObject& _deviceObject;
     SaveRestore* _saveRestores[MAXSAVE] = {0};
     TableObject* _tableObjects[MAXTABLEOBJ] = {0};

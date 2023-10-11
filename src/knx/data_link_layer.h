@@ -7,6 +7,7 @@
 #include "knx_types.h"
 #include "network_layer_entity.h"
 #include "cemi_server.h"
+#include "arduino_platform.h"
 
 class Platform;
 
@@ -14,7 +15,7 @@ class DataLinkLayer
 {
   public:
     DataLinkLayer(DeviceObject& devObj, NetworkLayerEntity& netLayerEntity,
-                  Platform& platform);
+                  ArduinoPlatform& platform);
 
 #ifdef USE_CEMI_SERVER
     // from tunnel
@@ -39,7 +40,7 @@ class DataLinkLayer
     uint8_t* frameData(CemiFrame& frame);
     DeviceObject& _deviceObject;
     NetworkLayerEntity& _networkLayerEntity;
-    Platform& _platform;
+    ArduinoPlatform& _platform;
 #ifdef USE_CEMI_SERVER
     CemiServer* _cemiServer;
 #endif    

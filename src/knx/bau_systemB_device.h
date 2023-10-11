@@ -1,5 +1,6 @@
 #pragma once
 
+#include "arduino_platform.h"
 #include "config.h"
 #include "bau_systemB.h"
 #include "device_object.h"
@@ -13,13 +14,13 @@
 #include "transport_layer.h"
 #include "network_layer_device.h"
 #include "data_link_layer.h"
-#include "platform.h"
+// #include "platform.h"
 #include "memory.h"
 
 class BauSystemBDevice : public BauSystemB
 {
   public:
-    BauSystemBDevice(Platform& platform);
+    BauSystemBDevice(ArduinoPlatform& platform);
     void loop() override;
     bool configured() override;
     GroupObjectTableObject& groupObjectTable();

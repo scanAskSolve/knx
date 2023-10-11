@@ -103,6 +103,191 @@ size_t ArduinoPlatform::readBytesUart(uint8_t *buffer, size_t length)
     return length;
 }
 
+uint32_t ArduinoPlatform::uniqueSerialNumber()
+{
+    return 0x01020304;
+}
+
+uint8_t* ArduinoPlatform::getNonVolatileMemoryStart()
+{
+    if(_memoryType == Flash)
+        return userFlashStart();
+    else
+        return getEepromBuffer(KNX_FLASH_SIZE);
+}
+
+uint8_t *ArduinoPlatform::userFlashStart()
+{
+    return nullptr;
+}
+
+uint8_t * ArduinoPlatform::getEepromBuffer(uint32_t size)
+{
+    return nullptr;
+}
+
+size_t ArduinoPlatform::getNonVolatileMemorySize()
+{
+    if(_memoryType == Flash)
+        return userFlashSizeEraseBlocks() * flashEraseBlockSize() * flashPageSize();
+    else
+        return KNX_FLASH_SIZE;
+}
+
+size_t ArduinoPlatform::userFlashSizeEraseBlocks()
+{
+    return 0;
+}
+
+size_t ArduinoPlatform::flashEraseBlockSize()
+{
+    return 0;
+}
+
+size_t ArduinoPlatform::flashPageSize()
+{
+    // align to 32bit as default for Eeprom Emulation plattforms
+    return 4;
+}
+
+uint32_t ArduinoPlatform::writeNonVolatileMemory(uint32_t relativeAddress, uint8_t* buffer, size_t size)
+{
+    if(_memoryType == Flash)
+    {
+        while (size > 0)
+        {
+            loadEraseblockContaining(relativeAddress);
+            uint32_t start = _bufferedEraseblockNumber * (flashEraseBlockSize() * flashPageSize());
+            uint32_t end = start +  (flashEraseBlockSize() * flashPageSize());
+
+            uint32_t offset = relativeAddress - start;
+            uint32_t length = end - relativeAddress;
+            if(length > size)
+                length = size;
+            memcpy(_eraseblockBuffer + offset, buffer, length);
+            _bufferedEraseblockDirty = true;
+
+            relativeAddress += length;
+            buffer += length;
+            size -= length;
+        }
+        return relativeAddress;
+    }
+    else
+    {
+        memcpy(getEepromBuffer(KNX_FLASH_SIZE)+relativeAddress, buffer, size);
+        return relativeAddress+size;
+    }
+}
+
+// writes value repeat times into flash starting at relativeAddress
+// returns next free relativeAddress
+uint32_t ArduinoPlatform::writeNonVolatileMemory(uint32_t relativeAddress, uint8_t value, size_t repeat)
+{
+    if(_memoryType == Flash)
+    {
+        while (repeat > 0)
+        {
+            loadEraseblockContaining(relativeAddress);
+            uint32_t start = _bufferedEraseblockNumber * (flashEraseBlockSize() * flashPageSize());
+            uint32_t end = start +  (flashEraseBlockSize() * flashPageSize());
+
+            uint32_t offset = relativeAddress - start;
+            uint32_t length = end - relativeAddress;
+            if(length > repeat)
+                length = repeat;
+            memset(_eraseblockBuffer + offset, value, length);
+            _bufferedEraseblockDirty = true;
+
+            relativeAddress += length;
+            repeat -= length;
+        }
+        return relativeAddress;
+    }
+    else
+    {
+        memset(getEepromBuffer(KNX_FLASH_SIZE)+relativeAddress, value, repeat);
+        return relativeAddress+repeat;
+    }
+}
+
+void ArduinoPlatform::loadEraseblockContaining(uint32_t relativeAddress)
+{
+    int32_t blockNum = getEraseBlockNumberOf(relativeAddress);
+    if (blockNum < 0)
+    {
+        println("loadEraseblockContaining could not get valid eraseblock number");
+        fatalError();
+    }
+
+    if (blockNum != _bufferedEraseblockNumber && _bufferedEraseblockNumber >= 0)
+        writeBufferedEraseBlock();
+
+    bufferEraseBlock(blockNum);
+}
+
+int32_t ArduinoPlatform::getEraseBlockNumberOf(uint32_t relativeAddress)
+{
+    return relativeAddress / (flashEraseBlockSize() * flashPageSize());
+}
+
+void ArduinoPlatform::writeBufferedEraseBlock()
+{
+    if(_bufferedEraseblockNumber > -1 && _bufferedEraseblockDirty)
+    {
+        flashErase(_bufferedEraseblockNumber);
+        for(uint32_t i = 0; i < flashEraseBlockSize(); i++)
+        {   
+            int32_t pageNumber = _bufferedEraseblockNumber * flashEraseBlockSize() + i;
+            uint8_t *data = _eraseblockBuffer + flashPageSize() * i;
+            flashWritePage(pageNumber, data);
+        }
+        _bufferedEraseblockDirty = false;
+    }
+}
+
+void ArduinoPlatform::bufferEraseBlock(int32_t eraseBlockNumber)
+{
+    if(_bufferedEraseblockNumber == eraseBlockNumber)
+        return;
+    
+    if(_eraseblockBuffer == nullptr)
+    {
+        _eraseblockBuffer = (uint8_t*)malloc(flashEraseBlockSize() * flashPageSize());
+    }
+    memcpy(_eraseblockBuffer, userFlashStart() + eraseBlockNumber * flashEraseBlockSize() * flashPageSize(), flashEraseBlockSize() * flashPageSize());
+
+    _bufferedEraseblockNumber = eraseBlockNumber;
+    _bufferedEraseblockDirty = false;
+}
+
+void ArduinoPlatform::flashErase(uint16_t eraseBlockNum)
+{}
+
+void ArduinoPlatform::flashWritePage(uint16_t pageNumber, uint8_t* data)
+{}
+
+void ArduinoPlatform::commitNonVolatileMemory()
+{
+    if(_memoryType == Flash)
+    {
+        if(_bufferedEraseblockNumber > -1 && _bufferedEraseblockDirty)
+        {
+            writeBufferedEraseBlock();
+            
+            free(_eraseblockBuffer);
+            _eraseblockBuffer = nullptr;
+            _bufferedEraseblockNumber = -1;  // does that make sense?
+        }
+    }
+    else
+    {
+        commitToEeprom();
+    }
+}
+
+void ArduinoPlatform::commitToEeprom()
+{}
 /*#ifndef KNX_NO_SPI
 
 void ArduinoPlatform::setupSpi()

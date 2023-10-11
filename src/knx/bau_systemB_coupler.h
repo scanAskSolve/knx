@@ -11,13 +11,13 @@
 #include "transport_layer.h"
 #include "network_layer_coupler.h"
 #include "data_link_layer.h"
-#include "platform.h"
+#include "arduino_platform.h"
 #include "memory.h"
 
 class BauSystemBCoupler : public BauSystemB
 {
   public:
-    BauSystemBCoupler(Platform& platform);
+    BauSystemBCoupler(ArduinoPlatform& platform);
     void loop() override;
     bool configured() override;
 
@@ -26,7 +26,7 @@ class BauSystemBCoupler : public BauSystemB
 
     void doMasterReset(EraseCode eraseCode, uint8_t channel) override;
 
-    Platform& _platform;
+    ArduinoPlatform& _platform;
 
 #ifdef USE_DATASECURE
     SecureApplicationLayer _appLayer;

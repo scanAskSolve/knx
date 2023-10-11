@@ -9,11 +9,14 @@
 #pragma warning "KNX_FLASH_SIZE not defined, using 1024"
 #endif
 
+#ifndef KNX_MV_MEMORY
+#define KNX_MV_MEMORY 1
 enum NvMemoryType
 {
     Eeprom,
     Flash
 };
+#endif
 
 class Platform
 {
