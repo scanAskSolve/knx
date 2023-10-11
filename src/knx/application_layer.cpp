@@ -10,7 +10,7 @@
 
 const SecurityControl ApplicationLayer::noSecurity {.toolAccess=false, .dataSecurity=DataSecurity::None};
 
-ApplicationLayer::ApplicationLayer(BusAccessUnit& bau) : _bau(bau)
+ApplicationLayer::ApplicationLayer(BauSystemB& bau) : _bau(bau)
 {
 }
 

@@ -3,9 +3,10 @@
 #include "stdint.h"
 #include "knx_types.h"
 #include "apdu.h"
+#include "bau_systemB.h"
 
 class AssociationTableObject;
-class BusAccessUnit;
+class BauSystemB;
 class TransportLayer;
 /**
  * This is an implementation of the application layer as specified in @cite knx:3/5/1.
@@ -22,7 +23,7 @@ class ApplicationLayer
      * @param assocTable The AssociationTable is used to translate between asap (i.e. group objects) and group addresses.
      * @param bau methods are called here depending of the content of the APDU
      */
-    ApplicationLayer(BusAccessUnit& bau);
+    ApplicationLayer(BauSystemB& bau);
     /**
      * Assigns the TransportLayer to which encoded APDU are submitted to.
      */
@@ -206,7 +207,7 @@ class ApplicationLayer
     uint16_t _savedAsapWriteRequest = 0;
     uint16_t _savedAsapResponse = 0;
     AssociationTableObject* _assocTable = nullptr;
-    BusAccessUnit& _bau;
+    BauSystemB& _bau;
 
     int32_t _connectedTsap = -1;
 };

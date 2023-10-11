@@ -28,19 +28,19 @@ class BauSystemBDevice : public BauSystemB
   protected:
     ApplicationLayer& applicationLayer() override;
 
-    void groupValueWriteLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl,
-                                     uint8_t* data, uint8_t dataLength, bool status) override;
-    void groupValueReadLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, bool status) override;
-    void groupValueReadIndication(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl) override;
-    void groupValueReadAppLayerConfirm(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl,
-                                       uint8_t* data, uint8_t dataLength) override;
-    void groupValueWriteIndication(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl,
-                                   uint8_t* data, uint8_t dataLength) override;
+    virtual void groupValueWriteLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl,
+                                     uint8_t* data, uint8_t dataLength, bool status) ;
+    virtual void groupValueReadLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, bool status);
+    virtual void groupValueReadIndication(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl);
+    virtual void groupValueReadAppLayerConfirm(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl,
+                                       uint8_t* data, uint8_t dataLength);
+    virtual void groupValueWriteIndication(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl,
+                                   uint8_t* data, uint8_t dataLength);
 
     void sendNextGroupTelegram();
     void updateGroupObject(GroupObject& go, uint8_t* data, uint8_t length);
 
-    void doMasterReset(EraseCode eraseCode, uint8_t channel) override;
+    virtual void doMasterReset(EraseCode eraseCode, uint8_t channel);
 
     AddressTableObject _addrTable;
     AssociationTableObject _assocTable;
