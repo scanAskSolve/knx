@@ -26,15 +26,15 @@
             static uint32_t lastEvent=0;
             static uint32_t lastPressed=0;
 
-            uint32_t diff = HAL_GetTick() - lastEvent;
+            uint32_t diff = millis() - lastEvent;
             if (diff >= PROG_BTN_PRESS_MIN_MILLIS && diff <= PROG_BTN_PRESS_MAX_MILLIS){
-                if (HAL_GetTick() - lastPressed > 200)
+                if (millis() - lastPressed > 200)
                 {  
                     knx.toggleProgMode();
-                    lastPressed = HAL_GetTick();
+                    lastPressed = millis();
                 }
             }
-            lastEvent = HAL_GetTick();
+            lastEvent = millis();
         }
     #endif
 
@@ -51,15 +51,3 @@
 
 
 //#endif // KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
-
-
-
-
-
-
-
-
-
-
-
-
