@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "application_layer.h"
+#include "application_layer.h"
 #include <stdint.h>
 #include "knx_types.h"
 #include "apdu.h"
@@ -20,8 +20,7 @@ class BusAccessUnit;
  * It also takes calls from TransportLayer, decodes the submitted APDU and calls the coresponding
  * methods of the BusAccessUnit class.
  */
-//class SecureApplicationLayer :  public ApplicationLayer 
-class SecureApplicationLayer
+class SecureApplicationLayer :  public ApplicationLayer
 {
   public:
     /**
@@ -34,26 +33,27 @@ class SecureApplicationLayer
     void groupAddressTable(AddressTableObject& addrTable);
 
     // from transport layer
-     virtual void dataGroupIndication(HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu);
-     virtual void dataGroupConfirm(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu, bool status);
-     virtual void dataBroadcastIndication(HopCountType hopType, Priority priority, uint16_t source, APDU& apdu);
-     virtual void dataBroadcastConfirm(AckType ack, HopCountType hopType, Priority priority, APDU& apdu, bool status);
-     virtual void dataSystemBroadcastIndication(HopCountType hopType, Priority priority, uint16_t source, APDU& apdu);
-     virtual void dataSystemBroadcastConfirm(HopCountType hopType, Priority priority, APDU& apdu, bool status);
-     virtual void dataIndividualIndication(HopCountType hopType, Priority priority, uint16_t source, APDU& apdu);
-     void dataIndividualConfirm(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu, bool status);
-     virtual void dataConnectedIndication(Priority priority, uint16_t tsap, APDU& apdu);
-     virtual void dataConnectedConfirm(uint16_t tsap);
+     void dataGroupIndication(HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu) override;
+     void dataGroupConfirm(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap,
+                                  APDU& apdu, bool status) override;
+     void dataBroadcastIndication(HopCountType hopType, Priority priority, uint16_t source, APDU& apdu) override;
+     void dataBroadcastConfirm(AckType ack, HopCountType hopType, Priority priority, APDU& apdu, bool status) override;
+     void dataSystemBroadcastIndication(HopCountType hopType, Priority priority, uint16_t source, APDU& apdu) override;
+     void dataSystemBroadcastConfirm(HopCountType hopType, Priority priority, APDU& apdu, bool status) override;
+     void dataIndividualIndication(HopCountType hopType, Priority priority, uint16_t source, APDU& apdu) override;
+     void dataIndividualConfirm(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu, bool status) override;
+     void dataConnectedIndication(Priority priority, uint16_t tsap, APDU& apdu) override;
+     void dataConnectedConfirm(uint16_t tsap) override;
 
     void loop();
 
   protected:
     // to transport layer
-     virtual void dataGroupRequest(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu, const SecurityControl& secCtrl);
-     virtual void dataBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, APDU& apdu, const SecurityControl& secCtrl);
-     virtual void dataSystemBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, APDU& apdu, const SecurityControl& secCtrl);
-     virtual void dataIndividualRequest(AckType ack, HopCountType hopType, Priority priority, uint16_t destination, APDU& apdu, const SecurityControl& secCtrl);
-     virtual void dataConnectedRequest(uint16_t tsap, Priority priority, APDU& apdu, const SecurityControl& secCtrl); // apdu must be valid until it was confirmed
+     void dataGroupRequest(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu, const SecurityControl& secCtrl) override;
+     void dataBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, APDU& apdu, const SecurityControl& secCtrl) override;
+     void dataSystemBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, APDU& apdu, const SecurityControl& secCtrl) override;
+     void dataIndividualRequest(AckType ack, HopCountType hopType, Priority priority, uint16_t destination, APDU& apdu, const SecurityControl& secCtrl) override;
+     void dataConnectedRequest(uint16_t tsap, Priority priority, APDU& apdu, const SecurityControl& secCtrl) override; // apdu must be valid until it was confirmed
 
   private:
     enum class AddrType : uint8_t
