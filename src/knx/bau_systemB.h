@@ -54,7 +54,7 @@ class BauSystemB
     void functionPropertyStateCallback(FunctionPropertyCallback func);
     FunctionPropertyCallback functionPropertyStateCallback();
 
-  protected:
+  public:
     virtual ApplicationLayer& applicationLayer() = 0;
     virtual InterfaceObject* getInterfaceObject(uint8_t idx) = 0;
     virtual InterfaceObject* getInterfaceObject(ObjectType objectType, uint8_t objectInstance) = 0;
