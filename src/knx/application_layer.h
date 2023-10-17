@@ -3,10 +3,11 @@
 #include "stdint.h"
 #include "knx_types.h"
 #include "apdu.h"
-#include "bau_systemB.h"
+// #include "bau_systemB_device.h"
+#include "arduino_platform.h"
 
 class AssociationTableObject;
-class BauSystemB;
+class ArduinoPlatform;
 class TransportLayer;
 /**
  * This is an implementation of the application layer as specified in @cite knx:3/5/1.
@@ -23,7 +24,7 @@ class ApplicationLayer
      * @param assocTable The AssociationTable is used to translate between asap (i.e. group objects) and group addresses.
      * @param bau methods are called here depending of the content of the APDU
      */
-    ApplicationLayer(BauSystemB& bau);
+    ApplicationLayer(ArduinoPlatform& bau);
     /**
      * Assigns the TransportLayer to which encoded APDU are submitted to.
      */
@@ -207,7 +208,7 @@ class ApplicationLayer
     uint16_t _savedAsapWriteRequest = 0;
     uint16_t _savedAsapResponse = 0;
     AssociationTableObject* _assocTable = nullptr;
-    BauSystemB& _bau;
+    ArduinoPlatform& _bau;
 
     int32_t _connectedTsap = -1;
 };
