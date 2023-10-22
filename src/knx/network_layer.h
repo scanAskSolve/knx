@@ -11,7 +11,7 @@ class APDU;
 
 class NetworkLayer
 {
-    friend class NetworkLayerEntity;
+    //friend class NetworkLayerEntity;
 
   public:
     NetworkLayer(DeviceObject& deviceObj, TransportLayer& layer);
@@ -25,7 +25,7 @@ class NetworkLayer
     virtual void dataBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, TPDU& tpdu) = 0;
     virtual void dataSystemBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, TPDU& tpdu) = 0;
 
-  protected:
+  //protected:
     DeviceObject& _deviceObj;
     TransportLayer& _transportLayer;
 
@@ -41,6 +41,6 @@ class NetworkLayer
                                            Priority priority, uint16_t source, uint8_t srcIfIdx) = 0;
     virtual void systemBroadcastConfirm(AckType ack, FrameFormat format, Priority priority, uint16_t source, NPDU& npdu, bool status, uint8_t srcIfIdx) = 0;
 
-  private:
+  //private:
     uint8_t _hopCount; // Network Layer Parameter hop_count for the device's own outgoing frames (default value from PID_ROUTING_COUNT)
 };

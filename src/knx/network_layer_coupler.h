@@ -12,7 +12,7 @@ class RouterObject;
 
 class NetworkLayerCoupler : public NetworkLayer
 {
-    friend class NetworkLayerEntity;
+    //friend class NetworkLayerEntity;
 
   public:
     NetworkLayerCoupler(DeviceObject& deviceObj, TransportLayer& layer);
@@ -32,7 +32,7 @@ class NetworkLayerCoupler : public NetworkLayer
     void dataBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, TPDU& tpdu) override;
     void dataSystemBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, TPDU& tpdu) override;
 
-  private:
+  //private:
     enum CouplerType
     {
         LineCoupler,

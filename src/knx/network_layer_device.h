@@ -11,7 +11,7 @@ class DeviceObject;
 
 class NetworkLayerDevice : public NetworkLayer
 {
-    friend class NetworkLayerEntity;
+    //friend class NetworkLayerEntity;
 
   public:
     NetworkLayerDevice(DeviceObject& deviceObj, TransportLayer& layer);
@@ -24,7 +24,7 @@ class NetworkLayerDevice : public NetworkLayer
     void dataBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, TPDU& tpdu) override;
     void dataSystemBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, TPDU& tpdu) override;
 
-  private:
+  //private:
     // from entities
     void dataIndication(AckType ack, AddressType addType, uint16_t destination, FrameFormat format, NPDU& npdu,
                         Priority priority, uint16_t source, uint8_t srcIfIdx) override;

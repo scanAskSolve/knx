@@ -10,8 +10,8 @@ class NetworkLayer;
 
 class NetworkLayerEntity
 {
-    friend class NetworkLayerCoupler;
-    friend class NetworkLayerDevice;
+    //friend class NetworkLayerCoupler;
+    //friend class NetworkLayerDevice;
 
   public:
     NetworkLayerEntity(NetworkLayer &netLayer, uint8_t entityIndex);
@@ -33,7 +33,7 @@ class NetworkLayerEntity
                                    Priority priority, uint16_t source);
     void systemBroadcastConfirm(AckType ack, FrameFormat format, Priority priority, uint16_t source, NPDU& npdu, bool status);
 
-  private:
+  //private:
     // From network layer
     void sendDataRequest(NPDU& npdu, AckType ack, uint16_t destination, uint16_t source, Priority priority, AddressType addrType, SystemBroadcast systemBroadcast);
 
