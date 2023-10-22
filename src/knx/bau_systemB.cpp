@@ -14,9 +14,7 @@ enum NmReadSerialNumberType
 static constexpr auto kFunctionPropertyResultBufferMaxSize = 64;
 static constexpr auto kRestartProcessTime = 3;
 
-BauSystemB::BauSystemB(ArduinoPlatform& platform): _memory(platform, _deviceObj),
-     _appProgram(_memory),
-    _platform(platform)
+BauSystemB::BauSystemB(ArduinoPlatform& platform): _memory(platform, _deviceObj),_appProgram(_memory),_platform(platform)
 {
     _memory.addSaveRestore(&_appProgram);
 }
