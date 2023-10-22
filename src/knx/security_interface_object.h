@@ -5,13 +5,14 @@
 
 #include "interface_object.h"
 #include "knx_types.h"
-
-class SecurityInterfaceObject: public InterfaceObject
+#include "save_restore.h"
+//class SecurityInterfaceObject: public InterfaceObject
+class SecurityInterfaceObject
 {
 public:
   SecurityInterfaceObject();
 
-  void masterReset(EraseCode eraseCode, uint8_t channel) override;
+  virtual void masterReset(EraseCode eraseCode, uint8_t channel);
 
   bool isSecurityModeEnabled();
 
@@ -30,9 +31,9 @@ public:
   DataSecurity getGroupObjectSecurity(uint16_t index);
 
   LoadState loadState();
-  uint8_t* save(uint8_t* buffer) override;
-  const uint8_t* restore(const uint8_t* buffer) override;
-  uint16_t saveSize() override;
+  virtual uint8_t* save(uint8_t* buffer);
+  virtual const uint8_t* restore(const uint8_t* buffer);
+  virtual uint16_t saveSize();
 
 private:
   void setSecurityMode(bool enabled);
