@@ -7,7 +7,7 @@ class TPDU;
 
 class NPDU
 {
-    friend class CemiFrame;
+    //friend class CemiFrame;
 
   public:
     uint8_t octetCount() const;
@@ -18,10 +18,10 @@ class NPDU
     CemiFrame& frame();
     TPDU& tpdu();
 
-  protected:
+  //protected:
     NPDU(uint8_t* data, CemiFrame& frame);
 
-  private:
+  //private:
     uint8_t* _data = 0;
     CemiFrame& _frame;
 };

@@ -18,7 +18,7 @@
 
 class CemiFrame
 {
-    friend class DataLinkLayer;
+    //friend class DataLinkLayer;
 
   public:
     CemiFrame(uint8_t* data, uint16_t length);
@@ -73,7 +73,7 @@ class CemiFrame
     uint8_t calcCrcTP(uint8_t* buffer, uint16_t len);
     bool valid() const;
 
-  private:
+  public:
     uint8_t buffer[0xff + NPDU_LPDU_DIFF] = {0}; //only valid of add info is zero
     uint8_t* _data = 0;
     uint8_t* _ctrl1 = 0;
