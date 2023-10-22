@@ -3,7 +3,7 @@
 #include "config.h"
 #ifdef USE_DATASECURE
 
-#include "interface_object.h"
+//#include "interface_object.h"
 #include "knx_types.h"
 #include "save_restore.h"
 //class SecurityInterfaceObject: public InterfaceObject
