@@ -41,7 +41,7 @@ public:
     void readMemory();
     void writeMemory();
     void saveMemory();
-    void addSaveRestore(SaveRestore* obj);
+    virtual void addSaveRestore(DeviceObject* obj);
     void addSaveRestore(TableObject* obj);
 
     uint8_t* allocMemory(size_t size);
@@ -71,7 +71,7 @@ public:
     VersionCheckCallback _versionCheckCallback = 0;
     ArduinoPlatform& _platform;
     DeviceObject& _deviceObject;
-    SaveRestore* _saveRestores[MAXSAVE] = {0};
+    DeviceObject* _saveRestores[MAXSAVE] = {0};
     TableObject* _tableObjects[MAXTABLEOBJ] = {0};
     uint8_t _saveCount = 0;
     uint8_t _tableObjCount = 0;

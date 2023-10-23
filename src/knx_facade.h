@@ -31,7 +31,7 @@ typedef void (*IsrFunctionPtr)();
 typedef void (*ProgLedOnCallback)();
 typedef void (*ProgLedOffCallback)();
 
-template <class P, class B> class KnxFacade : private SaveRestore
+template <class P, class B> class KnxFacade : private DeviceObject
 {
   public:
     KnxFacade() : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr)
@@ -440,3 +440,15 @@ template <class P, class B> class KnxFacade : private SaveRestore
         #error "no predefined global instance"
     #endif
 //#endif // KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
+// uint8_t* save(uint8_t* buffer)
+//     {
+//         return buffer;
+//     }
+// const uint8_t* restore(const uint8_t* buffer)
+//     {
+//         return buffer;
+//     }
+// uint16_t saveSize()
+//     {
+//         return 0;
+//     }
