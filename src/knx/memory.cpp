@@ -184,7 +184,7 @@ void Memory::saveMemory()
     _platform.commitNonVolatileMemory();
 }
 
-void Memory::addSaveRestore(SaveRestore* obj)
+void Memory::addSaveRestore(DeviceObject* obj)
 {
     if (_saveCount >= MAXSAVE - 1)
         return;

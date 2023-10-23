@@ -4,7 +4,7 @@
 
 #define LEN_HARDWARE_TYPE 6
 
-class DeviceObject: public InterfaceObject, public SaveRestore
+class DeviceObject: public InterfaceObject
 {
 public:
     // increase this version anytime DeviceObject-API changes 
@@ -12,9 +12,9 @@ public:
     const uint16_t apiVersion = 1;
     
     DeviceObject();
-    uint8_t* save(uint8_t* buffer) override;
-    const uint8_t* restore(const uint8_t* buffer) override;
-    uint16_t saveSize() override;
+    uint8_t* save(uint8_t* buffer);
+    const uint8_t* restore(const uint8_t* buffer);
+    uint16_t saveSize();
 
     uint16_t individualAddress();
     void individualAddress(uint16_t value);

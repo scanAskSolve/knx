@@ -499,7 +499,7 @@ void BauSystemB::individualAddressSerialNumberReadIndication(Priority priority, 
     }
 }
 
-void BauSystemB::addSaveRestore(SaveRestore* obj)
+void BauSystemB::addSaveRestore(DeviceObject* obj)
 {
     _memory.addSaveRestore(obj);
 }

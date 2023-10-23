@@ -28,7 +28,7 @@ class BauSystemB : protected BusAccessUnit
     Memory& memory();
     void readMemory();
     void writeMemory();
-    void addSaveRestore(SaveRestore* obj);
+    void addSaveRestore(DeviceObject* obj);
 
     bool restartRequest(uint16_t asap, const SecurityControl secCtrl);
     uint8_t checkmasterResetValidity(EraseCode eraseCode, uint8_t channel);
