@@ -53,7 +53,7 @@ public:
     void versionCheckCallback(VersionCheckCallback func);
     VersionCheckCallback versionCheckCallback();
 
-  private:
+  //private:
     void removeFromFreeList(MemoryBlock* block);
     void addToUsedList(MemoryBlock* block);
     void removeFromUsedList(MemoryBlock* block);

@@ -11,7 +11,7 @@ typedef void (*BeforeTablesUnloadCallback)();
  */
 class TableObject: public InterfaceObject
 {
-    friend class Memory;
+    //friend class Memory;
 
   public:
     /**
@@ -35,7 +35,7 @@ class TableObject: public InterfaceObject
     static void beforeTablesUnloadCallback(BeforeTablesUnloadCallback func);
     static BeforeTablesUnloadCallback beforeTablesUnloadCallback();
 
-  protected:
+  //protected:
     /**
      * This method is called before the interface object enters a new ::LoadState.
      * If there is a error changing the state newState should be set to ::LS_ERROR and errorCode() 
@@ -57,7 +57,7 @@ class TableObject: public InterfaceObject
 
     static BeforeTablesUnloadCallback _beforeTablesUnload;
 
-  private:
+  //private:
     uint32_t tableReference();
     bool allocTable(uint32_t size, bool doFill, uint8_t fillByte);
     void loadEvent(const uint8_t* data);
