@@ -31,10 +31,11 @@ typedef void (*IsrFunctionPtr)();
 typedef void (*ProgLedOnCallback)();
 typedef void (*ProgLedOffCallback)();
 
-template <class P, class B> class KnxFacade : private DeviceObject
+//template <class P, class B> class KnxFacade : private DeviceObject
+class KnxFacade : private DeviceObject
 {
   public:
-    KnxFacade() : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr)
+    /*KnxFacade() : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr)
     {
         manufacturerId(0xfa);
         bauNumber(platform().uniqueSerialNumber());
@@ -47,9 +48,9 @@ template <class P, class B> class KnxFacade : private DeviceObject
         manufacturerId(0xfa);
         bauNumber(platform().uniqueSerialNumber());
         _bau.addSaveRestore(this);
-    }
+    }*/
 
-    KnxFacade(IsrFunctionPtr buttonISRFunction) : _platformPtr(new P()), _bauPtr(new B(*_platformPtr)), _bau(*_bauPtr)
+    KnxFacade(IsrFunctionPtr buttonISRFunction) : _platformPtr(new Stm32Platform()), _bauPtr(new Bau07B0(*_platformPtr)), _bau(*_bauPtr)
     {
         manufacturerId(0xfa);
         bauNumber(platform().uniqueSerialNumber());
@@ -66,12 +67,12 @@ template <class P, class B> class KnxFacade : private DeviceObject
             delete _platformPtr;
     }
 
-    P& platform()
+    Stm32Platform& platform()
     {
         return *_platformPtr;
     }
 
-    B& bau()
+    Bau07B0& bau()
     {
         return _bau;
     }
@@ -369,9 +370,9 @@ template <class P, class B> class KnxFacade : private DeviceObject
     }
 
   private:
-    P* _platformPtr = 0;
-    B* _bauPtr = 0;
-    B& _bau;
+    Stm32Platform* _platformPtr = 0;
+    Bau07B0* _bauPtr = 0;
+    Bau07B0& _bau;
     ProgLedOnCallback _progLedOnCallback = 0;
     ProgLedOffCallback _progLedOffCallback = 0;
     uint32_t _ledPinActiveOn = KNX_LED_ACTIVE_ON;
@@ -431,7 +432,8 @@ template <class P, class B> class KnxFacade : private DeviceObject
     #ifdef ARDUINO_ARCH_STM32
         // predefined global instance for TP only
         #if MASK_VERSION == 0x07B0
-            extern KnxFacade<Stm32Platform, Bau07B0> knx;
+			extern KnxFacade knx;
+            //extern KnxFacade<Stm32Platform, Bau07B0> knx;
         #else
             #error "Mask version not supported on ARDUINO_ARCH_STM32"
         #endif
