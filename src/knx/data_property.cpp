@@ -80,12 +80,12 @@ DataProperty::DataProperty(PropertyID id, bool writeEnable, PropertyDataType typ
                            uint16_t maxElements, uint8_t access)
     : Property(id, writeEnable, type, maxElements, access)
 {}
-
+/*
 DataProperty::~DataProperty()
 {
     if (_data)
         delete[] _data;
-}
+}*/
 
 DataProperty::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
                            uint16_t maxElements, uint8_t access, uint16_t value)
@@ -152,12 +152,12 @@ uint8_t* DataProperty::save(uint8_t* buffer)
 }
 
 
-const uint8_t* DataProperty::data()
+const uint8_t* DataProperty::DataProperty_data()
 {
     return _data;
 }
 
-const uint8_t* DataProperty::data(uint16_t elementIndex)
+const uint8_t* DataProperty::DataProperty_data(uint16_t elementIndex)
 {
     if ((elementIndex == 0) || (elementIndex > _currentElements))
         return nullptr;

@@ -197,11 +197,11 @@ const Property* InterfaceObject::property(PropertyID id) const
 const uint8_t* InterfaceObject::propertyData(PropertyID id)
 {
     DataProperty* prop = (DataProperty*)property(id);
-    return prop->data();
+    return prop->DataProperty_data();
 }
 
 const uint8_t* InterfaceObject::propertyData(PropertyID id, uint16_t elementIndex)
 {
     DataProperty* prop = (DataProperty*)property(id);
-    return prop->data(elementIndex);
+    return prop->DataProperty_data(elementIndex);
 }
