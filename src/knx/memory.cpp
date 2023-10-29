@@ -194,6 +194,18 @@ void Memory::addSaveRestore(DeviceObject* obj)
     _metadataSize += obj->saveSize();
 }
 
+void Memory::addSaveRestore(AddressTableObject* objj)
+{
+    if (_tableObjCount >= MAXTABLEOBJ)
+        return;
+        
+    TableObject* obj = new TableObject(objj->_memory);
+    _tableObjects[_tableObjCount] = obj;
+    _tableObjCount += 1;
+    _metadataSize += obj->saveSize();
+    _metadataSize += 2; // for size
+}
+
 void Memory::addSaveRestore(TableObject* obj)
 {
     if (_tableObjCount >= MAXTABLEOBJ)
