@@ -20,8 +20,8 @@ DeviceObject::DeviceObject()
 
     Property* properties[] =
     {
-        new DataProperty(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_DEVICE),
-        new DataProperty(PID_SERIAL_NUMBER, false, PDT_GENERIC_06, 1, ReadLv3 | WriteLv0, serialNumber), 
+        DataProperty(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_DEVICE),
+        DataProperty(PID_SERIAL_NUMBER, false, PDT_GENERIC_06, 1, ReadLv3 | WriteLv0, serialNumber), 
         new CallbackProperty<DeviceObject>(this, PID_MANUFACTURER_ID, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0,
             [](DeviceObject* io, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t 
             { 
@@ -35,10 +35,10 @@ DeviceObject::DeviceObject()
                 pushByteArray(io->propertyData(PID_SERIAL_NUMBER), 2, data);
                 return 1;
             }),
-        new DataProperty(PID_DEVICE_CONTROL, true, PDT_BITSET8, 1, ReadLv3 | WriteLv3, (uint8_t)0),
-        new DataProperty(PID_ORDER_INFO, false, PDT_GENERIC_10, 1, ReadLv3 | WriteLv0),
-        new DataProperty(PID_VERSION, false, PDT_VERSION, 1, ReadLv3 | WriteLv0, (uint16_t)3),
-        new DataProperty(PID_ROUTING_COUNT, true, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv3, (uint8_t)(6 << 4)),
+        DataProperty(PID_DEVICE_CONTROL, true, PDT_BITSET8, 1, ReadLv3 | WriteLv3, (uint8_t)0),
+        DataProperty(PID_ORDER_INFO, false, PDT_GENERIC_10, 1, ReadLv3 | WriteLv0),
+        DataProperty(PID_VERSION, false, PDT_VERSION, 1, ReadLv3 | WriteLv0, (uint16_t)3),
+        DataProperty(PID_ROUTING_COUNT, true, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv3, (uint8_t)(6 << 4)),
         new CallbackProperty<DeviceObject>(this, PID_PROG_MODE, true, PDT_BITSET8, 1, ReadLv3 | WriteLv3, 
             [](DeviceObject* io, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t 
             { 
@@ -60,7 +60,7 @@ DeviceObject::DeviceObject()
                 io->_prgMode = *data;
                 return 1;
             }),
-        new DataProperty(PID_MAX_APDU_LENGTH, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)254),
+        DataProperty(PID_MAX_APDU_LENGTH, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)254),
         new CallbackProperty<DeviceObject>(this, PID_SUBNET_ADDR, false, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv0,
             [](DeviceObject* io, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t 
             { 
@@ -88,11 +88,11 @@ DeviceObject::DeviceObject()
                 *data = (io->_ownAddress & 0xff);
                 return 1;
             }),
-        new DataProperty(PID_IO_LIST, false, PDT_UNSIGNED_INT, 8, ReadLv3 | WriteLv0),
-        new DataProperty(PID_HARDWARE_TYPE, true, PDT_GENERIC_06, 1, ReadLv3 | WriteLv3, hardwareType),
-        new DataProperty(PID_DEVICE_DESCRIPTOR, false, PDT_GENERIC_02, 1, ReadLv3 | WriteLv0),
+        DataProperty(PID_IO_LIST, false, PDT_UNSIGNED_INT, 8, ReadLv3 | WriteLv0),
+        DataProperty(PID_HARDWARE_TYPE, true, PDT_GENERIC_06, 1, ReadLv3 | WriteLv3, hardwareType),
+        DataProperty(PID_DEVICE_DESCRIPTOR, false, PDT_GENERIC_02, 1, ReadLv3 | WriteLv0),
 #ifdef USE_RF
-        new DataProperty(PID_RF_DOMAIN_ADDRESS_CEMI_SERVER, true, PDT_GENERIC_06, 1, ReadLv3 | WriteLv3),
+        DataProperty(PID_RF_DOMAIN_ADDRESS_CEMI_SERVER, true, PDT_GENERIC_06, 1, ReadLv3 | WriteLv3),
 #endif
     };
     initializeProperties(sizeof(properties), properties);
