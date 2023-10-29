@@ -55,7 +55,7 @@ void setup() {
     //digitalWrite(27,knx.paramByte(0) && 0x80);
     pinMode(PB11, OUTPUT);
     pinMode(PC13,OUTPUT);
-    digitalWrite(PC13,LOW);
+    /*digitalWrite(PC13,LOW);
     delay(1000);
     digitalWrite(PC13,HIGH);
     delay(1000);
@@ -64,7 +64,7 @@ void setup() {
     digitalWrite(PC13,HIGH);
     delay(1000);
     digitalWrite(PC13,LOW);
-    delay(1000);
+    delay(1000);*/
 
   randomSeed(HAL_GetTick());
 

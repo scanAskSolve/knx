@@ -5,7 +5,7 @@
 
 #include "association_table_object.h"
 #include "bits.h"
-#include "data_property.h"
+#include "property.h"
 
 using namespace std;
 

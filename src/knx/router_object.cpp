@@ -7,7 +7,7 @@
 #include "router_object.h"
 #include "bits.h"
 #include "memory.h"
-#include "data_property.h"
+#include "property.h"
 #include "callback_property.h"
 #include "function_property.h"
 

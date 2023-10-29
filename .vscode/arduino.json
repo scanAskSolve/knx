@@ -1,0 +1,6 @@
+{
+    "configuration": "pnum=BLUEPILL_F103C8B,upload_method=swdMethod,xserial=generic,usb=none,xusb=FS,opt=osstd,rtlib=nano",
+    "board": "STM32:stm32:GenF1",
+    "port": "COM3",
+    "sketch": "examples\\knx-STM\\knx-STM.ino"
+}

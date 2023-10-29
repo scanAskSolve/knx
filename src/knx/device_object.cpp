@@ -4,7 +4,7 @@
 
 #include "device_object.h"
 #include "bits.h"
-#include "data_property.h"
+#include "property.h"
 #include "callback_property.h"
 #include "config.h"
 

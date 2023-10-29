@@ -7,7 +7,7 @@
 #include "security_interface_object.h"
 #include "secure_application_layer.h"
 #include "bits.h"
-#include "data_property.h"
+#include "property.h"
 #include "callback_property.h"
 #include "function_property.h"
 

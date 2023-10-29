@@ -7,7 +7,7 @@
 
 #include "cemi_server_object.h"
 #include "bits.h"
-#include "data_property.h"
+#include "property.h"
 
 CemiServerObject::CemiServerObject()
 {
