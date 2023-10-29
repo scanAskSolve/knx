@@ -113,9 +113,7 @@ Property::Property(PropertyID id, bool writeEnable, PropertyDataType type,
 {}
 
 Property::~Property()
-{    if (_data)
-        delete[] _data;
-}
+{}
 
 
 uint8_t Property::read(uint8_t& value) const
@@ -243,7 +241,7 @@ uint16_t Property::saveSize()
 
 //-----------------------------------------------------------------------
 
-uint8_t Property::read(uint16_t start, uint8_t count, uint8_t* data) const
+uint8_t Property::DataProperty_read(uint16_t start, uint8_t count, uint8_t* data) const
 {
     if (start == 0)
     {
@@ -264,7 +262,7 @@ uint8_t Property::read(uint16_t start, uint8_t count, uint8_t* data) const
     return count;
 }
 
-uint8_t Property::write(uint16_t start, uint8_t count, const uint8_t* data)
+uint8_t Property::DataProperty_write(uint16_t start, uint8_t count, const uint8_t* data)
 {
     if (count == 0 || start > _maxElements || start + count > _maxElements + 1)
         return 0;
@@ -312,43 +310,45 @@ uint8_t Property::write(uint16_t start, uint8_t count, const uint8_t* data)
     return count;
 }
 
-//: _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 
 Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
                            uint16_t maxElements, uint8_t access)
-    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
-{}
-/*Property::~DataProperty()
+{
+	Property(id, writeEnable, type, maxElements, access);
+}
+/*
+Property::~DataProperty()
 {
     if (_data)
         delete[] _data;
-}*/
+}
+*/
 
 Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
                            uint16_t maxElements, uint8_t access, uint16_t value)
-    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
-    write(value);
+	Property(id, writeEnable, type, maxElements, access);
+	write(value);
 }
 
 Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, 
                            uint16_t maxElements, uint8_t access, uint32_t value)
-    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
-    write(value);
+	Property(id, writeEnable, type, maxElements, access);
+	write(value);
 }
 
 Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
                            uint16_t maxElements, uint8_t access, uint8_t value)
-    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
-    write(value);
+	Property(id, writeEnable, type, maxElements, access);
+	write(value);
 }
 
 Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
                            uint16_t maxElements, uint8_t access, const uint8_t* value)
-    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
+	Property(id, writeEnable, type, maxElements, access);
     write(value);
 }
 

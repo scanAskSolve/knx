@@ -210,7 +210,7 @@ void DeviceObject::bauNumber(uint32_t value)
 
 const uint8_t* DeviceObject::orderNumber()
 {
-    DataProperty* prop = (DataProperty*)property(PID_ORDER_INFO);
+    Property* prop = property(PID_ORDER_INFO);
     return prop->DataProperty_data();
 }
 
@@ -222,7 +222,7 @@ void DeviceObject::orderNumber(const uint8_t* value)
 
 const uint8_t* DeviceObject::hardwareType()
 {
-    DataProperty* prop = (DataProperty*)property(PID_HARDWARE_TYPE);
+    Property* prop = property(PID_HARDWARE_TYPE);
     return prop->DataProperty_data();
 }
 
@@ -276,7 +276,7 @@ void DeviceObject::maxApduLength(uint16_t value)
 
 const uint8_t* DeviceObject::rfDomainAddress()
 {
-    DataProperty* prop = (DataProperty*)property(PID_RF_DOMAIN_ADDRESS_CEMI_SERVER);
+    Property* prop = property(PID_RF_DOMAIN_ADDRESS_CEMI_SERVER);
     return prop->DataProperty_data();
 }
 
