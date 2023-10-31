@@ -303,7 +303,7 @@ class Property
 	const uint8_t* DataProperty_data();
     const uint8_t* DataProperty_data(uint16_t elementIndex);
 	//-----------------------------------------------------------------------
-  protected:
+  //protected:
     PropertyID _id;
     bool _writeEnable;
     PropertyDataType _type;

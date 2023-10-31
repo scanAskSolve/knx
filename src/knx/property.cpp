@@ -311,12 +311,7 @@ uint8_t Property::DataProperty_write(uint16_t start, uint8_t count, const uint8_
 }
 
 
-Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
-                           uint16_t maxElements, uint8_t access)
-    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
-{
-	return this;
-}
+
 /*
 Property::~DataProperty()
 {
@@ -324,13 +319,20 @@ Property::~DataProperty()
         delete[] _data;
 }*/
 	
+Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
+                           uint16_t maxElements, uint8_t access)
+    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
+{
+	return this;
+}
+	
 
 Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
                            uint16_t maxElements, uint8_t access, uint16_t value)
     : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
 	write(value);
-	return this*;
+	return this;
 }
 
 Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, 
@@ -338,7 +340,7 @@ Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataTy
     : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
 	write(value);
-	return this*;
+	return this;
 }
 
 Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
@@ -346,7 +348,7 @@ Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataTy
     : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
 	write(value);
-	return this*;
+	return this;
 }
 
 Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
@@ -354,7 +356,7 @@ Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataTy
     : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
     write(value);
-	return this*;
+	return this;
 }
 
 uint16_t Property::DataProperty_saveSize()

@@ -13,7 +13,7 @@ GroupObjectTableObject::GroupObjectTableObject(Memory& memory)
 {
     Property* properties[]
     {
-        DataProperty(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_GRP_OBJ_TABLE)
+        Property::DataProperty(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_GRP_OBJ_TABLE)
     };
     TableObject::initializeProperties(sizeof(properties), properties);
 }
