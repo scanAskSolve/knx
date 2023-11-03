@@ -116,22 +116,22 @@ Property::~Property()
 {}
 
 
-uint8_t Property::read(uint8_t& value) const
+uint8_t Property::read(uint8_t& value)
 {
     if (ElementSize() != 1)
         return 0;
     
-    return read(1, 1, &value);
+    return DataProperty_read(1, 1, &value);
 }
 
 
-uint8_t Property::read(uint16_t& value) const
+uint8_t Property::read(uint16_t& value)
 {
     if (ElementSize() != 2)
         return 0;
 
     uint8_t data[2];
-    uint8_t count = read(1, 1, data);
+    uint8_t count = DataProperty_read(1, 1, data);
     if (count > 0)
     {
         popWord(value, data);
@@ -140,13 +140,13 @@ uint8_t Property::read(uint16_t& value) const
 }
 
 
-uint8_t Property::read(uint32_t& value) const
+uint8_t Property::read(uint32_t& value)
 {
     if (ElementSize() != 4)
         return 0;
 
     uint8_t data[4];
-    uint8_t count = read(1, 1, data);
+    uint8_t count = DataProperty_read(1, 1, data);
     if (count > 0)
     {
         popInt(value, data);
@@ -154,9 +154,9 @@ uint8_t Property::read(uint32_t& value) const
     return count;
 }
 
-uint8_t Property::read(uint8_t* value) const
+uint8_t Property::read(uint8_t* value)
 {
-    return read(1, 1, value);
+    return DataProperty_read(1, 1, value);
 }
 
 uint8_t Property::write(uint8_t value)
@@ -164,7 +164,7 @@ uint8_t Property::write(uint8_t value)
     if (ElementSize() != 1)
         return 0;
 
-    return write(1, 1, &value);
+    return DataProperty_write(1, 1, &value);
 }
 
 
@@ -175,7 +175,7 @@ uint8_t Property::write(uint16_t value)
 
     uint8_t data[2];
     pushWord(value, data);
-    return write(1, 1, data);
+    return DataProperty_write(1, 1, data);
 }
 
 
@@ -186,13 +186,13 @@ uint8_t Property::write(uint32_t value)
 
     uint8_t data[4];
     pushInt(value, data);
-    return write(1, 1, data);
+    return DataProperty_write(1, 1, data);
 }
 
 
 uint8_t Property::write(const uint8_t* value)
 {
-    return write(1, 1, value);
+    return DataProperty_write(1, 1, value);
 }
 
 
@@ -203,7 +203,7 @@ uint8_t Property::write(uint16_t position, uint16_t value)
 
     uint8_t data[2];
     pushWord(value, data);
-    return write(position, 1, data);
+    return DataProperty_write(position, 1, data);
 }
 
 void Property::command(uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
@@ -241,7 +241,7 @@ uint16_t Property::saveSize()
 
 //-----------------------------------------------------------------------
 
-uint8_t Property::DataProperty_read(uint16_t start, uint8_t count, uint8_t* data) const
+uint8_t Property::DataProperty_read(uint16_t start, uint8_t count, uint8_t* data)
 {
     if (start == 0)
     {
@@ -318,45 +318,64 @@ Property::~DataProperty()
     if (_data)
         delete[] _data;
 }*/
-	
+	//    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
                            uint16_t maxElements, uint8_t access)
-    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
-	return this;
+	Property* prop = new Property(id, writeEnable, type, maxElements, access);
+	return prop;
+	//Property(id, writeEnable, type, maxElements, access);
+	//return this;
 }
 	
 
 Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
                            uint16_t maxElements, uint8_t access, uint16_t value)
-    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
-	write(value);
-	return this;
+	
+	Property* prop = new Property(id, writeEnable, type, maxElements, access);
+	prop->write(value);
+	return prop;
+	//Property(id, writeEnable, type, maxElements, access);
+	//write(value);
+	//return this;
 }
 
 Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, 
                            uint16_t maxElements, uint8_t access, uint32_t value)
-    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
-	write(value);
-	return this;
+	
+	Property* prop = new Property(id, writeEnable, type, maxElements, access);
+	prop->write(value);
+	return prop;
+	//Property(id, writeEnable, type, maxElements, access);
+	//write(value);
+	//return this;
+
 }
 
 Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
                            uint16_t maxElements, uint8_t access, uint8_t value)
-    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {
-	write(value);
-	return this;
+	
+	Property* prop = new Property(id, writeEnable, type, maxElements, access);
+	prop->write(value);
+	return prop;
+	//Property(id, writeEnable, type, maxElements, access);
+	//write(value);
+	//return this;
+
 }
 
 Property* Property::DataProperty(PropertyID id, bool writeEnable, PropertyDataType type,
                            uint16_t maxElements, uint8_t access, const uint8_t* value)
-    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
-{
-    write(value);
-	return this;
+{	
+	Property* prop = new Property(id, writeEnable, type, maxElements, access);
+	prop->write(value);
+	return prop;
+	//Property(id, writeEnable, type, maxElements, access);
+	//write(value);
+	//return this;
 }
 
 uint16_t Property::DataProperty_saveSize()

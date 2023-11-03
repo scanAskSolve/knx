@@ -14,12 +14,12 @@ template <class T> class FunctionProperty : public Property
         /* max_elements is set to 1, read and write level any value so we use Lv0, see 3.3.7 Application Layer p.68 */
     {}
     
-    uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const override
+    uint8_t read(uint16_t start, uint8_t count, uint8_t* data)
     {
         return 0;
     }
 
-    uint8_t write(uint16_t start, uint8_t count, const uint8_t* data) override
+    uint8_t write(uint16_t start, uint8_t count, const uint8_t* data)
     {
         return 0;
     }

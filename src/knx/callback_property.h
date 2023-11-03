@@ -18,14 +18,14 @@ template <class T> class CallbackProperty : public Property
         : Property(id, writeEnable, type, maxElements, access), _interfaceObject(io), _readCallback(readCallback)
     {}
     
-    uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const override
+    uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const
     {
         if (count == 0 || _readCallback == nullptr || start > _maxElements || start + count > _maxElements + 1)
             return 0;
 
         return _readCallback(_interfaceObject, start, count, data);
     }
-    uint8_t write(uint16_t start, uint8_t count, const uint8_t* data) override
+    uint8_t write(uint16_t start, uint8_t count, const uint8_t* data)
     {
         if (count == 0 || start > _maxElements || start + count > _maxElements + 1 || _writeCallback == nullptr)
             return 0;

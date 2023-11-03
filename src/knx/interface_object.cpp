@@ -72,7 +72,7 @@ void InterfaceObject::readProperty(PropertyID id, uint16_t start, uint8_t& count
         return;
     }
 
-    count = prop->read(start, count, data);
+    count = prop->DataProperty_read(start, count, data);
 }
 
 void InterfaceObject::writeProperty(PropertyID id, uint16_t start, uint8_t* data, uint8_t& count)
@@ -84,7 +84,7 @@ void InterfaceObject::writeProperty(PropertyID id, uint16_t start, uint8_t* data
         return;
     }
 
-    count = prop->write(start, count, data);
+    count = prop->DataProperty_write(start, count, data);
 }
 
 uint8_t InterfaceObject::propertySize(PropertyID id)
