@@ -413,6 +413,20 @@ uint8_t* Property::DataProperty_save(uint8_t* buffer)
 
     return buffer;
 }
+const uint8_t* Property::DataProperty_data()
+{
+    return _data;
+}
+
+const uint8_t* Property::DataProperty_data(uint16_t elementIndex)
+{
+    if ((elementIndex == 0) || (elementIndex > _currentElements))
+        return nullptr;
+
+    elementIndex -= 1; // Starting from 0
+    uint16_t offset = elementIndex * ElementSize();
+    return _data + offset;
+}
 
 
 
