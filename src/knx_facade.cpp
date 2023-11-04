@@ -40,7 +40,8 @@
 
     #ifdef ARDUINO_ARCH_STM32
         #if MASK_VERSION == 0x07B0
-            KnxFacade<Stm32Platform, Bau07B0> knx(buttonEvent);
+            //KnxFacade<Stm32Platform, Bau07B0> knx(buttonEvent);
+		    KnxFacade knx(buttonEvent);
         #else
             #error "Mask version not supported on ARDUINO_ARCH_STM32"
         #endif
