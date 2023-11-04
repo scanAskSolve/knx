@@ -5,7 +5,6 @@
 #include "arduino_platform.h"
 #include "device_object.h"
 #include "table_object.h"
-#include "address_table_object.h"
 
 #define MAXSAVE 5
 #define MAXTABLEOBJ 4
@@ -13,7 +12,7 @@
 #ifndef KNX_FLASH_SIZE
 #define KNX_FLASH_SIZE 1024
 #endif
-class AddressTableObject;
+
 class MemoryBlock
 {
   public:
@@ -44,7 +43,6 @@ public:
     void saveMemory();
     virtual void addSaveRestore(DeviceObject* obj);
     void addSaveRestore(TableObject* obj);
-    void addSaveRestore(AddressTableObject* objj);
 
     uint8_t* allocMemory(size_t size);
     void freeMemory(uint8_t* ptr);
