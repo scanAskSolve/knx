@@ -5,16 +5,16 @@
 
 #include "address_table_object.h"
 #include "bits.h"
-#include "data_property.h"
+#include "property.h"
 
 using namespace std;
 
 AddressTableObject::AddressTableObject(Memory& memory)
     : TableObject(memory)
-{
+{	
     Property* properties[] =
     {
-        new DataProperty(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_ADDR_TABLE)
+		new Property(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_ADDR_TABLE)
     };
 
     TableObject::initializeProperties(sizeof(properties), properties);

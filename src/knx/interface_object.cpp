@@ -4,7 +4,7 @@
 
 
 #include "interface_object.h"
-#include "data_property.h"
+#include "property.h"
 
 InterfaceObject::~InterfaceObject()
 {
@@ -196,12 +196,12 @@ const Property* InterfaceObject::property(PropertyID id) const
 
 const uint8_t* InterfaceObject::propertyData(PropertyID id)
 {
-    DataProperty* prop = (DataProperty*)property(id);
+    Property* prop = property(id);
     return prop->data();
 }
 
 const uint8_t* InterfaceObject::propertyData(PropertyID id, uint16_t elementIndex)
 {
-    DataProperty* prop = (DataProperty*)property(id);
+    Property* prop = property(id);
     return prop->data(elementIndex);
 }

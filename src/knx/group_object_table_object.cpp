@@ -6,14 +6,14 @@
 #include "group_object_table_object.h"
 #include "group_object.h"
 #include "bits.h"
-#include "data_property.h"
+#include "property.h"
 
 GroupObjectTableObject::GroupObjectTableObject(Memory& memory)
     : TableObject(memory)
 {
     Property* properties[]
     {
-        new DataProperty(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_GRP_OBJ_TABLE)
+        new Property(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_GRP_OBJ_TABLE)
     };
     TableObject::initializeProperties(sizeof(properties), properties);
 }

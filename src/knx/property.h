@@ -261,36 +261,62 @@ class Property
 {
   public:
     Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access);
-    virtual ~Property();
+	Property(PropertyID id, bool writeEnable, PropertyDataType type,uint16_t maxElements, uint8_t access, uint16_t value);
+	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint32_t value);
+	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint8_t value);
+	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, const uint8_t* value);
+     ~Property();
     PropertyID Id() const;
     bool WriteEnable() const;
     PropertyDataType Type() const;
     uint16_t MaxElements() const;
     uint8_t Access() const;
     uint8_t ElementSize() const;
-    virtual uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const = 0;
-    virtual uint8_t write(uint16_t start, uint8_t count, const uint8_t* data) = 0;
+    //virtual uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const = 0;
+    //virtual uint8_t write(uint16_t start, uint8_t count, const uint8_t* data) = 0;
     virtual void command(uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength);
     virtual void state(uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength);
-    uint8_t read(uint8_t& value) const;
-    uint8_t read(uint16_t& value) const;
-    uint8_t read(uint32_t& value) const;
-    uint8_t read(uint8_t* value) const;
+    uint8_t read(uint8_t& value) const; 
+    uint8_t read(uint16_t& value) const; 
+    uint8_t read(uint32_t& value) const; 
+    uint8_t read(uint8_t* value) const; 
     uint8_t write(uint8_t value);
     uint8_t write(uint16_t value);
     uint8_t write(uint16_t position, uint16_t value);
     uint8_t write(uint32_t value);
     uint8_t write(const uint8_t* value);
 
-	virtual uint8_t* save(uint8_t* buffer);
-	virtual const uint8_t* restore(const uint8_t* buffer);
-	virtual uint16_t saveSize();
+	//virtual uint8_t* save(uint8_t* buffer);
+	//virtual const uint8_t* restore(const uint8_t* buffer);
+	//virtual uint16_t saveSize();
 
-	
-  protected:
+
+
+	//-----------------------------------------------------------------------
+	/*static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access);
+    static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint8_t value);
+    static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint16_t value);
+    static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint32_t value);
+    static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, const uint8_t* value);*/
+    //void ~DataProperty();
+	virtual uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const;
+    virtual uint8_t write(uint16_t start, uint8_t count, const uint8_t* data);
+    virtual uint8_t* save(uint8_t* buffer);
+    virtual const uint8_t* restore(const uint8_t* buffer);
+    virtual uint16_t saveSize();
+	const uint8_t* data();
+    const uint8_t* data(uint16_t elementIndex);
+	//-----------------------------------------------------------------------
+  //protected:
     PropertyID _id;
     bool _writeEnable;
     PropertyDataType _type;
     uint16_t _maxElements;
     uint8_t _access;
+	//-----------------------------------------------------------------------
+  //private:
+	uint16_t _currentElements = 0;
+	uint8_t* _data = nullptr;
+
+	//-----------------------------------------------------------------------
 };
