@@ -265,7 +265,7 @@ class Property
 	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint32_t value);
 	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint8_t value);
 	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, const uint8_t* value);
-    virtual ~Property();
+     ~Property();
     PropertyID Id() const;
     bool WriteEnable() const;
     PropertyDataType Type() const;
@@ -276,10 +276,10 @@ class Property
     //virtual uint8_t write(uint16_t start, uint8_t count, const uint8_t* data) = 0;
     virtual void command(uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength);
     virtual void state(uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength);
-    uint8_t read(uint8_t& value);
-    uint8_t read(uint16_t& value);
-    uint8_t read(uint32_t& value);
-    uint8_t read(uint8_t* value);
+    uint8_t read(uint8_t& value) const; 
+    uint8_t read(uint16_t& value) const; 
+    uint8_t read(uint32_t& value) const; 
+    uint8_t read(uint8_t* value) const; 
     uint8_t write(uint8_t value);
     uint8_t write(uint16_t value);
     uint8_t write(uint16_t position, uint16_t value);
@@ -299,7 +299,7 @@ class Property
     static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint32_t value);
     static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, const uint8_t* value);*/
     //void ~DataProperty();
-	uint8_t read(uint16_t start, uint8_t count, uint8_t* data);
+	uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const;
     uint8_t write(uint16_t start, uint8_t count, const uint8_t* data);
     virtual uint8_t* save(uint8_t* buffer);
     virtual const uint8_t* restore(const uint8_t* buffer);

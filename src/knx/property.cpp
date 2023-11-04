@@ -111,6 +111,7 @@ Property::Property(PropertyID id, bool writeEnable, PropertyDataType type,
                    uint16_t maxElements, uint8_t access)
     : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access)
 {}
+/*
 
 Property::Property(PropertyID id, bool writeEnable, PropertyDataType type,
                            uint16_t maxElements, uint8_t access, uint16_t value)
@@ -139,6 +140,35 @@ Property::Property(PropertyID id, bool writeEnable, PropertyDataType type,
 {	
 	write(value);
 }
+*/
+
+Property::Property(PropertyID id, bool writeEnable, PropertyDataType type,
+                           uint16_t maxElements, uint8_t access, uint16_t value)
+    : Property(id, writeEnable, type, maxElements, access)
+{
+    Property::write(value);
+}
+
+Property::Property(PropertyID id, bool writeEnable, PropertyDataType type, 
+                           uint16_t maxElements, uint8_t access, uint32_t value)
+    : Property(id, writeEnable, type, maxElements, access)
+{
+    Property::write(value);
+}
+
+Property::Property(PropertyID id, bool writeEnable, PropertyDataType type,
+                           uint16_t maxElements, uint8_t access, uint8_t value)
+    : Property(id, writeEnable, type, maxElements, access)
+{
+    Property::write(value);
+}
+
+Property::Property(PropertyID id, bool writeEnable, PropertyDataType type,
+                           uint16_t maxElements, uint8_t access, const uint8_t* value)
+    : Property(id, writeEnable, type, maxElements, access)
+{
+    Property::write(value);
+}
 
 Property::~Property()
 {
@@ -147,7 +177,7 @@ Property::~Property()
 }
 
 
-uint8_t Property::read(uint8_t& value)
+uint8_t Property::read(uint8_t& value) const
 {
     if (ElementSize() != 1)
         return 0;
@@ -156,7 +186,7 @@ uint8_t Property::read(uint8_t& value)
 }
 
 
-uint8_t Property::read(uint16_t& value)
+uint8_t Property::read(uint16_t& value) const
 {
     if (ElementSize() != 2)
         return 0;
@@ -171,7 +201,7 @@ uint8_t Property::read(uint16_t& value)
 }
 
 
-uint8_t Property::read(uint32_t& value)
+uint8_t Property::read(uint32_t& value) const
 {
     if (ElementSize() != 4)
         return 0;
@@ -185,7 +215,7 @@ uint8_t Property::read(uint32_t& value)
     return count;
 }
 
-uint8_t Property::read(uint8_t* value)
+uint8_t Property::read(uint8_t* value) const
 {
     return read(1, 1, value);
 }
@@ -272,7 +302,7 @@ uint16_t Property::saveSize()
 
 //-----------------------------------------------------------------------
 
-uint8_t Property::read(uint16_t start, uint8_t count, uint8_t* data)
+uint8_t Property::read(uint16_t start, uint8_t count, uint8_t* data) const 
 {
     if (start == 0)
     {
