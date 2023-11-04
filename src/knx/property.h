@@ -299,8 +299,8 @@ class Property
     static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint32_t value);
     static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, const uint8_t* value);*/
     //void ~DataProperty();
-	uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const;
-    uint8_t write(uint16_t start, uint8_t count, const uint8_t* data);
+	virtual uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const;
+    virtual uint8_t write(uint16_t start, uint8_t count, const uint8_t* data);
     virtual uint8_t* save(uint8_t* buffer);
     virtual const uint8_t* restore(const uint8_t* buffer);
     virtual uint16_t saveSize();
