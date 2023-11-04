@@ -319,7 +319,7 @@ void TableObject::initializeProperties(size_t propertiesSize, Property** propert
     
                 return 1;
             }),
-        Property::DataProperty(PID_ERROR_CODE, false, PDT_ENUM8, 1, ReadLv3 | WriteLv0, (uint8_t)E_NO_FAULT)
+        new Property(PID_ERROR_CODE, false, PDT_ENUM8, 1, ReadLv3 | WriteLv0, (uint8_t)E_NO_FAULT)
      };
     //TODO: missing
 

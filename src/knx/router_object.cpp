@@ -58,9 +58,9 @@ void RouterObject::initialize(CouplerModel model, uint8_t objIndex, DptMedium me
     // These properties are always present
     Property* fixedProperties[] =
     {
-        Property::DataProperty( PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t) OT_ROUTER ),
-        Property::DataProperty( PID_MEDIUM_STATUS, false, PDT_GENERIC_01, 1, ReadLv3 | WriteLv0, (uint16_t) 0 ), // 0 means communication is possible, could be set by datalink layer or bau to 1 (comm impossible)
-        Property::DataProperty( PID_MAX_APDU_LENGTH_ROUTER, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, maxApduSize ),
+        new Property( PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t) OT_ROUTER ),
+        new Property( PID_MEDIUM_STATUS, false, PDT_GENERIC_01, 1, ReadLv3 | WriteLv0, (uint16_t) 0 ), // 0 means communication is possible, could be set by datalink layer or bau to 1 (comm impossible)
+        new Property( PID_MAX_APDU_LENGTH_ROUTER, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, maxApduSize ),
     };
     uint8_t fixedPropertiesCount = sizeof(fixedProperties) / sizeof(Property*);
 
@@ -68,10 +68,10 @@ void RouterObject::initialize(CouplerModel model, uint8_t objIndex, DptMedium me
     Property* model1xProperties[] =
     {
         // TODO: implement filtering based on this config here
-        Property::DataProperty( PID_MAIN_LCCONFIG, true, PDT_BITSET8, 1, ReadLv3 | WriteLv0, (uint8_t) 0 ), // Primary: data individual (connless and connorient) + broadcast
-        Property::DataProperty( PID_SUB_LCCONFIG, true, PDT_BITSET8, 1, ReadLv3 | WriteLv0, (uint8_t) 0 ), // Secondary: data individual (connless and connorient) + broadcast
-        Property::DataProperty( PID_MAIN_LCGRPCONFIG, true, PDT_BITSET8, 1, ReadLv3 | WriteLv0, (uint8_t) 0 ), // Primary: data group
-        Property::DataProperty( PID_SUB_LCGRPCONFIG, true, PDT_BITSET8, 1, ReadLv3 | WriteLv0, (uint8_t) 0 ), // Secondary: data group
+        new Property( PID_MAIN_LCCONFIG, true, PDT_BITSET8, 1, ReadLv3 | WriteLv0, (uint8_t) 0 ), // Primary: data individual (connless and connorient) + broadcast
+        new Property( PID_SUB_LCCONFIG, true, PDT_BITSET8, 1, ReadLv3 | WriteLv0, (uint8_t) 0 ), // Secondary: data individual (connless and connorient) + broadcast
+        new Property( PID_MAIN_LCGRPCONFIG, true, PDT_BITSET8, 1, ReadLv3 | WriteLv0, (uint8_t) 0 ), // Primary: data group
+        new Property( PID_SUB_LCGRPCONFIG, true, PDT_BITSET8, 1, ReadLv3 | WriteLv0, (uint8_t) 0 ), // Secondary: data group
     };
     uint8_t model1xPropertiesCount = sizeof(model1xProperties) / sizeof(Property*);
 
@@ -79,15 +79,15 @@ void RouterObject::initialize(CouplerModel model, uint8_t objIndex, DptMedium me
     // One router object per interface, currently only TP1/RF coupler specified
     Property* model20Properties[] =
     {
-        Property::DataProperty( PID_OBJECT_INDEX, false, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv0, objIndex ), // Must be set by concrete BAUxxxx!
-        Property::DataProperty( PID_MEDIUM, false, PDT_ENUM8, 1, ReadLv3 | WriteLv0, (uint8_t) mediumType ),
+        new Property( PID_OBJECT_INDEX, false, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv0, objIndex ), // Must be set by concrete BAUxxxx!
+        new Property( PID_MEDIUM, false, PDT_ENUM8, 1, ReadLv3 | WriteLv0, (uint8_t) mediumType ),
     };
     uint8_t model20PropertiesCount = sizeof(model20Properties) / sizeof(Property*);
 
     Property* tableProperties[] =
     {
-        Property::DataProperty( PID_COUPLER_SERVICES_CONTROL, true, PDT_GENERIC_01, 1, ReadLv3 | WriteLv0, (uint8_t) 0), // written by ETS TODO: implement
-        Property::DataProperty( PID_FILTER_TABLE_USE, true, PDT_BINARY_INFORMATION, 1, ReadLv3 | WriteLv0, (uint16_t) 0 ), // default: invalid filter table, do not use, written by ETS
+        new Property( PID_COUPLER_SERVICES_CONTROL, true, PDT_GENERIC_01, 1, ReadLv3 | WriteLv0, (uint8_t) 0), // written by ETS TODO: implement
+        new Property( PID_FILTER_TABLE_USE, true, PDT_BINARY_INFORMATION, 1, ReadLv3 | WriteLv0, (uint16_t) 0 ), // default: invalid filter table, do not use, written by ETS
         new FunctionProperty<RouterObject>(this, PID_ROUTETABLE_CONTROL,
                 // Command Callback of PID_ROUTETABLE_CONTROL
                 [](RouterObject* obj, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength) -> void {
@@ -127,7 +127,7 @@ void RouterObject::initialize(CouplerModel model, uint8_t objIndex, DptMedium me
     {
         // TODO: Primary side: 5 for line coupler, 4 for backbone coupler, only exists if secondary is open medium without hop count
         // Do we need to set a default value here or is it written by ETS?
-        allProperties[i++] = Property::DataProperty( PID_HOP_COUNT, true, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t) 5);
+        allProperties[i++] = new Property( PID_HOP_COUNT, true, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t) 5);
     }
 
     if (useTable)
