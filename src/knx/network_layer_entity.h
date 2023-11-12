@@ -10,8 +10,6 @@ class NetworkLayer;
 
 class NetworkLayerEntity
 {
-    //friend class NetworkLayerCoupler;
-    //friend class NetworkLayerDevice;
 
   public:
     NetworkLayerEntity(NetworkLayer &netLayer, uint8_t entityIndex);

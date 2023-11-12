@@ -12,7 +12,7 @@ BauSystemBCoupler::BauSystemBCoupler(ArduinoPlatform& platform) :
     _appLayer(*this),
 #endif
     _transLayer(_appLayer),
-    _netLayer(_deviceObj, _transLayer)
+    _netLayer(_deviceObj, _transLayer, coupler)
 {
     _appLayer.transportLayer(_transLayer);
     _transLayer.networkLayer(_netLayer);

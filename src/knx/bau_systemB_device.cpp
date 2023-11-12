@@ -12,7 +12,7 @@ BauSystemBDevice::BauSystemBDevice(ArduinoPlatform& platform) :
 #else
     _appLayer(*this),
 #endif
-    _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer)
+    _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, device)
 {
     _appLayer.transportLayer(_transLayer);
     _appLayer.associationTableObject(_assocTable);

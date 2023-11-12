@@ -12,7 +12,7 @@
 #include "application_layer.h"
 #include "secure_application_layer.h"
 #include "transport_layer.h"
-#include "network_layer_device.h"
+#include "network_layer.h"
 #include "data_link_layer.h"
 // #include "platform.h"
 #include "memory.h"
@@ -52,7 +52,7 @@ class BauSystemBDevice : public BauSystemB
     ApplicationLayer _appLayer;
 #endif
     TransportLayer _transLayer;
-    NetworkLayerDevice _netLayer;
+    NetworkLayer _netLayer;
 
     bool _configured = true;
 };

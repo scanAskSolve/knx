@@ -9,7 +9,7 @@
 #include "application_layer.h"
 #include "secure_application_layer.h"
 #include "transport_layer.h"
-#include "network_layer_coupler.h"
+#include "network_layer.h"
 #include "data_link_layer.h"
 #include "arduino_platform.h"
 #include "memory.h"
@@ -35,6 +35,6 @@ class BauSystemBCoupler : public BauSystemB
     ApplicationLayer _appLayer;
 #endif
     TransportLayer _transLayer;
-    NetworkLayerCoupler _netLayer;
+    NetworkLayer _netLayer;
     bool _configured = true;
 };
