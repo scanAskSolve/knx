@@ -13,12 +13,14 @@ class RouterObject;
 enum LayerType
 {
     coupler,
-    device
+    device,
+    none
 };
 class NetworkLayer
 {
 
   public:
+    NetworkLayer(DeviceObject& deviceObj, TransportLayer& layer);
     NetworkLayerEntity& getInterface();
     static constexpr uint8_t kInterfaceIndex = 0;
     
@@ -29,7 +31,7 @@ class NetworkLayer
         TP1Bridge,
         TP1Repeater
     };
-    LayerType _layerType;
+    LayerType _layerType=none;
 
     NetworkLayerEntity _netLayerEntities[2];
 
@@ -59,8 +61,9 @@ class NetworkLayer
     void rtObjSecondary(RouterObject& rtObjSecondary); // Coupler model 2.0
     void rtObj(RouterObject& rtObj); // Coupler model 1.x
 
-    NetworkLayer(DeviceObject& deviceObj, TransportLayer& layer,LayerType layerType);
-    NetworkLayer(DeviceObject& deviceObj, TransportLayer& layer);
+    // NetworkLayer(DeviceObject& deviceObj, TransportLayer& layer,LayerType layerType);
+    
+    void setLayerType(LayerType LayerType);
     uint8_t hopCount() const;
     bool isApciSystemBroadcast(APDU& apdu);
 

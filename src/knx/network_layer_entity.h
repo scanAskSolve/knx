@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "knx_types.h"
 #include "npdu.h"
-
+#include "network_layer.h"
 
 class TpUartDataLinkLayer;
 class NetworkLayer;
