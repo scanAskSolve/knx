@@ -35,8 +35,8 @@ public:
 
   NetworkLayerEntity* _netLayerEntities[2];
 
-  RouterObject* _rtObjPrimary{nullptr};
-  RouterObject* _rtObjSecondary{nullptr};
+  RouterObject* _rtObjPrimary {nullptr};
+  RouterObject* _rtObjSecondary {nullptr};
 
   CouplerType _couplerType;
   uint16_t _currentAddress;

@@ -21,7 +21,7 @@ void NetworkLayer::setLayerType(LayerType layerType)
         new (&_netLayerEntities[1]) NetworkLayerEntity(*this, kSecondaryIfIndex);
         // _netLayerEntities = { NetworkLayerEntity(*this, kPrimaryIfIndex),
         //                       NetworkLayerEntity(*this, kSecondaryIfIndex) };
-        _currentAddress = this._deviceObj.individualAddress();
+        _currentAddress = _deviceObj.individualAddress();
         evaluateCouplerType();
     }
     else if (_layerType == device)
@@ -130,6 +130,7 @@ bool NetworkLayer::isGroupAddressInFilterTable(uint16_t groupAddress)
         return (_rtObjPrimary != nullptr) ? _rtObjPrimary->isGroupAddressInFilterTable(groupAddress) : false;
     else
     {
+
         return _rtObjSecondary->isGroupAddressInFilterTable(groupAddress);
     }
 }
