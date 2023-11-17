@@ -6,36 +6,14 @@
 #include "bits.h"
 #include "apdu.h"
 
-// NetworkLayer::NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer, LayerType layerType) : _deviceObj(deviceObj),
-//                                                                                                   _layerType(layerType),
-//                                                                                                   _transportLayer(layer)
-
-// {
-//     _hopCount = _deviceObj.defaultHopCount();
-//     if (_layerType == coupler)
-//     {
-//         new (&_netLayerEntities[0]) NetworkLayerEntity(*this, kPrimaryIfIndex);
-//         new (&_netLayerEntities[1]) NetworkLayerEntity(*this, kSecondaryIfIndex);
-//         // _netLayerEntities = { NetworkLayerEntity(*this, kPrimaryIfIndex),
-//         //                       NetworkLayerEntity(*this, kSecondaryIfIndex) };
-//         _currentAddress = deviceObj.individualAddress();
-//         evaluateCouplerType();
-//     }
-//     else if (_layerType == device)
-//     {
-//         new (&_netLayerEntities[0]) NetworkLayerEntity(*this, kInterfaceIndex);
-//         new (&_netLayerEntities[1]) NetworkLayerEntity(*this, kInterfaceIndex);
-//         // _netLayerEntities = { NetworkLayerEntity(*this, kInterfaceIndex),NetworkLayerEntity(*this, kInterfaceIndex)};
-//     }
-// }
-
 NetworkLayer::NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer) : _deviceObj(deviceObj), _transportLayer(layer)
 {
-    _layerType=none;
+    _layerType = none;
     _hopCount = _deviceObj.defaultHopCount();
 }
 
-void NetworkLayer::setLayerType(LayerType layerType){
+void NetworkLayer::setLayerType(LayerType layerType)
+{
     _layerType = layerType;
     if (_layerType == coupler)
     {
@@ -86,12 +64,12 @@ bool NetworkLayer::isApciSystemBroadcast(APDU &apdu)
 
 NetworkLayerEntity &NetworkLayer::getPrimaryInterface()
 {
-    return _netLayerEntities[0];
+    return *_netLayerEntities[0];
 }
 
 NetworkLayerEntity &NetworkLayer::getSecondaryInterface()
 {
-    return _netLayerEntities[1];
+    return *_netLayerEntities[1];
 }
 
 void NetworkLayer::rtObj(RouterObject &rtObj)
@@ -221,7 +199,7 @@ void NetworkLayer::sendMsgHopCount(AckType ack, AddressType addrType, uint16_t d
     print(destination, HEX);
     print(" - ");
     npdu.frame().apdu().printPDU();
-    _netLayerEntities[interfaceIndex].sendDataRequest(npdu, ack, destination, source, priority, addrType, broadcastType);
+    _netLayerEntities[interfaceIndex]->sendDataRequest(npdu, ack, destination, source, priority, addrType, broadcastType);
 }
 
 // TODO: for later: improve by putting routing algorithms in its own class/functions and only instantiate required algorithm (line vs. coupler)
@@ -301,7 +279,7 @@ void NetworkLayer::routeDataIndividual(AckType ack, uint16_t destination, NPDU &
         {
             // if destination is not within our subnet then send via primary interface, else via secondary interface
             uint8_t destIfidx = (ZS != ownSNA) ? kPrimaryIfIndex : kSecondaryIfIndex;
-            _netLayerEntities[destIfidx].sendDataRequest(npdu, ack, destination, source, priority, AddressType::IndividualAddress, Broadcast);
+            _netLayerEntities[destIfidx]->sendDataRequest(npdu, ack, destination, source, priority, AddressType::IndividualAddress, Broadcast);
             return;
         }
     }
@@ -357,7 +335,7 @@ void NetworkLayer::routeDataIndividual(AckType ack, uint16_t destination, NPDU &
         {
             // if destination is not within our area then send via primary interface, else via secondary interface
             uint8_t destIfidx = (Z != ownAA) ? kPrimaryIfIndex : kSecondaryIfIndex;
-            _netLayerEntities[destIfidx].sendDataRequest(npdu, ack, destination, source, priority, AddressType::IndividualAddress, Broadcast);
+            _netLayerEntities[destIfidx]->sendDataRequest(npdu, ack, destination, source, priority, AddressType::IndividualAddress, Broadcast);
             return;
         }
     }
@@ -458,7 +436,7 @@ void NetworkLayer::broadcastIndication(AckType ack, FrameFormat format, NPDU &np
         // Send it to our local stack first
         {
             HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
-            DptMedium mediumType = _netLayerEntities[srcIfIdx].mediumType();
+            DptMedium mediumType = _netLayerEntities[srcIfIdx]->mediumType();
 
             // for closed media like TP1 and IP
             if (((mediumType == DptMedium::KNX_TP1) || (mediumType == DptMedium::KNX_IP)) &&
@@ -478,7 +456,7 @@ void NetworkLayer::broadcastIndication(AckType ack, FrameFormat format, NPDU &np
     else if (_layerType = device)
     {
         HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
-        DptMedium mediumType = _netLayerEntities[srcIfIdx].mediumType();
+        DptMedium mediumType = _netLayerEntities[srcIfIdx]->mediumType();
 
         // for closed media like TP1 and IP there is no system broadcast
         // however we must be able to access those APCI via broadcast mode
@@ -586,7 +564,7 @@ void NetworkLayer::dataIndividualRequest(AckType ack, uint16_t destination, HopC
         //     print.print("-> NL  ");
         //     tpdu.apdu().printPDU();
         // }
-        _netLayerEntities[kInterfaceIndex].sendDataRequest(npdu, ack, destination, _deviceObj.individualAddress(), priority, IndividualAddress, Broadcast);
+        _netLayerEntities[kInterfaceIndex]->sendDataRequest(npdu, ack, destination, _deviceObj.individualAddress(), priority, IndividualAddress, Broadcast);
     }
 }
 
@@ -604,10 +582,10 @@ void NetworkLayer::dataGroupRequest(AckType ack, uint16_t destination, HopCountT
         // If the group address is in the filter table, then we route it to the primary side too
         if (isGroupAddressInFilterTable(destination))
         {
-            _netLayerEntities[kPrimaryIfIndex].sendDataRequest(npdu, ack, destination, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
+            _netLayerEntities[kPrimaryIfIndex]->sendDataRequest(npdu, ack, destination, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
         }
         // We send it to our sub line in any case
-        _netLayerEntities[kSecondaryIfIndex].sendDataRequest(npdu, ack, destination, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
+        _netLayerEntities[kSecondaryIfIndex]->sendDataRequest(npdu, ack, destination, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
     }
     else if (_layerType = device)
     {
@@ -618,7 +596,7 @@ void NetworkLayer::dataGroupRequest(AckType ack, uint16_t destination, HopCountT
         else
             npdu.hopCount(hopCount());
 
-        _netLayerEntities[kInterfaceIndex].sendDataRequest(npdu, ack, destination, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
+        _netLayerEntities[kInterfaceIndex]->sendDataRequest(npdu, ack, destination, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
     }
 }
 
@@ -633,8 +611,8 @@ void NetworkLayer::dataBroadcastRequest(AckType ack, HopCountType hopType, Prior
         else
             npdu.hopCount(hopCount());
 
-        _netLayerEntities[kPrimaryIfIndex].sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
-        _netLayerEntities[kSecondaryIfIndex].sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
+        _netLayerEntities[kPrimaryIfIndex]->sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
+        _netLayerEntities[kSecondaryIfIndex]->sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
     }
     else if (_layerType = device)
     {
@@ -645,7 +623,7 @@ void NetworkLayer::dataBroadcastRequest(AckType ack, HopCountType hopType, Prior
         else
             npdu.hopCount(hopCount());
 
-        _netLayerEntities[kInterfaceIndex].sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
+        _netLayerEntities[kInterfaceIndex]->sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
     }
 }
 
@@ -660,13 +638,13 @@ void NetworkLayer::dataSystemBroadcastRequest(AckType ack, HopCountType hopType,
         else
             npdu.hopCount(hopCount());
 
-        _netLayerEntities[kPrimaryIfIndex].sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, SysBroadcast);
-        _netLayerEntities[kSecondaryIfIndex].sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, SysBroadcast);
+        _netLayerEntities[kPrimaryIfIndex]->sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, SysBroadcast);
+        _netLayerEntities[kSecondaryIfIndex]->sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, SysBroadcast);
     }
     else if (_layerType = device)
     {
         // for closed media like TP1 and IP
-        bool isClosedMedium = (_netLayerEntities[kInterfaceIndex].mediumType() == DptMedium::KNX_TP1) || (_netLayerEntities[kInterfaceIndex].mediumType() == DptMedium::KNX_IP);
+        bool isClosedMedium = (_netLayerEntities[kInterfaceIndex]->mediumType() == DptMedium::KNX_TP1) || (_netLayerEntities[kInterfaceIndex]->mediumType() == DptMedium::KNX_IP);
         SystemBroadcast broadcastType = (isClosedMedium && isApciSystemBroadcast(tpdu.apdu()) ? Broadcast : SysBroadcast);
 
         NPDU &npdu = tpdu.frame().npdu();
@@ -676,11 +654,11 @@ void NetworkLayer::dataSystemBroadcastRequest(AckType ack, HopCountType hopType,
         else
             npdu.hopCount(hopCount());
 
-        _netLayerEntities[kInterfaceIndex].sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, broadcastType);
+        _netLayerEntities[kInterfaceIndex]->sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, broadcastType);
     }
 }
 //===device
 NetworkLayerEntity &NetworkLayer::getInterface()
 {
-    return _netLayerEntities[kInterfaceIndex];
+    return *_netLayerEntities[kInterfaceIndex];
 }

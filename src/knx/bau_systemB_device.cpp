@@ -14,7 +14,7 @@ BauSystemBDevice::BauSystemBDevice(ArduinoPlatform& platform) :
 #endif
     _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer)
 {
-    _netLayer.setLayerType(device);
+    _netLayer.setLayerType(LayerType::device);
     _appLayer.transportLayer(_transLayer);
     _appLayer.associationTableObject(_assocTable);
 #ifdef USE_DATASECURE
