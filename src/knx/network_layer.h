@@ -5,9 +5,9 @@
 #include "npdu.h"
 #include "transport_layer.h"
 
+class RouterObject;
 class DeviceObject;
 class APDU;
-class RouterObject;
 class NetworkLayerEntity;
 
 enum LayerType

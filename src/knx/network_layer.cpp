@@ -5,6 +5,7 @@
 #include "cemi_frame.h"
 #include "bits.h"
 #include "apdu.h"
+#include "router_object.h"
 
 NetworkLayer::NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer) : _deviceObj(deviceObj), _transportLayer(layer)
 {
