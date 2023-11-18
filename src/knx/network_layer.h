@@ -4,6 +4,7 @@
 #include "knx_types.h"
 #include "npdu.h"
 #include "transport_layer.h"
+#include "router_object.h"
 
 class RouterObject;
 class DeviceObject;
