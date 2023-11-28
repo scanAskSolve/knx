@@ -32,7 +32,7 @@ public:
     TP1Bridge,
     TP1Repeater
   };
-  LayerType _layerType = none;
+  LayerType layerType = none;
 
   NetworkLayerEntity* _netLayerEntities[2];
 
