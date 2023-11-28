@@ -21,7 +21,7 @@ class NetworkLayer
 {
 
 public:
-  NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer);
+  NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer,LayerType leyertype);
   NetworkLayerEntity &getInterface();
   static constexpr uint8_t kInterfaceIndex = 0;
 

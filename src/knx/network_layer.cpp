@@ -7,15 +7,9 @@
 #include "apdu.h"
 #include "router_object.h"
 
-NetworkLayer::NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer) : _deviceObj(deviceObj), _transportLayer(layer)
+NetworkLayer::NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer,LayerType layerType) : _deviceObj(deviceObj), _transportLayer(layer), layerType(layerType)
 {
-    layerType = none;
-    _hopCount = _deviceObj.defaultHopCount();
-}
-
-void NetworkLayer::setLayerType(LayerType layer)
-{
-    layerType = layer;
+    // layerType = none;
     if (layerType == coupler)
     {
         new (&_netLayerEntities[0]) NetworkLayerEntity(*this, kPrimaryIfIndex);
@@ -31,7 +25,28 @@ void NetworkLayer::setLayerType(LayerType layer)
         new (&_netLayerEntities[1]) NetworkLayerEntity(*this, kInterfaceIndex);
         // _netLayerEntities = { NetworkLayerEntity(*this, kInterfaceIndex),NetworkLayerEntity(*this, kInterfaceIndex)};
     }
+    _hopCount = _deviceObj.defaultHopCount();
 }
+
+// void NetworkLayer::setLayerType(LayerType layer)
+// {
+//     layerType = layer;
+//     if (layerType == coupler)
+//     {
+//         new (&_netLayerEntities[0]) NetworkLayerEntity(*this, kPrimaryIfIndex);
+//         new (&_netLayerEntities[1]) NetworkLayerEntity(*this, kSecondaryIfIndex);
+//         // _netLayerEntities = { NetworkLayerEntity(*this, kPrimaryIfIndex),
+//         //                       NetworkLayerEntity(*this, kSecondaryIfIndex) };
+//         _currentAddress = _deviceObj.individualAddress();
+//         evaluateCouplerType();
+//     }
+//     else if (layerType == device)
+//     {
+//         new (&_netLayerEntities[0]) NetworkLayerEntity(*this, kInterfaceIndex);
+//         new (&_netLayerEntities[1]) NetworkLayerEntity(*this, kInterfaceIndex);
+//         // _netLayerEntities = { NetworkLayerEntity(*this, kInterfaceIndex),NetworkLayerEntity(*this, kInterfaceIndex)};
+//     }
+// }
 
 uint8_t NetworkLayer::hopCount() const
 {
