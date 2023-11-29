@@ -17,6 +17,9 @@ void knx_loop();
 int knx_configured();
 void knx_start();
 void knx_readMemory();
+void knx_ledPin(uint32_t value);
+void knx_ledPinActiveOn(uint32_t value);
+void knx_buttonPin(int32_t value);
 
 #ifdef __cplusplus
 }

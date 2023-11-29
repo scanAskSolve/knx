@@ -100,11 +100,11 @@ void setup() {
   Serial.println("configured PASS");
 
   // pin or GPIO the programming led is connected to. Default is LED_BUILTIN
-   knx.ledPin(LED_BUILTIN);
+   knx_ledPin(LED_BUILTIN);
   // is the led active on HIGH or low? Default is LOW
-   knx.ledPinActiveOn(HIGH);
+   knx_ledPinActiveOn(HIGH);
   // pin or GPIO programming button is connected to. Default is 0
-   knx.buttonPin(PA0);
+   knx_buttonPin(PA0);
 
   // start the framework.
   // knx.start();
