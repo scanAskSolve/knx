@@ -46,7 +46,7 @@ void setup() {
   //Serial.setRx(PA10);
   //Serial.setTx(PA9);
   
-  Serial.begin(115200);
+  //Serial.begin(115200);
   ArduinoPlatform::SerialDebug = &Serial;
   
  
@@ -55,16 +55,12 @@ void setup() {
     //digitalWrite(27,knx.paramByte(0) && 0x80);
     pinMode(PB11, OUTPUT);
     pinMode(PC13,OUTPUT);
-    /*digitalWrite(PC13,LOW);
-    delay(1000);
-    digitalWrite(PC13,HIGH);
-    delay(1000);
-    digitalWrite(PC13,LOW);
-    delay(1000);
-    digitalWrite(PC13,HIGH);
-    delay(1000);
-    digitalWrite(PC13,LOW);
-    delay(1000);*/
+    /*for(int i = 0; i < 2;i++){
+        digitalWrite(PC13,LOW);
+        delay(1000);
+        digitalWrite(PC13,HIGH);
+        delay(1000);
+    }*/
 
   randomSeed(HAL_GetTick());
 

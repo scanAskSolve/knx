@@ -32,9 +32,9 @@ public:
     TP1Bridge,
     TP1Repeater
   };
-  LayerType layerType = none;
+  LayerType _layerType = none;
 
-  NetworkLayerEntity* _netLayerEntities[2];
+  NetworkLayerEntity* _netLayerEntities[2] = {0};
 
   RouterObject* _rtObjPrimary {nullptr};
   RouterObject* _rtObjSecondary {nullptr};
