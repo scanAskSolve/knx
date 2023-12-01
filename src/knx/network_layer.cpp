@@ -32,29 +32,32 @@ NetworkLayer::NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer,LayerT
     if (_layerType == coupler)
     {
         
-        new (&_netLayerEntities_coupler[0]) NetworkLayerEntity(*this, kPrimaryIfIndex);
-        new (&_netLayerEntities_coupler[1]) NetworkLayerEntity(*this, kSecondaryIfIndex);
+        //new (&_netLayerEntities_coupler[0]) NetworkLayer(*this, kPrimaryIfIndex);
+        //new (&_netLayerEntities_coupler[1]) NetworkLayer(*this, kSecondaryIfIndex);
 
+        _netLayerEntities_coupler[0] = new NetworkLayerEntity(*this, kPrimaryIfIndex);
+        _netLayerEntities_coupler[1] = new NetworkLayerEntity(*this, kSecondaryIfIndex);
 
-        /*NetworkLayerEntity* _netLayerEntities_coupler[] = {
-            new NetworkLayerEntity(*this, kPrimaryIfIndex),
-            new NetworkLayerEntity(*this, kSecondaryIfIndex)
+        /*NetworkLayerEntity* _netLayerEntities[] = {
+            new NetworkLayer(*this, kPrimaryIfIndex),
+            new NetworkLayer(*this, kSecondaryIfIndex)
         };
-        _netLayerEntities = _netLayerEntities_coupler;*/
+        _netLayerEntities_coupler = _netLayerEntities;*/
         
         _currentAddress = _deviceObj.individualAddress();
         evaluateCouplerType();
     }
     else if (_layerType == device)
     {
-        new (&_netLayerEntities_device[0]) NetworkLayerEntity(*this, kInterfaceIndex);
+        //new (&_netLayerEntities_device[0]) NetworkLayer(*this, kInterfaceIndex);
+        _netLayerEntities_device[0] = new NetworkLayerEntity(*this, kInterfaceIndex);
         //_netLayerEntities[0] = new NetworkLayerEntity(*this, kInterfaceIndex);
 
-        /*NetworkLayerEntity* _netLayerEntities_device[] = {
-            new NetworkLayerEntity(*this, kInterfaceIndex)
+        /*NetworkLayerEntity* _netLayerEntities[] = {
+            new NetworkLayer(*this, kInterfaceIndex)
         };
         
-        _netLayerEntities = _netLayerEntities_device;*/
+        _netLayerEntities_device = _netLayerEntities;*/
         
     }
     else{
