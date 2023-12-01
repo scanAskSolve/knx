@@ -1,5 +1,3 @@
-#include "Arduino.h"
-
 #include "network_layer.h"
 #include "device_object.h"
 #include "data_link_layer.h"
@@ -12,88 +10,25 @@
 NetworkLayer::NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer,LayerType layerType) : _deviceObj(deviceObj), _transportLayer(layer)
 {
     _layerType = layerType;
-    pinMode(PC13,OUTPUT);
-    pinMode(PA1,OUTPUT);
-    pinMode(PA4,OUTPUT);
-    digitalWrite(PC13,HIGH);
-    digitalWrite(PA1,LOW);
-    for(int i = 0; i < 2;i++){
-        digitalWrite(PC13,LOW);
-        digitalWrite(PA1,HIGH);
-        digitalWrite(PA4,HIGH);
-        delay(250);
-        digitalWrite(PC13,HIGH);
-        digitalWrite(PA1,LOW);
-        digitalWrite(PA4,LOW);
-        delay(250);
-    }
-        delay(3000);
-
     if (_layerType == coupler)
     {
-        
-        //new (&_netLayerEntities_coupler[0]) NetworkLayer(*this, kPrimaryIfIndex);
-        //new (&_netLayerEntities_coupler[1]) NetworkLayer(*this, kSecondaryIfIndex);
 
         _netLayerEntities_coupler[0] = new NetworkLayerEntity(*this, kPrimaryIfIndex);
         _netLayerEntities_coupler[1] = new NetworkLayerEntity(*this, kSecondaryIfIndex);
-
-        /*NetworkLayerEntity* _netLayerEntities[] = {
-            new NetworkLayer(*this, kPrimaryIfIndex),
-            new NetworkLayer(*this, kSecondaryIfIndex)
-        };
-        _netLayerEntities_coupler = _netLayerEntities;*/
         
         _currentAddress = _deviceObj.individualAddress();
         evaluateCouplerType();
     }
     else if (_layerType == device)
     {
-        //new (&_netLayerEntities_device[0]) NetworkLayer(*this, kInterfaceIndex);
         _netLayerEntities_device[0] = new NetworkLayerEntity(*this, kInterfaceIndex);
-        //_netLayerEntities[0] = new NetworkLayerEntity(*this, kInterfaceIndex);
-
-        /*NetworkLayerEntity* _netLayerEntities[] = {
-            new NetworkLayer(*this, kInterfaceIndex)
-        };
-        
-        _netLayerEntities_device = _netLayerEntities;*/
         
     }
     else{
-        for(int i = 0; i < 2;i++){
-            digitalWrite(PC13,LOW);
-            //digitalWrite(PA1,HIGH);
-            digitalWrite(PA4,HIGH);
-            delay(250);
-            digitalWrite(PC13,HIGH);
-            //digitalWrite(PA1,LOW);
-            //digitalWrite(PA4,LOW);
-            delay(250);
-        }
         _hopCount = _deviceObj.defaultHopCount();
     }
 }
 
-// void NetworkLayer::setLayerType(LayerType layer)
-// {
-//     layerType = layer;
-//     if (layerType == coupler)
-//     {
-//         new (&_netLayerEntities[0]) NetworkLayerEntity(*this, kPrimaryIfIndex);
-//         new (&_netLayerEntities[1]) NetworkLayerEntity(*this, kSecondaryIfIndex);
-//         // _netLayerEntities = { NetworkLayerEntity(*this, kPrimaryIfIndex),
-//         //                       NetworkLayerEntity(*this, kSecondaryIfIndex) };
-//         _currentAddress = _deviceObj.individualAddress();
-//         evaluateCouplerType();
-//     }
-//     else if (layerType == device)
-//     {
-//         new (&_netLayerEntities[0]) NetworkLayerEntity(*this, kInterfaceIndex);
-//         new (&_netLayerEntities[1]) NetworkLayerEntity(*this, kInterfaceIndex);
-//         // _netLayerEntities = { NetworkLayerEntity(*this, kInterfaceIndex),NetworkLayerEntity(*this, kInterfaceIndex)};
-//     }
-// }
 
 uint8_t NetworkLayer::hopCount() const
 {
