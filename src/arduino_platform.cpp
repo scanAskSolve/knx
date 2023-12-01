@@ -25,7 +25,7 @@ void ArduinoPlatform::fatalError()
 #ifdef KNX_LED
         static const long LED_BLINK_PERIOD = 200;
 
-        if ((millis() % LED_BLINK_PERIOD) > (LED_BLINK_PERIOD / 2))
+        if ((HAL_GetTick() % LED_BLINK_PERIOD) > (LED_BLINK_PERIOD / 2))
             digitalWrite(KNX_LED, HIGH);
         else
             digitalWrite(KNX_LED, LOW);
