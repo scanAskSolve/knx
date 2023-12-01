@@ -1,3 +1,4 @@
+//#include <Arduino.h>
 #include <knx.h>
 
 
@@ -46,7 +47,7 @@ void setup() {
   //Serial.setRx(PA10);
   //Serial.setTx(PA9);
   
-  //Serial.begin(115200);
+  Serial.begin(115200);
   ArduinoPlatform::SerialDebug = &Serial;
   
  

@@ -21,7 +21,7 @@ class NetworkLayer
 {
 
 public:
-  NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer,LayerType leyertype);
+  NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer,LayerType leyertype = none);
   NetworkLayerEntity &getInterface();
   static constexpr uint8_t kInterfaceIndex = 0;
 
@@ -32,9 +32,10 @@ public:
     TP1Bridge,
     TP1Repeater
   };
-  LayerType _layerType = none;
+  LayerType _layerType;
 
-  NetworkLayerEntity* _netLayerEntities[2] = {0};
+  NetworkLayerEntity* _netLayerEntities_coupler[2] = {0};
+  NetworkLayerEntity* _netLayerEntities_device[1] = {0};
 
   RouterObject* _rtObjPrimary {nullptr};
   RouterObject* _rtObjSecondary {nullptr};
