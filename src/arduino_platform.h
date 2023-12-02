@@ -24,7 +24,7 @@ class ArduinoPlatform
   public:
     ArduinoPlatform();
     ArduinoPlatform(HardwareSerial* knxSerial);
-
+    //~ArduinoPlatform();
     // basic stuff
     void fatalError();
 
@@ -68,7 +68,7 @@ class ArduinoPlatform
     virtual void flashWritePage(uint16_t pageNumber, uint8_t* data); 
     virtual void commitToEeprom();
 
-    virtual void restart() = 0;
+    virtual void restart();
 /*#ifndef KNX_NO_SPI
 
     void setupSpi() override;
@@ -86,5 +86,7 @@ class ArduinoPlatform
     int32_t _bufferedEraseblockNumber = -1;
     uint8_t* _eraseblockBuffer = nullptr;
     bool _bufferedEraseblockDirty = false;
+    uint8_t *_eepromPtr = nullptr;
+    uint16_t _eepromSize = 0;
 };
 

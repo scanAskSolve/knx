@@ -28,17 +28,17 @@ Stm32Platform::~Stm32Platform()
         //delete [] _eepromPtr;
 	free(_eepromPtr);	
 }
-
+/*
 uint32_t Stm32Platform::uniqueSerialNumber()
 {
     return HAL_GetUIDw0() ^ HAL_GetUIDw1() ^ HAL_GetUIDw2();
-}
-
+}*/
+/*
 void Stm32Platform::restart()
 {
     NVIC_SystemReset();
-}
-
+}*/
+/*
 uint8_t * Stm32Platform::getEepromBuffer(uint32_t size)
 {
     // check if the buffer already exists
@@ -57,8 +57,8 @@ uint8_t * Stm32Platform::getEepromBuffer(uint32_t size)
     }
     
     return _eepromPtr;
-}
-
+}*/
+/*
 void Stm32Platform::commitToEeprom()
 {
     if(_eepromPtr == nullptr || _eepromSize == 0)
@@ -71,6 +71,6 @@ void Stm32Platform::commitToEeprom()
     // does nothing.
     HAL_FLASH_Unlock();
     eeprom_buffer_flush();
-}
+}*/
 
 #endif
