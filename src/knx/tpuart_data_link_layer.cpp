@@ -120,7 +120,7 @@ void TpUartDataLinkLayer::enterRxWaitEOP()
     {
         _platform.readUart();
     }
-    _lastByteRxTime = millis();
+    _lastByteRxTime = HAL_GetTick();
     _rxState = RX_WAIT_EOP;
 }
 
@@ -130,10 +130,10 @@ void TpUartDataLinkLayer::loop()
     {
         if(_waitConfirmStartTime == 0)
         {
-            if (millis() - _lastResetChipTime > 1000)
+            if (HAL_GetTick() - _lastResetChipTime > 1000)
             { 
                 //reset chip every 1 seconds
-                _lastResetChipTime = millis();
+                _lastResetChipTime = HAL_GetTick();
                 _enabled = resetChip();
             }
         } else {
@@ -157,8 +157,8 @@ void TpUartDataLinkLayer::loop()
         // After seeing a L2 packet start, stay in loop until address bytes are
         // received and the AK/NAK packet is sent, when last loop call delayed
         // by more than HOGMODE_THRESHOLD
-        bool stayInRx = millis() - _lastLoopTime > HOGMODE_THRESHOLD;
-        _lastLoopTime = millis();
+        bool stayInRx = HAL_GetTick() - _lastLoopTime > HOGMODE_THRESHOLD;
+        _lastLoopTime = HAL_GetTick();
 #else
         // After seeing a L2 packet start, leave loop and hope the loop
         // is called early enough to do further processings
@@ -184,7 +184,7 @@ void TpUartDataLinkLayer::loop()
 #ifdef DBG_TRACE
                         print(rxByte, HEX);
 #endif
-                        _lastByteRxTime = millis();
+                        _lastByteRxTime = HAL_GetTick();
 
                         // Check for layer-2 packets
                         _RxByteCnt = 0;
@@ -285,7 +285,7 @@ void TpUartDataLinkLayer::loop()
                     }
                     break;
                 case RX_L_ADDR:
-                    if (millis() - _lastByteRxTime > EOPR_TIMEOUT)
+                    if (HAL_GetTick() - _lastByteRxTime > EOPR_TIMEOUT)
                     {
                         _rxState = RX_WAIT_START;
                         println("EOPR @ RX_L_ADDR");
@@ -293,7 +293,7 @@ void TpUartDataLinkLayer::loop()
                     }
                     if (!_platform.uartAvailable())
                         break;
-                    _lastByteRxTime = millis();
+                    _lastByteRxTime = HAL_GetTick();
                     rxByte = _platform.readUart();
 #ifdef DBG_TRACE
                     print(rxByte, HEX);
@@ -340,7 +340,7 @@ void TpUartDataLinkLayer::loop()
                 case RX_L_DATA:
                     if (!_platform.uartAvailable())
                         break;
-                    _lastByteRxTime = millis();
+                    _lastByteRxTime = HAL_GetTick();
                     rxByte = _platform.readUart();
 #ifdef DBG_TRACE
                     print(rxByte, HEX);
@@ -366,11 +366,11 @@ void TpUartDataLinkLayer::loop()
                                 _receiveBuffer[0] = 0x29;
                                 _receiveBuffer[1] = 0;
 #ifdef DBG_TRACE
-                                unsigned long runTime = millis();
+                                unsigned long runTime = HAL_GetTick();
 #endif
                                 frameBytesReceived(_receiveBuffer, _RxByteCnt + 2);
 #ifdef DBG_TRACE
-                                runTime = millis() - runTime;
+                                runTime = HAL_GetTick() - runTime;
                                 if (runTime > (OVERRUN_COUNT*14)/10)
                                 {
                                     // complain when the runtime was long than the OVERRUN_COUNT allows
@@ -395,7 +395,7 @@ void TpUartDataLinkLayer::loop()
                     }
                     break;
                 case RX_WAIT_EOP:
-                    if (millis() - _lastByteRxTime > EOP_TIMEOUT)
+                    if (HAL_GetTick() - _lastByteRxTime > EOP_TIMEOUT)
                     {
                         // found a gap
                         _rxState = RX_WAIT_START;
@@ -407,7 +407,7 @@ void TpUartDataLinkLayer::loop()
                     if (_platform.uartAvailable())
                     {
                         _platform.readUart();
-                        _lastByteRxTime = millis();
+                        _lastByteRxTime = HAL_GetTick();
                     }
                     break;
                 default:
@@ -435,11 +435,11 @@ void TpUartDataLinkLayer::loop()
                 }
                 break;
             case TX_FRAME:
-                if (millis() - _lastByteTxTime > TX_TIMEPAUSE)
+                if (HAL_GetTick() - _lastByteTxTime > TX_TIMEPAUSE)
                 {
                     if (sendSingleFrameByte() == false)
                     {
-                        _waitConfirmStartTime = millis();
+                        _waitConfirmStartTime = HAL_GetTick();
                         _txState = TX_WAIT_CONN;
 #ifdef DBG_TRACE
                         println("TX_WAIT_CONN");
@@ -447,7 +447,7 @@ void TpUartDataLinkLayer::loop()
                     }
                     else
                     {
-                        _lastByteTxTime = millis();
+                        _lastByteTxTime = HAL_GetTick();
                     }
                 }
                 break;
@@ -460,7 +460,7 @@ void TpUartDataLinkLayer::loop()
                     _sendBufferLength = 0;
                     _txState = TX_IDLE;
                 }
-                else if (millis() - _waitConfirmStartTime > CONFIRM_TIMEOUT)
+                else if (HAL_GetTick() - _waitConfirmStartTime > CONFIRM_TIMEOUT)
                 {
                     println("L_DATA_CON not received within expected time");
                     uint8_t cemiBuffer[MAX_KNX_TELEGRAM_SIZE];
@@ -503,7 +503,7 @@ bool TpUartDataLinkLayer::resetChip()
     if (resp == U_RESET_IND)
         return true;
 
-    _waitConfirmStartTime = millis();
+    _waitConfirmStartTime = HAL_GetTick();
     return false;
 }
 
@@ -515,7 +515,7 @@ bool TpUartDataLinkLayer::resetChipTick()
         _waitConfirmStartTime = 0;
         return true;
     }
-    else if (millis() - _waitConfirmStartTime > RESET_TIMEOUT)
+    else if (HAL_GetTick() - _waitConfirmStartTime > RESET_TIMEOUT)
         _waitConfirmStartTime = 0;
     
     return false;
@@ -567,7 +567,7 @@ void TpUartDataLinkLayer::enabled(bool value)
 
         uint8_t cmd = U_RESET_REQ;
         _platform.writeUart(cmd);
-        _waitConfirmStartTime = millis();
+        _waitConfirmStartTime = HAL_GetTick();
         bool flag = false;
 
         while (true)
@@ -578,7 +578,7 @@ void TpUartDataLinkLayer::enabled(bool value)
                 flag = true;
                 break;
             }
-            else if (millis() - _waitConfirmStartTime > RESET_TIMEOUT)
+            else if (HAL_GetTick() - _waitConfirmStartTime > RESET_TIMEOUT)
             {
                 flag = false;
                 break;

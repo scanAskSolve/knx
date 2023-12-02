@@ -26,15 +26,15 @@
             static uint32_t lastEvent=0;
             static uint32_t lastPressed=0;
 
-            uint32_t diff = millis() - lastEvent;
+            uint32_t diff = HAL_GetTick() - lastEvent;
             if (diff >= PROG_BTN_PRESS_MIN_MILLIS && diff <= PROG_BTN_PRESS_MAX_MILLIS){
-                if (millis() - lastPressed > 200)
+                if (HAL_GetTick() - lastPressed > 200)
                 {  
                     knx.toggleProgMode();
-                    lastPressed = millis();
+                    lastPressed = HAL_GetTick();
                 }
             }
-            lastEvent = millis();
+            lastEvent = HAL_GetTick();
         }
     #endif
 

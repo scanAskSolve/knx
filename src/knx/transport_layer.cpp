@@ -556,7 +556,7 @@ uint16_t TransportLayer::getConnectionAddress()
 
 void TransportLayer::loop()
 {
-    uint32_t milliseconds = millis();
+    uint32_t milliseconds = HAL_GetTick();
     if (_connectionTimeoutEnabled 
         && (milliseconds - _connectionTimeoutStartMillis) > _connectionTimeoutMillis)
         connectionTimeoutIndication();
@@ -725,7 +725,7 @@ void TransportLayer::A15(Priority priority, uint16_t tsap)
 
 void TransportLayer::enableConnectionTimeout()
 {
-    _connectionTimeoutStartMillis = millis();
+    _connectionTimeoutStartMillis = HAL_GetTick();
     _connectionTimeoutEnabled = true;
 }
 
@@ -736,7 +736,7 @@ void TransportLayer::disableConnectionTimeout()
 
 void TransportLayer::enableAckTimeout()
 {
-    _ackTimeoutStartMillis = millis();
+    _ackTimeoutStartMillis = HAL_GetTick();
     _ackTimeoutEnabled = true;
 }
 

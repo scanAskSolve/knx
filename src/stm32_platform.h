@@ -9,17 +9,17 @@ public:
     ~Stm32Platform();
 
     // unique serial number
-    uint32_t uniqueSerialNumber() override;
+    //uint32_t uniqueSerialNumber() override;
 
     // basic stuff
-    void restart();
+    //void restart();
     
     //memory
-    uint8_t* getEepromBuffer(uint32_t size);
-    void commitToEeprom();
-private:
+    //uint8_t* getEepromBuffer(uint32_t size);
+    //void commitToEeprom();
+/*private:
     uint8_t *_eepromPtr = nullptr;
-    uint16_t _eepromSize = 0;
+    uint16_t _eepromSize = 0;*/
 };
 
 #endif

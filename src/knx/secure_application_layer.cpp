@@ -683,7 +683,7 @@ void SecureApplicationLayer::sendSyncResponse(uint16_t dstAddr, bool dstAddrIsGr
 
     if(secure(response.data() + APDU_LPDU_DIFF, kSecureSyncResponse, _deviceObj.individualAddress(), dstAddr, dstAddrIsGroupAddr, tpci, asdu, sizeof(asdu), secCtrl, systemBcast))
     {
-        _lastSyncRes = millis();
+        _lastSyncRes = HAL_GetTick();
 
         println("SyncResponse: ");
         response.apdu().printPDU();
@@ -852,7 +852,7 @@ bool SecureApplicationLayer::decrypt(uint8_t* plainApdu, uint16_t plainApduLengt
         }
 
         // if responded to another request within the last 1 second, ignore
-        if ((millis() - _lastSyncRes) < 1000)
+        if ((HAL_GetTick() - _lastSyncRes) < 1000)
         {
             return false;
         }

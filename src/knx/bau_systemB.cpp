@@ -519,7 +519,7 @@ void BauSystemB::connectConfirm(uint16_t tsap)
     {
         /* restart connection is confirmed, go to the next state */
         _restartState = Connected;
-        _restartDelay = millis();
+        _restartDelay = HAL_GetTick();
     }
     else
     {
@@ -539,16 +539,16 @@ void BauSystemB::nextRestartState()
             break;
         case Connected:
             /* connection confirmed, we send restartRequest, but we wait a moment (sending ACK etc)... */
-            if (millis() - _restartDelay > 30)
+            if (HAL_GetTick() - _restartDelay > 30)
             {
                 applicationLayer().restartRequest(AckRequested, SystemPriority, NetworkLayerParameter, _restartSecurity);
                 _restartState = Restarted;
-                _restartDelay = millis();
+                _restartDelay = HAL_GetTick();
             }
             break;
         case Restarted:
             /* restart is finished, we send a disconnect */
-            if (millis() - _restartDelay > 30)
+            if (HAL_GetTick() - _restartDelay > 30)
             {
                 applicationLayer().disconnectRequest(SystemPriority);
                 _restartState = Idle;
