@@ -11,21 +11,8 @@ const uint8_t* popByte(uint8_t& b, const uint8_t* data)
     return data;
 }
 
-#ifndef KNX_NO_PRINT
-void printHex(const char* suffix, const uint8_t *data, size_t length, bool newline)
-{
-    print(suffix);
-    for (size_t i = 0; i < length; i++) {
-        if (data[i] < 0x10) { print("0"); }
-        print(data[i], HEX);
-        print(" ");
-    }
-    if (newline)
-    {
-        println();
-    }
-} 
-#endif
+/*#ifndef KNX_NO_PRINT
+#endif*/
 
 const uint8_t* popWord(uint16_t& w, const uint8_t* data)
 {

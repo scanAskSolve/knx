@@ -1,6 +1,7 @@
+#include "arduino_platform.h"
 #include "dpt.h"
 
-#include "bits.h"
+//#include "bits.h"
 
 Dpt::Dpt()
 {}

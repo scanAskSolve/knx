@@ -1,5 +1,6 @@
 #pragma once
 
+#include "arduino_platform.h"
 #include "knx/bits.h"
 #include "knx/config.h"
 #include "knx/bau07B0.h"

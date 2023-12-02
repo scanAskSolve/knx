@@ -310,6 +310,21 @@ int ArduinoPlatform::readWriteSpi(uint8_t *data, size_t len)
 #endif*/
 
 #ifndef KNX_NO_PRINT
+
+void printHex(const char* suffix, const uint8_t *data, size_t length, bool newline)
+{
+    print(suffix);
+    for (size_t i = 0; i < length; i++) {
+        if (data[i] < 0x10) { print("0"); }
+        print(data[i], HEX);
+        print(" ");
+    }
+    if (newline)
+    {
+        println();
+    }
+} 
+
 void printUint64(uint64_t value, int base = DEC)
   {
     char buf[8 * sizeof(uint64_t) + 1];

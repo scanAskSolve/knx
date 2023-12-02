@@ -1,6 +1,7 @@
 #include "platform.h"
 
-#include "bits.h"
+#include "arduino_platform.h"
+//#include "bits.h"
 
 //#include <cstring>
 #include "string.h"

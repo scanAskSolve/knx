@@ -1,6 +1,7 @@
 #pragma once
 
 //#include "application_layer.h"
+#include "arduino_platform.h"
 #include <stdint.h>
 #include "knx_types.h"
 #include "apdu.h"

@@ -1,3 +1,4 @@
+#include "arduino_platform.h"
 #include "apdu.h"
 #include "cemi_frame.h"
 #include "bits.h"
