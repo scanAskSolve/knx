@@ -22,6 +22,8 @@ enum RouterObjectType
 
 class RouterObject : public TableObject
 {
+  friend class FunctionProperty;
+
 public:
   RouterObject(Memory& memory);
 
