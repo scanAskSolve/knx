@@ -34,8 +34,8 @@ void TEST_Function() {
     if(LED_NOW != LED_S){
     LED_S = LED_NOW;
     digitalWrite(PB11,LED_S);
-    //Serial.print("LED_S: ");
-    //Serial.println(LED_S);
+    Serial.print("LED_S: ");
+    Serial.println(LED_S);
   }
 
     

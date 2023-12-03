@@ -8,13 +8,10 @@
 #ifndef USERDATA_SAVE_SIZE
 #define USERDATA_SAVE_SIZE 0
 #endif
-
+/*
 #ifdef ARDUINO_ARCH_STM32
     #include "stm32_platform.h"
-    /*#ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
-        void buttonUp();
-    #endif*/
-#endif
+#endif*/
 
 #ifndef KNX_LED
     #define KNX_LED LED_BUILTIN
@@ -32,7 +29,7 @@ typedef void (*IsrFunctionPtr)();
 typedef void (*ProgLedOnCallback)();
 typedef void (*ProgLedOffCallback)();
 
-class Stm32Platform;
+class ArduinoPlatform;
 class Bau07B0;
 
 class KnxFacade : private DeviceObject
@@ -43,7 +40,7 @@ class KnxFacade : private DeviceObject
 
     ~KnxFacade(); 
 
-    Stm32Platform& platform();
+    ArduinoPlatform& platform();
 
     Bau07B0& bau();
 
@@ -169,9 +166,9 @@ class KnxFacade : private DeviceObject
     BeforeRestartCallback beforeRestartCallback();
 
   //private:
-    Stm32Platform* _platformPtr = 0;
-    Bau07B0* _bauPtr = 0;
-    Bau07B0& _bau;
+    ArduinoPlatform* _platformPtr  = new ArduinoPlatform(&KNX_SERIAL);
+    Bau07B0* _bauPtr = new Bau07B0(*_platformPtr);
+    Bau07B0& _bau = *_bauPtr;
     ProgLedOnCallback _progLedOnCallback = 0;
     ProgLedOffCallback _progLedOffCallback = 0;
     uint32_t _ledPinActiveOn = KNX_LED_ACTIVE_ON;
@@ -199,29 +196,16 @@ class KnxFacade : private DeviceObject
 
 
 void buttonEvent();
-//#ifndef KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
-    #ifdef ARDUINO_ARCH_STM32
-        // predefined global instance for TP only
-        #if MASK_VERSION == 0x07B0
-			extern KnxFacade knx;
-            //extern KnxFacade<Stm32Platform, Bau07B0> knx;
-        #else
-            #error "Mask version not supported on ARDUINO_ARCH_STM32"
-        #endif
-    #else // Non-Arduino platforms and Linux platform
-        // no predefined global instance
-        #error "no predefined global instance"
+
+#ifdef ARDUINO_ARCH_STM32
+    // predefined global instance for TP only
+    #if MASK_VERSION == 0x07B0
+        extern KnxFacade knx;
+        //extern KnxFacade<Stm32Platform, Bau07B0> knx;
+    #else
+        #error "Mask version not supported on ARDUINO_ARCH_STM32"
     #endif
-//#endif // KNX_NO_AUTOMATIC_GLOBAL_INSTANCE
-// uint8_t* save(uint8_t* buffer)
-//     {
-//         return buffer;
-//     }
-// const uint8_t* restore(const uint8_t* buffer)
-//     {
-//         return buffer;
-//     }
-// uint16_t saveSize()
-//     {
-//         return 0;
-//     }
+#else // Non-Arduino platforms and Linux platform
+    // no predefined global instance
+    #error "no predefined global instance"
+#endif

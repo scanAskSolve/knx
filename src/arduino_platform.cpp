@@ -1,17 +1,8 @@
 #include "arduino_platform.h"
 #include "knx/bits.h"
+#include <EEPROM.h>
 
 #include <Arduino.h>
-/*#ifndef KNX_NO_SPI
-#include <SPI.h>
-#endif*/
-/*#include <EEPROM.h>
-#include "knx/bits.h"
-
-#ifndef KNX_SERIAL
-#define KNX_SERIAL Serial2
-#endif*/
-
 
 #ifndef KNX_NO_PRINT
 Stream* ArduinoPlatform::SerialDebug = &KNX_DEBUG_SERIAL;

@@ -10,45 +10,16 @@
 	#define PROG_BTN_PRESS_MAX_MILLIS 500
 #endif
 
-#if defined(ARDUINO_ARCH_STM32)
-
-    // Only ESP8266 and ESP32 have this define. For all other platforms this is just empty.
-    //#ifndef ICACHE_RAM_ATTR
-        //#define ICACHE_RAM_ATTR
-    //#endif
-    //ICACHE_RAM_ATTR void buttonEvent()
-    void buttonEvent()
-    {
-        static uint32_t lastEvent=0;
-        static uint32_t lastPressed=0;
-
-        uint32_t diff = HAL_GetTick() - lastEvent;
-        if (diff >= PROG_BTN_PRESS_MIN_MILLIS && diff <= PROG_BTN_PRESS_MAX_MILLIS){
-            if (HAL_GetTick() - lastPressed > 200)
-            {  
-                knx.toggleProgMode();
-                lastPressed = HAL_GetTick();
-            }
-        }
-        lastEvent = HAL_GetTick();
-    }
-#endif
-
-#ifdef ARDUINO_ARCH_STM32
-    #if MASK_VERSION == 0x07B0
-        //KnxFacade<Stm32Platform, Bau07B0> knx(buttonEvent);
-        KnxFacade knx(buttonEvent);
-    #else
-        #error "Mask version not supported on ARDUINO_ARCH_STM32"
-    #endif
-#else // Non-Arduino platforms and Linux platform
-    // no predefined global instance
-    #error "no predefined global instance"
+#if MASK_VERSION == 0x07B0
+    //KnxFacade<Stm32Platform, Bau07B0> knx(buttonEvent);
+    KnxFacade knx(buttonEvent);
+#else
+    #error "Mask version not supported on ARDUINO_ARCH_STM32"
 #endif
 
 //****************************************************************************
-
-KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction) : _platformPtr(new Stm32Platform()), _bauPtr(new Bau07B0(*_platformPtr)), _bau(*_bauPtr)
+//KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction) : _platformPtr(new Stm32Platform()), _bauPtr(new Bau07B0(*_platformPtr)), _bau(*_bauPtr)
+KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction)
 {
     manufacturerId(0xfa);
     bauNumber(platform().uniqueSerialNumber());
@@ -65,7 +36,7 @@ KnxFacade:: ~KnxFacade()
         delete _platformPtr;
 }
 
-Stm32Platform& KnxFacade::platform()
+ArduinoPlatform& KnxFacade::platform()
 {
     return *_platformPtr;
 }
@@ -408,3 +379,20 @@ void KnxFacade::progLedOff()
     else
         _progLedOffCallback();
 }
+
+
+void buttonEvent()
+    {
+        static uint32_t lastEvent=0;
+        static uint32_t lastPressed=0;
+
+        uint32_t diff = HAL_GetTick() - lastEvent;
+        if (diff >= PROG_BTN_PRESS_MIN_MILLIS && diff <= PROG_BTN_PRESS_MAX_MILLIS){
+            if (HAL_GetTick() - lastPressed > 200)
+            {  
+                knx.toggleProgMode();
+                lastPressed = HAL_GetTick();
+            }
+        }
+        lastEvent = HAL_GetTick();
+    }
