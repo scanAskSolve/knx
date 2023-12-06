@@ -3,12 +3,12 @@
 #include "config.h"
 #if MASK_VERSION == 0x07B0
 #include "../arduino_platform.h"
-#include "bau_systemB_device.h"
+#include "bau_systemB.h"
 #include "tpuart_data_link_layer.h"
 #include "cemi_server.h"
 #include "cemi_server_object.h"
 //class Bau07B0 : public BauSystemBDevice, public ITpUartCallBacks
-class Bau07B0 : public BauSystemBDevice
+class Bau07B0 : public BauSystemB
 {
   public:
     Bau07B0(ArduinoPlatform& platform);

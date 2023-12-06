@@ -14,9 +14,34 @@ enum NmReadSerialNumberType
 static constexpr auto kFunctionPropertyResultBufferMaxSize = 64;
 static constexpr auto kRestartProcessTime = 3;
 
-BauSystemB::BauSystemB(ArduinoPlatform& platform): _memory(platform, _deviceObj),_appProgram(_memory),_platform(platform)
+BauSystemB::BauSystemB(ArduinoPlatform& platform): 
+_memory(platform, _deviceObj),_appProgram(_memory),_platform(platform),
+    _addrTable(_memory),
+    _assocTable(_memory), _groupObjTable(_memory),
+#ifdef USE_DATASECURE
+    _appLayer(_deviceObj, _secIfObj, *this),
+#else
+    _appLayer(*this),
+#endif
+    _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer,LayerType::device)
 {
     _memory.addSaveRestore(&_appProgram);
+    
+    _appLayer.transportLayer(_transLayer);
+    _appLayer.associationTableObject(_assocTable);
+#ifdef USE_DATASECURE
+    _appLayer.groupAddressTable(_addrTable);
+#endif
+    _transLayer.networkLayer(_netLayer);
+    _transLayer.groupAddressTable(_addrTable);
+
+    _memory.addSaveRestore(&_deviceObj);
+    _memory.addSaveRestore(&_groupObjTable); // changed order for better memory management
+    _memory.addSaveRestore(&_addrTable);
+    _memory.addSaveRestore(&_assocTable);
+#ifdef USE_DATASECURE
+    _memory.addSaveRestore(&_secIfObj);
+#endif
 }
 
 void BauSystemB::readMemory()
@@ -148,7 +173,15 @@ void BauSystemB::doMasterReset(EraseCode eraseCode, uint8_t channel)
 {
     _deviceObj.masterReset(eraseCode, channel);
     _appProgram.masterReset(eraseCode, channel);
+
+    _addrTable.masterReset(eraseCode, channel);
+    _assocTable.masterReset(eraseCode, channel);
+    _groupObjTable.masterReset(eraseCode, channel);
+#ifdef USE_DATASECURE
+    _secIfObj.masterReset(eraseCode, channel);
+#endif
 }
+
 
 void BauSystemB::restartRequestIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, RestartType restartType, EraseCode eraseCode, uint8_t channel)
 {
@@ -681,10 +714,36 @@ FunctionPropertyCallback BauSystemB::functionPropertyStateCallback()
 
 void BauSystemB::groupValueReadLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl& secCtrl, bool status)
 {
+    GroupObject& go = _groupObjTable.get(asap);
+    if (status)
+        go.commFlag(Ok);
+    else
+        go.commFlag(Error);
 }
 
 void BauSystemB::groupValueReadIndication(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl)
 {
+    #ifdef USE_DATASECURE
+    DataSecurity requiredGoSecurity;
+
+    // Get security flags from Security Interface Object for this group object
+    requiredGoSecurity = _secIfObj.getGroupObjectSecurity(asap);
+
+    if (secCtrl.dataSecurity != requiredGoSecurity)
+    {
+        println("GroupValueRead: access denied due to wrong security flags");
+        return;
+    }
+#endif
+
+    GroupObject& go = _groupObjTable.get(asap);
+
+    if (!go.communicationEnable() || !go.readEnable())
+        return;
+    
+    uint8_t* data = go.valueRef();
+    _appLayer.groupValueReadResponse(AckRequested, asap, priority, hopType, secCtrl, data, go.sizeInTelegram());
+
 }
 
 void BauSystemB::groupValueReadResponseConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopTtype, const SecurityControl &secCtrl, uint8_t* data, uint8_t dataLength, bool status)
@@ -693,14 +752,43 @@ void BauSystemB::groupValueReadResponseConfirm(AckType ack, uint16_t asap, Prior
 
 void BauSystemB::groupValueReadAppLayerConfirm(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t* data, uint8_t dataLength)
 {
+    GroupObject& go = _groupObjTable.get(asap);
+
+    if (!go.communicationEnable() || !go.responseUpdateEnable())
+        return;
+
+    updateGroupObject(go, data, dataLength);
 }
 
 void BauSystemB::groupValueWriteLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t* data, uint8_t dataLength, bool status)
 {
+    GroupObject& go = _groupObjTable.get(asap);
+    if (status)
+        go.commFlag(Ok);
+    else
+        go.commFlag(Error);
 }
 
 void BauSystemB::groupValueWriteIndication(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t* data, uint8_t dataLength)
 {
+    #ifdef USE_DATASECURE
+    DataSecurity requiredGoSecurity;
+
+    // Get security flags from Security Interface Object for this group object
+    requiredGoSecurity = _secIfObj.getGroupObjectSecurity(asap);
+
+    if (secCtrl.dataSecurity != requiredGoSecurity)
+    {
+        println("GroupValueWrite: access denied due to wrong security flags");
+        return;
+    }
+#endif
+    GroupObject& go = _groupObjTable.get(asap);
+
+    if (!go.communicationEnable() || !go.writeEnable())
+        return;
+
+    updateGroupObject(go, data, dataLength);
 }
 
 void BauSystemB::individualAddressWriteLocalConfirm(AckType ack, HopCountType hopType, const SecurityControl &secCtrl, uint16_t newaddress, bool status)
@@ -900,4 +988,135 @@ void BauSystemB::domainAddressSerialNumberWriteLocalConfirm(Priority priority, H
 
 void BauSystemB::domainAddressSerialNumberReadLocalConfirm(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t* knxSerialNumber, bool status)
 {
+}
+
+void BauSystemB::updateGroupObject(GroupObject & go, uint8_t * data, uint8_t length)
+{
+    uint8_t* goData = go.valueRef();
+    if (length != go.valueSize())
+    {
+        go.commFlag(Error);
+        return;
+    }
+
+    memcpy(goData, data, length);
+
+    if (go.commFlag() != WriteRequest)
+    {
+        go.commFlag(Updated);
+#ifdef SMALL_GROUPOBJECT
+        GroupObject::processClassCallback(go);
+#else
+        GroupObjectUpdatedHandler handler = go.callback();
+        if (handler)
+            handler(go);
+#endif
+    }
+    else
+    {
+        go.commFlag(Updated);
+    }
+}
+
+void BauSystemB::sendNextGroupTelegram()
+{
+    if(!configured())
+        return;
+    
+    static uint16_t startIdx = 1;
+
+    GroupObjectTableObject& table = _groupObjTable;
+    uint16_t objCount = table.entryCount();
+
+    for (uint16_t asap = startIdx; asap <= objCount; asap++)
+    {
+        GroupObject& go = table.get(asap);
+
+        ComFlag flag = go.commFlag();
+        if (flag != ReadRequest && flag != WriteRequest)
+            continue;
+
+        if (flag == WriteRequest) 
+        {
+#ifdef SMALL_GROUPOBJECT
+            GroupObject::processClassCallback(go);
+#else
+            GroupObjectUpdatedHandler handler = go.callback();
+            if (handler)
+                handler(go);
+#endif
+        }
+        if (!go.communicationEnable())
+        {
+            go.commFlag(Ok);
+            continue;
+        }
+
+        SecurityControl goSecurity;
+        goSecurity.toolAccess = false; // Secured group communication never uses the toolkey. ETS knows all keys, also the group keys.
+
+#ifdef USE_DATASECURE
+        // Get security flags from Security Interface Object for this group object
+        goSecurity.dataSecurity = _secIfObj.getGroupObjectSecurity(asap);
+#else
+        goSecurity.dataSecurity = DataSecurity::None;
+#endif
+
+        if (flag == WriteRequest && go.transmitEnable())
+        {
+            uint8_t* data = go.valueRef();
+            _appLayer.groupValueWriteRequest(AckRequested, asap, go.priority(), NetworkLayerParameter, goSecurity, data,
+                go.sizeInTelegram());
+        }
+        else if (flag == ReadRequest)
+        {
+            _appLayer.groupValueReadRequest(AckRequested, asap, go.priority(), NetworkLayerParameter, goSecurity);
+        }
+
+        go.commFlag(Transmitting);
+
+        startIdx = asap + 1;
+        return;
+    }
+
+    startIdx = 1;
+}
+
+ApplicationLayer& BauSystemB::applicationLayer()
+{
+    return _appLayer;
+}
+
+GroupObjectTableObject& BauSystemB::groupObjectTable()
+{
+    return _groupObjTable;
+}
+
+bool BauSystemB::configured()
+{
+    // _configured is set to true initially, if the device was configured with ETS it will be set to true after restart
+    
+    if (!_configured)
+        return false;
+    
+    _configured = _groupObjTable.loadState() == LS_LOADED
+        && _addrTable.loadState() == LS_LOADED
+        && _assocTable.loadState() == LS_LOADED
+        && _appProgram.loadState() == LS_LOADED;
+
+#ifdef USE_DATASECURE
+    _configured &= _secIfObj.loadState() == LS_LOADED;
+#endif
+
+    return _configured;
+}
+
+void BauSystemB::loop()
+{
+    _transLayer.loop();
+    sendNextGroupTelegram();
+    nextRestartState();
+#ifdef USE_DATASECURE
+    _appLayer.loop();
+#endif
 }

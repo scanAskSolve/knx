@@ -3,7 +3,7 @@
 #include "stdint.h"
 #include "knx_types.h"
 #include "apdu.h"
-#include "bau_systemB.h"
+
 
 class AssociationTableObject;
 class BauSystemB;
