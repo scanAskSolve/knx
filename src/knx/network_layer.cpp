@@ -10,16 +10,7 @@
 NetworkLayer::NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer,LayerType layerType) : _deviceObj(deviceObj), _transportLayer(layer)
 {
     _layerType = layerType;
-    if (_layerType == coupler)
-    {
-
-        _netLayerEntities_coupler[0] = new NetworkLayerEntity(*this, kPrimaryIfIndex);
-        _netLayerEntities_coupler[1] = new NetworkLayerEntity(*this, kSecondaryIfIndex);
-        
-        _currentAddress = _deviceObj.individualAddress();
-        evaluateCouplerType();
-    }
-    else if (_layerType == device)
+    if (_layerType == device)
     {
         _netLayerEntities_device[0] = new NetworkLayerEntity(*this, kInterfaceIndex);
         
@@ -343,34 +334,7 @@ void NetworkLayer::routeDataIndividual(AckType ack, uint16_t destination, NPDU &
 
 void NetworkLayer::dataIndication(AckType ack, AddressType addrType, uint16_t destination, FrameFormat format, NPDU &npdu, Priority priority, uint16_t source, uint8_t srcIfIdx)
 {
-    if (_layerType == coupler)
-    {
-        // routing for individual addresses
-        if (addrType == IndividualAddress)
-        {
-            routeDataIndividual(ack, destination, npdu, priority, source, srcIfIdx);
-            return;
-        }
-
-        // routing for group addresses
-        // TODO: check new AN189
-        // "AN189 only makes that group messages with hop count 7 cannot bypass the Filter Table unfiltered,
-        // what made the Security Proxy(AN192) useless; now, hc 7 Telegrams are filtered as any other and the value is decremented.
-        if (isGroupAddressInFilterTable(destination))
-        {
-            // ROUTE_XXX
-            sendMsgHopCount(ack, addrType, destination, npdu, priority, Broadcast, srcIfIdx, source);
-            return;
-        }
-        else
-        {
-            // IGNORE_TOTALLY
-            return;
-        }
-
-        println("Unhandled routing case! Should not happen!");
-    }
-    else if (_layerType == device)
+    if (_layerType == device)
     {
         HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
 
@@ -394,24 +358,7 @@ void NetworkLayer::dataIndication(AckType ack, AddressType addrType, uint16_t de
 
 void NetworkLayer::dataConfirm(AckType ack, AddressType addrType, uint16_t destination, FrameFormat format, Priority priority, uint16_t source, NPDU &npdu, bool status, uint8_t srcIfIdx)
 {
-    if (_layerType == coupler)
-    {
-        HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
-
-        // Check if received frame is an echo from our sent frame, we are a normal device in this case
-        if (source == _deviceObj.individualAddress())
-        {
-            if (addrType == IndividualAddress)
-            {
-                _transportLayer.dataIndividualConfirm(ack, destination, hopType, priority, npdu.tpdu(), status);
-                return;
-            }
-            // else: we do not have any local group communication, so do not handle this
-        }
-
-        // Do not process the frame any further if it was a routed frame sent from network layer
-    }
-    else if (_layerType == device)
+    if (_layerType == device)
     {
         HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
         if (addrType == IndividualAddress)
@@ -430,29 +377,7 @@ void NetworkLayer::dataConfirm(AckType ack, AddressType addrType, uint16_t desti
 
 void NetworkLayer::broadcastIndication(AckType ack, FrameFormat format, NPDU &npdu, Priority priority, uint16_t source, uint8_t srcIfIdx)
 {
-    if (_layerType == coupler)
-    {
-        // Send it to our local stack first
-        {
-            HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
-            DptMedium mediumType = _netLayerEntities_coupler[srcIfIdx]->mediumType();
-
-            // for closed media like TP1 and IP
-            if (((mediumType == DptMedium::KNX_TP1) || (mediumType == DptMedium::KNX_IP)) &&
-                isApciSystemBroadcast(npdu.tpdu().apdu()))
-            {
-                npdu.frame().systemBroadcast(SysBroadcast);
-                _transportLayer.dataSystemBroadcastIndication(hopType, priority, source, npdu.tpdu());
-                return;
-            }
-
-            _transportLayer.dataBroadcastIndication(hopType, priority, source, npdu.tpdu());
-        }
-
-        // Route to other interface
-        sendMsgHopCount(ack, GroupAddress, 0, npdu, priority, Broadcast, srcIfIdx, source);
-    }
-    else if (_layerType == device)
+    if (_layerType == device)
     {
         HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
         DptMedium mediumType = _netLayerEntities_device[srcIfIdx]->mediumType();
@@ -475,18 +400,7 @@ void NetworkLayer::broadcastIndication(AckType ack, FrameFormat format, NPDU &np
 
 void NetworkLayer::broadcastConfirm(AckType ack, FrameFormat format, Priority priority, uint16_t source, NPDU &npdu, bool status, uint8_t srcIfIdx)
 {
-    if (_layerType == coupler)
-    {
-        HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
-
-        // Check if received frame is an echo from our sent frame, we are a normal device in this case
-        if (source == _deviceObj.individualAddress())
-        {
-            _transportLayer.dataBroadcastConfirm(ack, hopType, priority, npdu.tpdu(), status);
-        }
-        // Do not process the frame any further
-    }
-    else if (_layerType == device)
+    if (_layerType == device)
     {
         HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
         _transportLayer.dataBroadcastConfirm(ack, hopType, priority, npdu.tpdu(), status);
@@ -495,17 +409,7 @@ void NetworkLayer::broadcastConfirm(AckType ack, FrameFormat format, Priority pr
 
 void NetworkLayer::systemBroadcastIndication(AckType ack, FrameFormat format, NPDU &npdu, Priority priority, uint16_t source, uint8_t srcIfIdx)
 {
-    if (_layerType == coupler)
-    {
-        // Send it to our local stack first
-        {
-            HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
-            _transportLayer.dataSystemBroadcastIndication(hopType, priority, source, npdu.tpdu());
-        }
-        // Route to other interface
-        sendMsgHopCount(ack, GroupAddress, 0, npdu, priority, SysBroadcast, srcIfIdx, source);
-    }
-    else if (_layerType == device)
+    if (_layerType == device)
     {
         HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
         _transportLayer.dataSystemBroadcastIndication(hopType, priority, source, npdu.tpdu());
@@ -514,17 +418,7 @@ void NetworkLayer::systemBroadcastIndication(AckType ack, FrameFormat format, NP
 
 void NetworkLayer::systemBroadcastConfirm(AckType ack, FrameFormat format, Priority priority, uint16_t source, NPDU &npdu, bool status, uint8_t srcIfIdx)
 {
-    if (_layerType == coupler)
-    {
-        // Check if received frame is an echo from our sent frame, we are a normal device in this case
-        if (source == _deviceObj.individualAddress())
-        {
-            HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
-            _transportLayer.dataSystemBroadcastConfirm(ack, hopType, npdu.tpdu(), priority, status);
-        }
-        // Do not process the frame any further
-    }
-    else if (_layerType == device)
+    if (_layerType == device)
     {
         HopCountType hopType = npdu.hopCount() == 7 ? UnlimitedRouting : NetworkLayerParameter;
         _transportLayer.dataSystemBroadcastConfirm(ack, hopType, npdu.tpdu(), priority, status);
@@ -533,23 +427,7 @@ void NetworkLayer::systemBroadcastConfirm(AckType ack, FrameFormat format, Prior
 
 void NetworkLayer::dataIndividualRequest(AckType ack, uint16_t destination, HopCountType hopType, Priority priority, TPDU &tpdu)
 {
-    if (_layerType == coupler)
-    {
-        NPDU &npdu = tpdu.frame().npdu();
-
-        if (hopType == UnlimitedRouting)
-            npdu.hopCount(7);
-        else
-            npdu.hopCount(hopCount());
-
-        // if (tpdu.apdu().length() > 0)
-        //{
-        //     print.print("-> NL  ");
-        //     tpdu.apdu().printPDU();
-        // }
-        routeDataIndividual(ack, destination, npdu, priority, _deviceObj.individualAddress(), kLocalIfIndex);
-    }
-    else if (_layerType == device)
+    if (_layerType == device)
     {
         NPDU &npdu = tpdu.frame().npdu();
 
@@ -569,24 +447,7 @@ void NetworkLayer::dataIndividualRequest(AckType ack, uint16_t destination, HopC
 
 void NetworkLayer::dataGroupRequest(AckType ack, uint16_t destination, HopCountType hopType, Priority priority, TPDU &tpdu)
 {
-    if (_layerType == coupler)
-    {
-        NPDU &npdu = tpdu.frame().npdu();
-
-        if (hopType == UnlimitedRouting)
-            npdu.hopCount(7);
-        else
-            npdu.hopCount(hopCount());
-
-        // If the group address is in the filter table, then we route it to the primary side too
-        if (isGroupAddressInFilterTable(destination))
-        {
-            _netLayerEntities_coupler[kPrimaryIfIndex]->sendDataRequest(npdu, ack, destination, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
-        }
-        // We send it to our sub line in any case
-        _netLayerEntities_coupler[kSecondaryIfIndex]->sendDataRequest(npdu, ack, destination, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
-    }
-    else if (_layerType == device)
+    if (_layerType == device)
     {
         NPDU &npdu = tpdu.frame().npdu();
 
@@ -601,19 +462,7 @@ void NetworkLayer::dataGroupRequest(AckType ack, uint16_t destination, HopCountT
 
 void NetworkLayer::dataBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, TPDU &tpdu)
 {
-    if (_layerType == coupler)
-    {
-        NPDU &npdu = tpdu.frame().npdu();
-
-        if (hopType == UnlimitedRouting)
-            npdu.hopCount(7);
-        else
-            npdu.hopCount(hopCount());
-
-        _netLayerEntities_coupler[kPrimaryIfIndex]->sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
-        _netLayerEntities_coupler[kSecondaryIfIndex]->sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, Broadcast);
-    }
-    else if (_layerType == device)
+    if (_layerType == device)
     {
         NPDU &npdu = tpdu.frame().npdu();
 
@@ -628,19 +477,7 @@ void NetworkLayer::dataBroadcastRequest(AckType ack, HopCountType hopType, Prior
 
 void NetworkLayer::dataSystemBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, TPDU &tpdu)
 {
-    if (_layerType == coupler)
-    {
-        NPDU &npdu = tpdu.frame().npdu();
-
-        if (hopType == UnlimitedRouting)
-            npdu.hopCount(7);
-        else
-            npdu.hopCount(hopCount());
-
-        _netLayerEntities_coupler[kPrimaryIfIndex]->sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, SysBroadcast);
-        _netLayerEntities_coupler[kSecondaryIfIndex]->sendDataRequest(npdu, ack, 0, _deviceObj.individualAddress(), priority, GroupAddress, SysBroadcast);
-    }
-    else if (_layerType == device)
+    if (_layerType == device)
     {
         // for closed media like TP1 and IP
         bool isClosedMedium = (_netLayerEntities_device[kInterfaceIndex]->mediumType() == DptMedium::KNX_TP1) || (_netLayerEntities_device[kInterfaceIndex]->mediumType() == DptMedium::KNX_IP);

@@ -13,7 +13,6 @@ class NetworkLayerEntity;
 
 enum LayerType
 {
-  coupler,
   device,
   none
 };
