@@ -18,11 +18,16 @@
 typedef void (*BeforeRestartCallback)(void);
 typedef bool (*FunctionPropertyCallback)(uint8_t objectIndex, uint8_t propertyId, uint8_t length, uint8_t *data, uint8_t *resultData, uint8_t &resultLength);
 
+enum BauSystemType{
+  SYSTEMB,
+  DEVICEB
+};
+
 // class BauSystemB : protected BusAccessUnit
 class BauSystemB
 {
 public:
-  BauSystemB(ArduinoPlatform &platform);
+  BauSystemB(ArduinoPlatform &platform,BauSystemType bauSystemB);
   virtual void loop() = 0;
   bool configured();
   virtual bool enabled() = 0;
