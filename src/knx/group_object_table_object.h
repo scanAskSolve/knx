@@ -5,7 +5,7 @@
 
 class GroupObjectTableObject : public TableObject
 {
-    friend class GroupObject;
+    //friend class GroupObject;
 
   public:
     GroupObjectTableObject(Memory& memory);
@@ -17,10 +17,10 @@ class GroupObjectTableObject : public TableObject
 
     const uint8_t* restore(const uint8_t* buffer) override;
 
-  protected:
+  //protected:
     void beforeStateChange(LoadState& newState) override;
 
-  private:
+  //private:
     void freeGroupObjects();
     bool initGroupObjects();
     uint16_t* _tableData = 0;

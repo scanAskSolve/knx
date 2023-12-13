@@ -8,8 +8,7 @@
 #include "bits.h"
 #include "property.h"
 
-GroupObjectTableObject::GroupObjectTableObject(Memory& memory)
-    : TableObject(memory)
+GroupObjectTableObject::GroupObjectTableObject(Memory& memory) : TableObject(memory)
 {
     Property* properties[]
     {

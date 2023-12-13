@@ -40,7 +40,7 @@ typedef void (*GroupObjectUpdatedHandler)(GroupObject& go);
  */
 class GroupObject
 {
-    friend class GroupObjectTableObject;
+    //friend class GroupObjectTableObject;
 
   public:
     /**
@@ -226,7 +226,7 @@ class GroupObject
     static void processClassCallback(GroupObject& ko);
 #endif
 
-  private:
+  //private:
     // class members
     static GroupObjectTableObject* _table;
 #ifdef SMALL_GROUPOBJECT
