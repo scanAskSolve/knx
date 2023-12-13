@@ -139,7 +139,14 @@ Property::Property(PropertyID id, bool writeEnable, PropertyDataType type,
 {	
 	write(value);
 }
+Property::Property(RouterObject* io, PropertyID id, 
+                     void (*commandCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&),
+                     void (*stateCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&)):
+                     _id(id), _writeEnable(false), _type(PDT_FUNCTION), _maxElements(1), _access(ReadLv0|WriteLv0)
+                     , _interfaceObject(io), _commandCallback(commandCallback), _stateCallback(stateCallback)
+{
 
+}
 Property::~Property()
 {
 	    if (_data)

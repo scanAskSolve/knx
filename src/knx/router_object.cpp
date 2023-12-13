@@ -9,7 +9,7 @@
 #include "memory.h"
 #include "property.h"
 #include "callback_property.h"
-#include "function_property.h"
+// #include "function_property.h"
 
 // Filter Table Realization Type 3
 // The Filter Table Realisation Type 3 shall be organised as a memory mapped bit-field of
@@ -88,7 +88,7 @@ void RouterObject::initialize(CouplerModel model, uint8_t objIndex, DptMedium me
     {
         new Property( PID_COUPLER_SERVICES_CONTROL, true, PDT_GENERIC_01, 1, ReadLv3 | WriteLv0, (uint8_t) 0), // written by ETS TODO: implement
         new Property( PID_FILTER_TABLE_USE, true, PDT_BINARY_INFORMATION, 1, ReadLv3 | WriteLv0, (uint16_t) 0 ), // default: invalid filter table, do not use, written by ETS
-        new FunctionProperty<RouterObject>(this, PID_ROUTETABLE_CONTROL,
+        new Property(this, PID_ROUTETABLE_CONTROL,
                 // Command Callback of PID_ROUTETABLE_CONTROL
                 [](RouterObject* obj, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength) -> void {
                     obj->functionRouteTableControl(true, data, length, resultData, resultLength);
@@ -138,7 +138,7 @@ void RouterObject::initialize(CouplerModel model, uint8_t objIndex, DptMedium me
 
     if (mediumType == DptMedium::KNX_RF)
     {
-        allProperties[i++] = new FunctionProperty<RouterObject>(this, PID_RF_ENABLE_SBC,
+        allProperties[i++] = new Property(this, PID_RF_ENABLE_SBC,
                                     // Command Callback of PID_RF_ENABLE_SBC
                                     [](RouterObject* obj, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength) -> void {
                                        obj->functionRfEnableSbc(true, data, length, resultData, resultLength);
@@ -150,7 +150,7 @@ void RouterObject::initialize(CouplerModel model, uint8_t objIndex, DptMedium me
     }
     else if (mediumType == DptMedium::KNX_IP)
     {
-        allProperties[i++] = new FunctionProperty<RouterObject>(this, PID_IP_ENABLE_SBC,
+        allProperties[i++] = new Property(this, PID_IP_ENABLE_SBC,
                                     // Command Callback of PID_IP_ENABLE_SBC
                                     [](RouterObject* obj, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength) -> void {
                                        obj->functionIpEnableSbc(true, data, length, resultData, resultLength);

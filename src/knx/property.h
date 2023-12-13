@@ -8,7 +8,7 @@
  *  published by the Free Software Foundation.
  */
 #pragma once
-
+// #include "router_object.h"
 #include <stdint.h>
 //#include "save_restore.h"
 
@@ -257,6 +257,8 @@ struct PropertyDescription
     uint8_t Access;
 };
 //class Property : public SaveRestore
+
+class RouterObject;
 class Property
 {
   public:
@@ -265,6 +267,9 @@ class Property
 	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint32_t value);
 	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint8_t value);
 	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, const uint8_t* value);
+    Property(RouterObject* io, PropertyID id, 
+                     void (*commandCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&),
+                     void (*stateCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&));
      ~Property();
     PropertyID Id() const;
     bool WriteEnable() const;
@@ -317,6 +322,9 @@ class Property
   //private:
 	uint16_t _currentElements = 0;
 	uint8_t* _data = nullptr;
-
+private:
+    RouterObject* _interfaceObject = nullptr;
+    void (*_commandCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&) = nullptr;
+    void (*_stateCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&) = nullptr;
 	//-----------------------------------------------------------------------
 };
