@@ -8,8 +8,7 @@
 
 using namespace std;
 
-Bau07B0::Bau07B0(ArduinoPlatform& platform)
-    : BauSystemBDevice(platform),
+Bau07B0::Bau07B0(ArduinoPlatform& platform) : BauSystemBDevice(platform),
       _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks&) *this)
 #ifdef USE_CEMI_SERVER
     , _cemiServer(*this)

@@ -6,6 +6,10 @@
 #define KNX_DEBUG_SERIAL Serial
 #endif
 
+#ifndef KNX_SERIAL
+#define KNX_SERIAL Serial2
+#endif
+
 #ifndef KNX_FLASH_SIZE
 #define KNX_FLASH_SIZE 1024
 #pragma warning "KNX_FLASH_SIZE not defined, using 1024"
