@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 
+
 enum NmReadSerialNumberType
 {
     NM_Read_SerialNumber_By_ProgrammingMode = 0x01,
@@ -25,7 +26,8 @@ BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _m
                                                                               _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device)
 {
     _memory.addSaveRestore(&_appProgram);
-
+    if (bauSystemB == BauSystemType::DEVICEB)
+    {
     _appLayer.transportLayer(_transLayer);
     _appLayer.associationTableObject(_assocTable);
 #ifdef USE_DATASECURE
@@ -33,8 +35,7 @@ BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _m
 #endif
     _transLayer.networkLayer(_netLayer);
     _transLayer.groupAddressTable(_addrTable);
-    if (bauSystemB == BauSystemType::DEVICEB)
-    {
+
         _memory.addSaveRestore(&_deviceObj);
         _memory.addSaveRestore(&_groupObjTable); // changed order for better memory management
         _memory.addSaveRestore(&_addrTable);

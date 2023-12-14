@@ -15,6 +15,11 @@
 #include "knx_types.h"
 #include "group_object_table_object.h"
 
+
+#include "device_object.h"
+#include "address_table_object.h"
+
+
 typedef void (*BeforeRestartCallback)(void);
 typedef bool (*FunctionPropertyCallback)(uint8_t objectIndex, uint8_t propertyId, uint8_t length, uint8_t *data, uint8_t *resultData, uint8_t &resultLength);
 
@@ -28,7 +33,7 @@ class BauSystemB
 {
 public:
   BauSystemB(ArduinoPlatform &platform,BauSystemType bauSystemB);
-  virtual void loop() = 0;
+  virtual void loop();
   bool configured();
   virtual bool enabled() = 0;
   virtual void enabled(bool value) = 0;

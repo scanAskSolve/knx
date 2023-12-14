@@ -13,8 +13,8 @@ class Bau07B0 : public BauSystemB
   public:
     Bau07B0(ArduinoPlatform& platform);
     void loop() override;
-    bool enabled() override;
-    void enabled(bool value) override;
+    virtual bool enabled();
+    virtual void enabled(bool value);
     
   protected:
     InterfaceObject* getInterfaceObject(uint8_t idx);
