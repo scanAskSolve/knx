@@ -169,7 +169,6 @@ void TpUartDataLinkLayer::loop()
         do {
             uint8_t* buffer = _receiveBuffer + 2;
             uint8_t rxByte;
-            print("_rxState:"); println(_rxState);
             switch (_rxState)
             {
                 case RX_WAIT_START:
@@ -183,9 +182,7 @@ void TpUartDataLinkLayer::loop()
                         }
                         rxByte = _platform.readUart();
 #ifdef DBG_TRACE
-                        print("RX_WAIT_START_platform.readUart:");
-                        println(rxByte, HEX);
-                        //print(rxByte, HEX);
+                        print(rxByte, HEX);
 #endif
                         _lastByteRxTime = HAL_GetTick();
 
@@ -299,16 +296,13 @@ void TpUartDataLinkLayer::loop()
                     _lastByteRxTime = HAL_GetTick();
                     rxByte = _platform.readUart();
 #ifdef DBG_TRACE
-                    print("RX_L_ADDR_platform.readUart:");
-                    println(rxByte, HEX);
-                    //print(rxByte, HEX);
+                    print(rxByte, HEX);
 #endif
                     buffer[_RxByteCnt++] = rxByte;
                     _xorSum ^= rxByte;
-                    print("_RxByteCnt"); println(_RxByteCnt);
+
                     if (_RxByteCnt == 7)
                     {
-                        println("_RxByteCnt get 7");
                         //Destination Address + payload available
                         //check if echo; ignore repeat bit of control byte
                         _isEcho = (_sendBuffer != nullptr && (!((buffer[0] ^ _sendBuffer[0]) & ~0x20) && !memcmp(buffer + _convert + 1, _sendBuffer + 1, 5)));
@@ -316,14 +310,12 @@ void TpUartDataLinkLayer::loop()
                         //convert into Extended.ind
                         if (_convert)
                         {
-                            println("_convert");
                             buffer[1] = buffer[6] & 0xF0;
                             buffer[6] &= 0x0F;
                         }
 
                         if (!_isEcho)
                         {
-                            println("!_isEcho");
                             uint8_t c = U_ACK_REQ;
 
                             // The bau knows everything and could either check the address table object (normal device)
@@ -332,17 +324,15 @@ void TpUartDataLinkLayer::loop()
                             //check if individual or group address
                             bool isGroupAddress = (buffer[1] & 0x80) != 0;
                             uint16_t addr = getWord(buffer + 4);
-                            println("getWord addr");
+
                             if (_cb.isAckRequired(addr, isGroupAddress))
                             {
-                                println("isAckRequired");
                                 c |= U_ACK_REQ_ADRESSED;
                             }
-                            println("finish isAckRequired ?");
+
                             // Hint: We can send directly here, this doesn't disturb other transmissions
                             // We don't have to update _lastByteTxTime because after U_ACK_REQ the timing is not so tight
                             _platform.writeUart(c);
-                            println("_platform.writeUart PASS");
                         }
                         _rxState = RX_L_DATA;
                     }
@@ -572,13 +562,7 @@ void TpUartDataLinkLayer::dataConBytesReceived(uint8_t* buffer, uint16_t length,
 void TpUartDataLinkLayer::enabled(bool value)
 {   
     
-    print("value1:"); 
-    if(value){
-        println("true");
-    }
-    else{
-        println("false");
-    }
+    print("value1:"); println(value);
     print("_enabled1:"); println(_enabled);
     if (value && !_enabled)
     {
@@ -859,30 +843,5 @@ void TpUartDataLinkLayer::frameReceived(CemiFrame& frame)
     {
         _networkLayerEntity.dataIndication(ack, addrType, destination, type, npdu, priority, source);
     }
-}
-
-bool ITpUartCallBacks::isAckRequired(uint16_t address, bool isGrpAddr)
-{
-    if (isGrpAddr)
-    {
-        println("isGrpAddr");
-        // ACK for broadcasts
-        if (address == 0)
-            return true;
-        // is group address in group address table? ACK if yes.
-        println("isGrpAddr go next");
-        return _addrTable.contains(address);
-    }
-    println("address go next");
-    // Also ACK for our own individual address
-    if (address  == _deviceObj.individualAddress())
-        return true;
-
-    if (address == 0)
-    {
-        println("Invalid broadcast detected: destination address is 0, but address type is \"individual\"");
-    }
-
-    return false;
 }
 #endif
