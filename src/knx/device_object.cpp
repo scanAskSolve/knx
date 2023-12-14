@@ -22,7 +22,7 @@ DeviceObject::DeviceObject()
     {
         new Property(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_DEVICE),
         new Property(PID_SERIAL_NUMBER, false, PDT_GENERIC_06, 1, ReadLv3 | WriteLv0, serialNumber), 
-        new CallbackProperty<DeviceObject>(this, PID_MANUFACTURER_ID, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0,
+        new Property(this, PID_MANUFACTURER_ID, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0,
             [](DeviceObject* io, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t 
             { 
                 if(start == 0)
@@ -39,7 +39,7 @@ DeviceObject::DeviceObject()
         new Property(PID_ORDER_INFO, false, PDT_GENERIC_10, 1, ReadLv3 | WriteLv0),
         new Property(PID_VERSION, false, PDT_VERSION, 1, ReadLv3 | WriteLv0, (uint16_t)3),
         new Property(PID_ROUTING_COUNT, true, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv3, (uint8_t)(6 << 4)),
-        new CallbackProperty<DeviceObject>(this, PID_PROG_MODE, true, PDT_BITSET8, 1, ReadLv3 | WriteLv3, 
+        new Property(this, PID_PROG_MODE, true, PDT_BITSET8, 1, ReadLv3 | WriteLv3, 
             [](DeviceObject* io, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t 
             { 
                 if(start == 0)
@@ -61,7 +61,7 @@ DeviceObject::DeviceObject()
                 return 1;
             }),
         new Property(PID_MAX_APDU_LENGTH, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)254),
-        new CallbackProperty<DeviceObject>(this, PID_SUBNET_ADDR, false, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv0,
+        new Property(this, PID_SUBNET_ADDR, false, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv0,
             [](DeviceObject* io, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t 
             { 
                 if(start == 0)
@@ -75,7 +75,7 @@ DeviceObject::DeviceObject()
 
                 return 1;
             }),
-        new CallbackProperty<DeviceObject>(this, PID_DEVICE_ADDR, false, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv0,
+        new Property(this, PID_DEVICE_ADDR, false, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv0,
             [](DeviceObject* io, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t 
             { 
                 if(start == 0)
