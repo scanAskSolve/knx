@@ -3,7 +3,6 @@
 #include "table_object.h"
 #include "bits.h"
 #include "memory.h"
-#include "callback_property.h"
 #include "property.h"
 
 BeforeTablesUnloadCallback TableObject::_beforeTablesUnload = 0;

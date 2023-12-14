@@ -5,7 +5,6 @@
 #include "device_object.h"
 #include "bits.h"
 #include "property.h"
-#include "callback_property.h"
 #include "config.h"
 
 #define LEN_KNX_SERIAL 6
