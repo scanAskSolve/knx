@@ -17,7 +17,7 @@ class ITpUartCallBacks
 {
 public:
     virtual ~ITpUartCallBacks() = default;
-    virtual bool isAckRequired(uint16_t address, bool isGrpAddr) =0;
+    virtual bool isAckRequired(uint16_t address, bool isGrpAddr);
 };
 
 // class TpUartDataLinkLayer : public DataLinkLayer

@@ -129,7 +129,7 @@ void Bau07B0::loop()
     _cemiServer.loop();
 #endif    
 }
-
+/*
 bool Bau07B0::isAckRequired(uint16_t address, bool isGrpAddr)
 {
     if (isGrpAddr)
@@ -153,6 +153,6 @@ bool Bau07B0::isAckRequired(uint16_t address, bool isGrpAddr)
     }
 
     return false;
-}
+}*/
 
 #endif
