@@ -115,7 +115,10 @@ bool Bau07B0::enabled()
 
 void Bau07B0::enabled(bool value)
 {
+    println("===================");
+    print("value:");println(value);
     _dlLayer.enabled(value);
+    println("===================");
 }
 
 void Bau07B0::loop()
@@ -126,18 +129,20 @@ void Bau07B0::loop()
     _cemiServer.loop();
 #endif    
 }
-
+/*
 bool Bau07B0::isAckRequired(uint16_t address, bool isGrpAddr)
 {
     if (isGrpAddr)
     {
+        println("isGrpAddr");
         // ACK for broadcasts
         if (address == 0)
             return true;
         // is group address in group address table? ACK if yes.
+        println("isGrpAddr go next");
         return _addrTable.contains(address);
     }
-
+    println("address go next");
     // Also ACK for our own individual address
     if (address  == _deviceObj.individualAddress())
         return true;
@@ -148,6 +153,6 @@ bool Bau07B0::isAckRequired(uint16_t address, bool isGrpAddr)
     }
 
     return false;
-}
+}*/
 
 #endif
