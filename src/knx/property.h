@@ -258,6 +258,10 @@ struct PropertyDescription
 };
 //class Property : public SaveRestore
 
+class ApplicationProgramObject;
+class DeviceObject;
+class TableObject;
+
 class RouterObject;
 class Property
 {
@@ -270,6 +274,23 @@ class Property
     Property(RouterObject* io, PropertyID id, 
                      void (*commandCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&),
                      void (*stateCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&));
+    
+    Property(ApplicationProgramObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+                     uint8_t access, uint8_t (*readCallbackApplication)(ApplicationProgramObject*, uint16_t, uint8_t, uint8_t*),
+                     uint8_t (*writeCallbackApplication)(ApplicationProgramObject*, uint16_t, uint8_t, const uint8_t*));        
+    Property(ApplicationProgramObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+                     uint8_t access, uint8_t (*readCallbackApplication)(ApplicationProgramObject*, uint16_t, uint8_t, uint8_t*));
+    Property(DeviceObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+                     uint8_t access, uint8_t (*readCallbackDevice)(DeviceObject*, uint16_t, uint8_t, uint8_t*),
+                     uint8_t (*writeCallbackDevice)(DeviceObject*, uint16_t, uint8_t, const uint8_t*));
+    Property(DeviceObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+                     uint8_t access, uint8_t (*readCallbackDevice)(DeviceObject*, uint16_t, uint8_t, uint8_t*));
+    Property(TableObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+                     uint8_t access, uint8_t (*readCallbackTable)(TableObject*, uint16_t, uint8_t, uint8_t*),
+                     uint8_t (*writeCallbackTable)(TableObject*, uint16_t, uint8_t, const uint8_t*));
+    Property(TableObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+                     uint8_t access, uint8_t (*readCallbackTable)(TableObject*, uint16_t, uint8_t, uint8_t*));
+
      ~Property();
     PropertyID Id() const;
     bool WriteEnable() const;
@@ -304,8 +325,8 @@ class Property
     static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint32_t value);
     static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, const uint8_t* value);*/
     //void ~DataProperty();
-	virtual uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const;
-    virtual uint8_t write(uint16_t start, uint8_t count, const uint8_t* data);
+	uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const;
+    uint8_t write(uint16_t start, uint8_t count, const uint8_t* data);
     virtual uint8_t* save(uint8_t* buffer);
     virtual const uint8_t* restore(const uint8_t* buffer);
     virtual uint16_t saveSize();
@@ -327,4 +348,17 @@ private:
     void (*_commandCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&) = nullptr;
     void (*_stateCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&) = nullptr;
 	//-----------------------------------------------------------------------
+    ApplicationProgramObject* _interfaceObjectApplication = nullptr;
+    uint8_t (*_readCallbackApplication)(ApplicationProgramObject*, uint16_t, uint8_t, uint8_t*) = nullptr;
+    uint8_t (*_writeCallbackApplication)(ApplicationProgramObject*, uint16_t, uint8_t, const uint8_t*) = nullptr;
+
+    DeviceObject* _interfaceObjectDevice = nullptr;
+    uint8_t (*_readCallbackDevice)(DeviceObject*, uint16_t, uint8_t, uint8_t*) = nullptr;
+    uint8_t (*_writeCallbackDevice)(DeviceObject*, uint16_t, uint8_t, const uint8_t*) = nullptr;
+
+    TableObject* _interfaceObjectTable = nullptr;
+    uint8_t (*_readCallbackTable)(TableObject*, uint16_t, uint8_t, uint8_t*) = nullptr;
+    uint8_t (*_writeCallbackTable)(TableObject*, uint16_t, uint8_t, const uint8_t*) = nullptr;
+
+    bool _callback = false;
 };

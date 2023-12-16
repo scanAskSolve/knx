@@ -3,7 +3,6 @@
 #include "table_object.h"
 #include "bits.h"
 #include "memory.h"
-#include "callback_property.h"
 #include "property.h"
 
 BeforeTablesUnloadCallback TableObject::_beforeTablesUnload = 0;
@@ -273,7 +272,7 @@ void TableObject::initializeProperties(size_t propertiesSize, Property** propert
 {
     Property* ownProperties[] =
     {
-        new CallbackProperty<TableObject>(this, PID_LOAD_STATE_CONTROL, true, PDT_CONTROL, 1, ReadLv3 | WriteLv3,
+        new Property(this, PID_LOAD_STATE_CONTROL, true, PDT_CONTROL, 1, ReadLv3 | WriteLv3,
             [](TableObject* obj, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t {
                 if(start == 0)
                 {
@@ -289,7 +288,7 @@ void TableObject::initializeProperties(size_t propertiesSize, Property** propert
                 obj->loadEvent(data);
                 return 1;
             }),
-        new CallbackProperty<TableObject>(this, PID_TABLE_REFERENCE, false, PDT_UNSIGNED_LONG, 1, ReadLv3 | WriteLv0,
+        new Property(this, PID_TABLE_REFERENCE, false, PDT_UNSIGNED_LONG, 1, ReadLv3 | WriteLv0,
             [](TableObject* obj, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t {
                 if(start == 0)
                 {
@@ -304,7 +303,7 @@ void TableObject::initializeProperties(size_t propertiesSize, Property** propert
                     pushInt(obj->tableReference(), data);
                 return 1;
             }),
-        new CallbackProperty<TableObject>(this, PID_MCB_TABLE, false, PDT_GENERIC_08, 1, ReadLv3 | WriteLv0,
+        new Property(this, PID_MCB_TABLE, false, PDT_GENERIC_08, 1, ReadLv3 | WriteLv0,
             [](TableObject* obj, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t {
                 if (obj->_state != LS_LOADED)
                     return 0; // need to check return code for invalid

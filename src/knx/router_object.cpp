@@ -8,7 +8,6 @@
 #include "bits.h"
 #include "memory.h"
 #include "property.h"
-#include "callback_property.h"
 // #include "function_property.h"
 
 // Filter Table Realization Type 3
