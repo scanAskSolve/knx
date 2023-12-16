@@ -29,7 +29,7 @@ enum BauSystemType{
 };
 
 // class BauSystemB : protected BusAccessUnit
-class BauSystemB : public ITpUartCallBacks
+class BauSystemB 
 {
 public:
 
@@ -268,4 +268,5 @@ public:
 
   bool _configured = true;
   TpUartDataLinkLayer _dlLayer;
+
 };
