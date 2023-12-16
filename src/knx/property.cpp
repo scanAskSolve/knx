@@ -358,11 +358,11 @@ uint16_t Property::saveSize()
 
 //-----------------------------------------------------------------------
 
-uint8_t Property::read(uint16_t start, uint8_t count, uint8_t *data) const
+uint8_t Property::read(uint16_t start, uint8_t count, uint8_t* data) const
 {
     if (_callback)
     {
-        if (count == 0 || start > _maxElements || start + count > _maxElements + 1 || _readCallbackApplication == nullptr || _readCallbackDevice == nullptr || _readCallbackTable == nullptr)
+        if (count == 0 || start > _maxElements || start + count > _maxElements + 1)
             return 0;
         if (_readCallbackApplication != nullptr)
         {
@@ -398,11 +398,11 @@ uint8_t Property::read(uint16_t start, uint8_t count, uint8_t *data) const
     }
 }
 
-uint8_t Property::write(uint16_t start, uint8_t count, const uint8_t *data)
+uint8_t Property::write(uint16_t start, uint8_t count, const uint8_t* data)
 {
     if (_callback)
     {
-        if (count == 0 || start > _maxElements || start + count > _maxElements + 1 || _writeCallbackApplication == nullptr || _writeCallbackDevice == nullptr || _writeCallbackTable == nullptr)
+        if (count == 0 || start > _maxElements || start + count > _maxElements + 1 || (_writeCallbackApplication == nullptr && _writeCallbackDevice == nullptr && _writeCallbackTable == nullptr))
             return 0;
         if (_writeCallbackApplication != nullptr)
         {
