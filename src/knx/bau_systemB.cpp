@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 
+
 enum NmReadSerialNumberType
 {
     NM_Read_SerialNumber_By_ProgrammingMode = 0x01,
@@ -14,9 +15,36 @@ enum NmReadSerialNumberType
 static constexpr auto kFunctionPropertyResultBufferMaxSize = 64;
 static constexpr auto kRestartProcessTime = 3;
 
-BauSystemB::BauSystemB(ArduinoPlatform& platform): _memory(platform, _deviceObj),_appProgram(_memory),_platform(platform)
+BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _memory(platform, _deviceObj), _appProgram(_memory), _platform(platform),
+                                                                              _addrTable(_memory),
+                                                                              _assocTable(_memory), _groupObjTable(_memory),
+#ifdef USE_DATASECURE
+                                                                              _appLayer(_deviceObj, _secIfObj, *this),
+#else
+                                                                               _appLayer(*this),
+#endif
+                                                                              _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device),
+                                                                              _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks&) *this)
 {
     _memory.addSaveRestore(&_appProgram);
+    if (bauSystemB == BauSystemType::DEVICEB)
+    {
+    _appLayer.transportLayer(_transLayer);
+    _appLayer.associationTableObject(_assocTable);
+#ifdef USE_DATASECURE
+    _appLayer.groupAddressTable(_addrTable);
+#endif
+    _transLayer.networkLayer(_netLayer);
+    _transLayer.groupAddressTable(_addrTable);
+
+        _memory.addSaveRestore(&_deviceObj);
+        _memory.addSaveRestore(&_groupObjTable); // changed order for better memory management
+        _memory.addSaveRestore(&_addrTable);
+        _memory.addSaveRestore(&_assocTable);
+#ifdef USE_DATASECURE
+        _memory.addSaveRestore(&_secIfObj);
+#endif
+    }
 }
 
 void BauSystemB::readMemory()
@@ -29,75 +57,75 @@ void BauSystemB::writeMemory()
     _memory.writeMemory();
 }
 
-ArduinoPlatform& BauSystemB::platform()
+ArduinoPlatform &BauSystemB::platform()
 {
     return _platform;
 }
 
-ApplicationProgramObject& BauSystemB::parameters()
+ApplicationProgramObject &BauSystemB::parameters()
 {
     return _appProgram;
 }
 
-DeviceObject& BauSystemB::deviceObject()
+DeviceObject &BauSystemB::deviceObject()
 {
     return _deviceObj;
 }
 
 uint8_t BauSystemB::checkmasterResetValidity(EraseCode eraseCode, uint8_t channel)
 {
-    static constexpr uint8_t successCode = 0x00; // Where does this come from? It is the code for "success".
+    static constexpr uint8_t successCode = 0x00;      // Where does this come from? It is the code for "success".
     static constexpr uint8_t invalidEraseCode = 0x02; // Where does this come from? It is the error code for "unspported erase code".
 
     switch (eraseCode)
     {
-        case EraseCode::ConfirmedRestart:
-        {
-            println("Confirmed restart requested.");
-            return successCode;
-        }
-        case EraseCode::ResetAP:
-        {
-            // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            println("ResetAP requested. Not implemented yet.");
-            return successCode;
-        }
-        case EraseCode::ResetIA:
-        {
-            // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            println("ResetIA requested. Not implemented yet.");
-            return successCode;
-        }
-        case EraseCode::ResetLinks:
-        {
-            // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            println("ResetLinks requested. Not implemented yet.");
-            return successCode;
-        }
-        case EraseCode::ResetParam:
-        {
-            // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            println("ResetParam requested. Not implemented yet.");
-            return successCode;
-        }
-        case EraseCode::FactoryReset:
-        {
-            // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            println("Factory reset requested. type: with IA");
-            return successCode;
-        }
-        case EraseCode::FactoryResetWithoutIA:
-        {
-            // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-            println("Factory reset requested. type: without IA");
-            return successCode;
-        }
-        default:
-        {
-            print("Unhandled erase code: ");
-            println(eraseCode, HEX);
-            return invalidEraseCode;
-        }
+    case EraseCode::ConfirmedRestart:
+    {
+        println("Confirmed restart requested.");
+        return successCode;
+    }
+    case EraseCode::ResetAP:
+    {
+        // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
+        println("ResetAP requested. Not implemented yet.");
+        return successCode;
+    }
+    case EraseCode::ResetIA:
+    {
+        // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
+        println("ResetIA requested. Not implemented yet.");
+        return successCode;
+    }
+    case EraseCode::ResetLinks:
+    {
+        // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
+        println("ResetLinks requested. Not implemented yet.");
+        return successCode;
+    }
+    case EraseCode::ResetParam:
+    {
+        // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
+        println("ResetParam requested. Not implemented yet.");
+        return successCode;
+    }
+    case EraseCode::FactoryReset:
+    {
+        // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
+        println("Factory reset requested. type: with IA");
+        return successCode;
+    }
+    case EraseCode::FactoryResetWithoutIA:
+    {
+        // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
+        println("Factory reset requested. type: without IA");
+        return successCode;
+    }
+    default:
+    {
+        print("Unhandled erase code: ");
+        println(eraseCode, HEX);
+        return invalidEraseCode;
+    }
     }
 }
 
@@ -105,14 +133,14 @@ void BauSystemB::deviceDescriptorReadIndication(Priority priority, HopCountType 
 {
     if (descriptorType != 0)
         descriptorType = 0x3f;
-    
+
     uint8_t data[2];
     pushWord(_deviceObj.maskVersion(), data);
     applicationLayer().deviceDescriptorReadResponse(AckRequested, priority, hopType, asap, secCtrl, descriptorType, data);
 }
 
 void BauSystemB::memoryWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number,
-    uint16_t memoryAddress, uint8_t * data)
+                                       uint16_t memoryAddress, uint8_t *data)
 {
     _memory.writeMemory(memoryAddress, number, data);
     if (_deviceObj.verifyMode())
@@ -120,19 +148,19 @@ void BauSystemB::memoryWriteIndication(Priority priority, HopCountType hopType, 
 }
 
 void BauSystemB::memoryReadIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number,
-    uint16_t memoryAddress, uint8_t * data)
+                                      uint16_t memoryAddress, uint8_t *data)
 {
     applicationLayer().memoryReadResponse(AckRequested, priority, hopType, asap, secCtrl, number, memoryAddress, data);
 }
 
 void BauSystemB::memoryReadIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number,
-    uint16_t memoryAddress)
+                                      uint16_t memoryAddress)
 {
     applicationLayer().memoryReadResponse(AckRequested, priority, hopType, asap, secCtrl, number, memoryAddress,
-        _memory.toAbsolute(memoryAddress));
+                                          _memory.toAbsolute(memoryAddress));
 }
 
-void BauSystemB::memoryExtWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t * data)
+void BauSystemB::memoryExtWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t *data)
 {
     _memory.writeMemory(memoryAddress, number, data);
 
@@ -148,6 +176,13 @@ void BauSystemB::doMasterReset(EraseCode eraseCode, uint8_t channel)
 {
     _deviceObj.masterReset(eraseCode, channel);
     _appProgram.masterReset(eraseCode, channel);
+
+    _addrTable.masterReset(eraseCode, channel);
+    _assocTable.masterReset(eraseCode, channel);
+    _groupObjTable.masterReset(eraseCode, channel);
+#ifdef USE_DATASECURE
+    _secIfObj.masterReset(eraseCode, channel);
+#endif
 }
 
 void BauSystemB::restartRequestIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, RestartType restartType, EraseCode eraseCode, uint8_t channel)
@@ -186,10 +221,10 @@ void BauSystemB::authorizeIndication(Priority priority, HopCountType hopType, ui
 void BauSystemB::userMemoryReadIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress)
 {
     applicationLayer().userMemoryReadResponse(AckRequested, priority, hopType, asap, secCtrl, number, memoryAddress,
-        _memory.toAbsolute(memoryAddress));
+                                              _memory.toAbsolute(memoryAddress));
 }
 
-void BauSystemB::userMemoryWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t* data)
+void BauSystemB::userMemoryWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t *data)
 {
     _memory.writeMemory(memoryAddress, number, data);
 
@@ -198,37 +233,37 @@ void BauSystemB::userMemoryWriteIndication(Priority priority, HopCountType hopTy
 }
 
 void BauSystemB::propertyDescriptionReadIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex,
-    uint8_t propertyId, uint8_t propertyIndex)
+                                                   uint8_t propertyId, uint8_t propertyIndex)
 {
     uint8_t pid = propertyId;
     bool writeEnable = false;
     uint8_t type = 0;
     uint16_t numberOfElements = 0;
     uint8_t access = 0;
-    InterfaceObject* obj = getInterfaceObject(objectIndex);
+    InterfaceObject *obj = getInterfaceObject(objectIndex);
     if (obj)
         obj->readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
 
     applicationLayer().propertyDescriptionReadResponse(AckRequested, priority, hopType, asap, secCtrl, objectIndex, pid, propertyIndex,
-        writeEnable, type, numberOfElements, access);
+                                                       writeEnable, type, numberOfElements, access);
 }
 
 void BauSystemB::propertyValueWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex,
-    uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length)
+                                              uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t *data, uint8_t length)
 {
-    InterfaceObject* obj = getInterfaceObject(objectIndex);
-    if(obj)
+    InterfaceObject *obj = getInterfaceObject(objectIndex);
+    if (obj)
         obj->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
     propertyValueReadIndication(priority, hopType, asap, secCtrl, objectIndex, propertyId, numberOfElements, startIndex);
 }
 
 void BauSystemB::propertyValueExtWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, ObjectType objectType, uint8_t objectInstance,
-    uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length, bool confirmed)
+                                                 uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t *data, uint8_t length, bool confirmed)
 {
     uint8_t returnCode = ReturnCodes::Success;
 
-    InterfaceObject* obj = getInterfaceObject(objectType, objectInstance);
-    if(obj)
+    InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
+    if (obj)
         obj->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
     else
         returnCode = ReturnCodes::AddressVoid;
@@ -240,11 +275,11 @@ void BauSystemB::propertyValueExtWriteIndication(Priority priority, HopCountType
 }
 
 void BauSystemB::propertyValueReadIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex,
-    uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex)
+                                             uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex)
 {
     uint8_t size = 0;
     uint8_t elementCount = numberOfElements;
-    InterfaceObject* obj = getInterfaceObject(objectIndex);
+    InterfaceObject *obj = getInterfaceObject(objectIndex);
     if (obj)
     {
         uint8_t elementSize = obj->propertySize((PropertyID)propertyId);
@@ -257,22 +292,22 @@ void BauSystemB::propertyValueReadIndication(Priority priority, HopCountType hop
         elementCount = 0;
 
     uint8_t data[size];
-    if(obj)
+    if (obj)
         obj->readProperty((PropertyID)propertyId, startIndex, elementCount, data);
-    
+
     if (elementCount == 0)
         size = 0;
-    
+
     applicationLayer().propertyValueReadResponse(AckRequested, priority, hopType, asap, secCtrl, objectIndex, propertyId, elementCount,
-                                        startIndex, data, size);
+                                                 startIndex, data, size);
 }
 
 void BauSystemB::propertyValueExtReadIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, ObjectType objectType, uint8_t objectInstance,
-    uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex)
+                                                uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex)
 {
     uint8_t size = 0;
     uint8_t elementCount = numberOfElements;
-    InterfaceObject* obj = getInterfaceObject(objectType, objectInstance);
+    InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
     if (obj)
     {
         uint8_t elementSize = obj->propertySize((PropertyID)propertyId);
@@ -285,26 +320,26 @@ void BauSystemB::propertyValueExtReadIndication(Priority priority, HopCountType 
         elementCount = 0;
 
     uint8_t data[size];
-    if(obj)
+    if (obj)
         obj->readProperty((PropertyID)propertyId, startIndex, elementCount, data);
 
     if (elementCount == 0)
         size = 0;
 
     applicationLayer().propertyValueExtReadResponse(AckRequested, priority, hopType, asap, secCtrl, objectType, objectInstance, propertyId, elementCount,
-                                           startIndex, data, size);
+                                                    startIndex, data, size);
 }
 
 void BauSystemB::functionPropertyCommandIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex,
-                                                   uint8_t propertyId, uint8_t* data, uint8_t length)
+                                                   uint8_t propertyId, uint8_t *data, uint8_t length)
 {
     uint8_t resultData[kFunctionPropertyResultBufferMaxSize];
     uint8_t resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
 
     bool handled = false;
 
-    InterfaceObject* obj = getInterfaceObject(objectIndex);
-    if(obj)
+    InterfaceObject *obj = getInterfaceObject(objectIndex);
+    if (obj)
     {
         if (obj->property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
         {
@@ -313,31 +348,33 @@ void BauSystemB::functionPropertyCommandIndication(Priority priority, HopCountTy
         }
         else
         {
-            if(_functionProperty != 0)
-                if(_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
+            if (_functionProperty != 0)
+                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
                     handled = true;
         }
-    } else {
-        if(_functionProperty != 0)
-            if(_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
+    }
+    else
+    {
+        if (_functionProperty != 0)
+            if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
                 handled = true;
     }
 
-    //only return a value it was handled by a property or function
-    if(handled)
+    // only return a value it was handled by a property or function
+    if (handled)
         applicationLayer().functionPropertyStateResponse(AckRequested, priority, hopType, asap, secCtrl, objectIndex, propertyId, resultData, resultLength);
 }
 
 void BauSystemB::functionPropertyStateIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex,
-                                                 uint8_t propertyId, uint8_t* data, uint8_t length)
+                                                 uint8_t propertyId, uint8_t *data, uint8_t length)
 {
     uint8_t resultData[kFunctionPropertyResultBufferMaxSize];
     uint8_t resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
 
     bool handled = true;
 
-    InterfaceObject* obj = getInterfaceObject(objectIndex);
-    if(obj)
+    InterfaceObject *obj = getInterfaceObject(objectIndex);
+    if (obj)
     {
         if (obj->property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
         {
@@ -346,29 +383,31 @@ void BauSystemB::functionPropertyStateIndication(Priority priority, HopCountType
         }
         else
         {
-            if(_functionPropertyState != 0)
-                if(_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
+            if (_functionPropertyState != 0)
+                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
                     handled = true;
         }
-    } else {
-        if(_functionPropertyState != 0)
-            if(_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
+    }
+    else
+    {
+        if (_functionPropertyState != 0)
+            if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
                 handled = true;
     }
 
-    //only return a value it was handled by a property or function
-    if(handled)
+    // only return a value it was handled by a property or function
+    if (handled)
         applicationLayer().functionPropertyStateResponse(AckRequested, priority, hopType, asap, secCtrl, objectIndex, propertyId, resultData, resultLength);
 }
 
 void BauSystemB::functionPropertyExtCommandIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, ObjectType objectType, uint8_t objectInstance,
-                                                      uint8_t propertyId, uint8_t* data, uint8_t length)
+                                                      uint8_t propertyId, uint8_t *data, uint8_t length)
 {
     uint8_t resultData[kFunctionPropertyResultBufferMaxSize];
     uint8_t resultLength = 1; // we always have to include the return code at least
 
-    InterfaceObject* obj = getInterfaceObject(objectType, objectInstance);
-    if(obj)
+    InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
+    if (obj)
     {
         PropertyDataType propType = obj->property((PropertyID)propertyId)->Type();
 
@@ -418,13 +457,13 @@ void BauSystemB::functionPropertyExtCommandIndication(Priority priority, HopCoun
 }
 
 void BauSystemB::functionPropertyExtStateIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, ObjectType objectType, uint8_t objectInstance,
-                                                    uint8_t propertyId, uint8_t* data, uint8_t length)
+                                                    uint8_t propertyId, uint8_t *data, uint8_t length)
 {
     uint8_t resultData[kFunctionPropertyResultBufferMaxSize];
     uint8_t resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
 
-    InterfaceObject* obj = getInterfaceObject(objectType, objectInstance);
-    if(obj)
+    InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
+    if (obj)
     {
         PropertyDataType propType = obj->property((PropertyID)propertyId)->Type();
 
@@ -477,7 +516,7 @@ void BauSystemB::individualAddressWriteIndication(HopCountType hopType, const Se
 }
 
 void BauSystemB::individualAddressSerialNumberWriteIndication(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint16_t newIndividualAddress,
-                                                          uint8_t* knxSerialNumber)
+                                                              uint8_t *knxSerialNumber)
 {
     // If the received serial number matches our serial number
     // then store the received new individual address in the device object
@@ -485,7 +524,7 @@ void BauSystemB::individualAddressSerialNumberWriteIndication(Priority priority,
         _deviceObj.individualAddress(newIndividualAddress);
 }
 
-void BauSystemB::individualAddressSerialNumberReadIndication(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t* knxSerialNumber)
+void BauSystemB::individualAddressSerialNumberReadIndication(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t *knxSerialNumber)
 {
     // If the received serial number matches our serial number
     // then send a response with the serial number. The domain address is set to 0 for closed media.
@@ -497,7 +536,7 @@ void BauSystemB::individualAddressSerialNumberReadIndication(Priority priority, 
     }
 }
 
-void BauSystemB::addSaveRestore(DeviceObject* obj)
+void BauSystemB::addSaveRestore(DeviceObject *obj)
 {
     _memory.addSaveRestore(obj);
 }
@@ -531,66 +570,66 @@ void BauSystemB::nextRestartState()
 {
     switch (_restartState)
     {
-        case Idle:
-            /* inactive state, do nothing */
-            break;
-        case Connecting:
-            /* wait for connection, we do nothing here */
-            break;
-        case Connected:
-            /* connection confirmed, we send restartRequest, but we wait a moment (sending ACK etc)... */
-            if (HAL_GetTick() - _restartDelay > 30)
-            {
-                applicationLayer().restartRequest(AckRequested, SystemPriority, NetworkLayerParameter, _restartSecurity);
-                _restartState = Restarted;
-                _restartDelay = HAL_GetTick();
-            }
-            break;
-        case Restarted:
-            /* restart is finished, we send a disconnect */
-            if (HAL_GetTick() - _restartDelay > 30)
-            {
-                applicationLayer().disconnectRequest(SystemPriority);
-                _restartState = Idle;
-            }
-        default:
-            break;
+    case Idle:
+        /* inactive state, do nothing */
+        break;
+    case Connecting:
+        /* wait for connection, we do nothing here */
+        break;
+    case Connected:
+        /* connection confirmed, we send restartRequest, but we wait a moment (sending ACK etc)... */
+        if (HAL_GetTick() - _restartDelay > 30)
+        {
+            applicationLayer().restartRequest(AckRequested, SystemPriority, NetworkLayerParameter, _restartSecurity);
+            _restartState = Restarted;
+            _restartDelay = HAL_GetTick();
+        }
+        break;
+    case Restarted:
+        /* restart is finished, we send a disconnect */
+        if (HAL_GetTick() - _restartDelay > 30)
+        {
+            applicationLayer().disconnectRequest(SystemPriority);
+            _restartState = Idle;
+        }
+    default:
+        break;
     }
 }
 
 void BauSystemB::systemNetworkParameterReadIndication(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint16_t objectType,
-                                                      uint16_t propertyId, uint8_t* testInfo, uint16_t testInfoLength)
+                                                      uint16_t propertyId, uint8_t *testInfo, uint16_t testInfoLength)
 {
     uint8_t operand;
 
     popByte(operand, testInfo + 1); // First byte (+ 0) contains only 4 reserved bits (0)
 
     // See KNX spec. 3.5.2 p.33 (Management Procedures: Procedures with A_SystemNetworkParameter_Read)
-    switch((NmReadSerialNumberType)operand)
+    switch ((NmReadSerialNumberType)operand)
     {
-        case NM_Read_SerialNumber_By_ProgrammingMode: // NM_Read_SerialNumber_By_ProgrammingMode
-            // Only send a reply if programming mode is on
-            if (_deviceObj.progMode() && (objectType == OT_DEVICE) && (propertyId == PID_SERIAL_NUMBER))
-            {
-                // Send reply. testResult data is KNX serial number
-                applicationLayer().systemNetworkParameterReadResponse(priority, hopType, secCtrl, objectType, propertyId,
-                                                             testInfo, testInfoLength, (uint8_t*)_deviceObj.propertyData(PID_SERIAL_NUMBER), 6);
-            }
+    case NM_Read_SerialNumber_By_ProgrammingMode: // NM_Read_SerialNumber_By_ProgrammingMode
+        // Only send a reply if programming mode is on
+        if (_deviceObj.progMode() && (objectType == OT_DEVICE) && (propertyId == PID_SERIAL_NUMBER))
+        {
+            // Send reply. testResult data is KNX serial number
+            applicationLayer().systemNetworkParameterReadResponse(priority, hopType, secCtrl, objectType, propertyId,
+                                                                  testInfo, testInfoLength, (uint8_t *)_deviceObj.propertyData(PID_SERIAL_NUMBER), 6);
+        }
         break;
 
-        case NM_Read_SerialNumber_By_ExFactoryState: // NM_Read_SerialNumber_By_ExFactoryState
+    case NM_Read_SerialNumber_By_ExFactoryState: // NM_Read_SerialNumber_By_ExFactoryState
         break;
 
-        case NM_Read_SerialNumber_By_PowerReset: // NM_Read_SerialNumber_By_PowerReset
+    case NM_Read_SerialNumber_By_PowerReset: // NM_Read_SerialNumber_By_PowerReset
         break;
 
-        case NM_Read_SerialNumber_By_ManufacturerSpecific: // Manufacturer specific use of A_SystemNetworkParameter_Read
+    case NM_Read_SerialNumber_By_ManufacturerSpecific: // Manufacturer specific use of A_SystemNetworkParameter_Read
         break;
     }
 }
 
 void BauSystemB::systemNetworkParameterReadLocalConfirm(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint16_t objectType,
-                                                         uint16_t propertyId, uint8_t* testInfo, uint16_t testInfoLength, bool status)
+                                                        uint16_t propertyId, uint8_t *testInfo, uint16_t testInfoLength, bool status)
 {
 }
 
@@ -601,7 +640,7 @@ void BauSystemB::propertyValueRead(ObjectType objectType, uint8_t objectInstance
     uint32_t size = 0;
     uint8_t elementCount = numberOfElements;
 
-    InterfaceObject* obj = getInterfaceObject(objectType, objectInstance);
+    InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
 
     if (obj)
     {
@@ -610,7 +649,7 @@ void BauSystemB::propertyValueRead(ObjectType objectType, uint8_t objectInstance
             size = elementSize * numberOfElements;
         else
             size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
-        *data = new uint8_t [size];
+        *data = new uint8_t[size];
         obj->readProperty((PropertyID)propertyId, startIndex, elementCount, *data);
     }
     else
@@ -625,16 +664,16 @@ void BauSystemB::propertyValueRead(ObjectType objectType, uint8_t objectInstance
 
 void BauSystemB::propertyValueWrite(ObjectType objectType, uint8_t objectInstance, uint8_t propertyId,
                                     uint8_t &numberOfElements, uint16_t startIndex,
-                                    uint8_t* data, uint32_t length)
+                                    uint8_t *data, uint32_t length)
 {
-    InterfaceObject* obj =  getInterfaceObject(objectType, objectInstance);
-    if(obj)
+    InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
+    if (obj)
         obj->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-    else 
+    else
         numberOfElements = 0;
 }
 
-Memory& BauSystemB::memory()
+Memory &BauSystemB::memory()
 {
     return _memory;
 }
@@ -678,29 +717,82 @@ FunctionPropertyCallback BauSystemB::functionPropertyStateCallback()
     return _functionPropertyState;
 }
 
-
-void BauSystemB::groupValueReadLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl& secCtrl, bool status)
+void BauSystemB::groupValueReadLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, bool status)
 {
+    GroupObject &go = _groupObjTable.get(asap);
+    if (status)
+        go.commFlag(Ok);
+    else
+        go.commFlag(Error);
 }
 
 void BauSystemB::groupValueReadIndication(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl)
 {
+#ifdef USE_DATASECURE
+    DataSecurity requiredGoSecurity;
+
+    // Get security flags from Security Interface Object for this group object
+    requiredGoSecurity = _secIfObj.getGroupObjectSecurity(asap);
+
+    if (secCtrl.dataSecurity != requiredGoSecurity)
+    {
+        println("GroupValueRead: access denied due to wrong security flags");
+        return;
+    }
+#endif
+
+    GroupObject &go = _groupObjTable.get(asap);
+
+    if (!go.communicationEnable() || !go.readEnable())
+        return;
+
+    uint8_t *data = go.valueRef();
+    _appLayer.groupValueReadResponse(AckRequested, asap, priority, hopType, secCtrl, data, go.sizeInTelegram());
 }
 
-void BauSystemB::groupValueReadResponseConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopTtype, const SecurityControl &secCtrl, uint8_t* data, uint8_t dataLength, bool status)
+void BauSystemB::groupValueReadResponseConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopTtype, const SecurityControl &secCtrl, uint8_t *data, uint8_t dataLength, bool status)
 {
 }
 
-void BauSystemB::groupValueReadAppLayerConfirm(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t* data, uint8_t dataLength)
+void BauSystemB::groupValueReadAppLayerConfirm(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t *data, uint8_t dataLength)
 {
+    GroupObject &go = _groupObjTable.get(asap);
+
+    if (!go.communicationEnable() || !go.responseUpdateEnable())
+        return;
+
+    updateGroupObject(go, data, dataLength);
 }
 
-void BauSystemB::groupValueWriteLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t* data, uint8_t dataLength, bool status)
+void BauSystemB::groupValueWriteLocalConfirm(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t *data, uint8_t dataLength, bool status)
 {
+    GroupObject &go = _groupObjTable.get(asap);
+    if (status)
+        go.commFlag(Ok);
+    else
+        go.commFlag(Error);
 }
 
-void BauSystemB::groupValueWriteIndication(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t* data, uint8_t dataLength)
+void BauSystemB::groupValueWriteIndication(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t *data, uint8_t dataLength)
 {
+#ifdef USE_DATASECURE
+    DataSecurity requiredGoSecurity;
+
+    // Get security flags from Security Interface Object for this group object
+    requiredGoSecurity = _secIfObj.getGroupObjectSecurity(asap);
+
+    if (secCtrl.dataSecurity != requiredGoSecurity)
+    {
+        println("GroupValueWrite: access denied due to wrong security flags");
+        return;
+    }
+#endif
+    GroupObject &go = _groupObjTable.get(asap);
+
+    if (!go.communicationEnable() || !go.writeEnable())
+        return;
+
+    updateGroupObject(go, data, dataLength);
 }
 
 void BauSystemB::individualAddressWriteLocalConfirm(AckType ack, HopCountType hopType, const SecurityControl &secCtrl, uint16_t newaddress, bool status)
@@ -719,19 +811,19 @@ void BauSystemB::individualAddressReadAppLayerConfirm(HopCountType hopType, cons
 {
 }
 
-void BauSystemB::individualAddressSerialNumberReadLocalConfirm(AckType ack, HopCountType hopType, const SecurityControl &secCtrl, uint8_t* serialNumber, bool status)
+void BauSystemB::individualAddressSerialNumberReadLocalConfirm(AckType ack, HopCountType hopType, const SecurityControl &secCtrl, uint8_t *serialNumber, bool status)
 {
 }
 
-void BauSystemB::individualAddressSerialNumberReadResponseConfirm(AckType ack, HopCountType hopType, const SecurityControl &secCtrl, uint8_t* serialNumber, uint16_t domainAddress, bool status)
+void BauSystemB::individualAddressSerialNumberReadResponseConfirm(AckType ack, HopCountType hopType, const SecurityControl &secCtrl, uint8_t *serialNumber, uint16_t domainAddress, bool status)
 {
 }
 
-void BauSystemB::individualAddressSerialNumberReadAppLayerConfirm(HopCountType hopType, const SecurityControl &secCtrl, uint8_t* serialNumber, uint16_t individualAddress, uint16_t domainAddress)
+void BauSystemB::individualAddressSerialNumberReadAppLayerConfirm(HopCountType hopType, const SecurityControl &secCtrl, uint8_t *serialNumber, uint16_t individualAddress, uint16_t domainAddress)
 {
 }
 
-void BauSystemB::individualAddressSerialNumberWriteLocalConfirm(AckType ack, HopCountType hopType, const SecurityControl &secCtrl, uint8_t* serialNumber, uint16_t newaddress, bool status)
+void BauSystemB::individualAddressSerialNumberWriteLocalConfirm(AckType ack, HopCountType hopType, const SecurityControl &secCtrl, uint8_t *serialNumber, uint16_t newaddress, bool status)
 {
 }
 
@@ -740,11 +832,11 @@ void BauSystemB::deviceDescriptorReadLocalConfirm(AckType ack, Priority priority
 }
 
 void BauSystemB::deviceDescriptorReadResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t descriptor_type,
-                                                        uint8_t* device_descriptor, bool status)
+                                                     uint8_t *device_descriptor, bool status)
 {
 }
 
-void BauSystemB::deviceDescriptorReadAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t descriptortype, uint8_t* deviceDescriptor)
+void BauSystemB::deviceDescriptorReadAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t descriptortype, uint8_t *deviceDescriptor)
 {
 }
 
@@ -756,15 +848,15 @@ void BauSystemB::propertyValueReadLocalConfirm(AckType ack, Priority priority, H
 {
 }
 
-void BauSystemB::propertyValueReadResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length, bool status)
+void BauSystemB::propertyValueReadResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t *data, uint8_t length, bool status)
 {
 }
 
-void BauSystemB::propertyValueReadAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length)
+void BauSystemB::propertyValueReadAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t *data, uint8_t length)
 {
 }
 
-void BauSystemB::propertyValueWriteLocalConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t* data, uint8_t length, bool status)
+void BauSystemB::propertyValueWriteLocalConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex, uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t *data, uint8_t length, bool status)
 {
 }
 
@@ -788,15 +880,15 @@ void BauSystemB::memoryReadLocalConfirm(AckType ack, Priority priority, HopCount
 {
 }
 
-void BauSystemB::memoryReadResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint16_t memoryAddress, uint8_t* data, bool status)
+void BauSystemB::memoryReadResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint16_t memoryAddress, uint8_t *data, bool status)
 {
 }
 
-void BauSystemB::memoryReadAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint16_t memoryAddress, uint8_t* data)
+void BauSystemB::memoryReadAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint16_t memoryAddress, uint8_t *data)
 {
 }
 
-void BauSystemB::memoryWriteLocalConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint16_t memoryAddress, uint8_t* data, bool status)
+void BauSystemB::memoryWriteLocalConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint16_t memoryAddress, uint8_t *data, bool status)
 {
 }
 
@@ -804,23 +896,23 @@ void BauSystemB::memoryExtReadLocalConfirm(AckType ack, Priority priority, HopCo
 {
 }
 
-void BauSystemB::memoryExtReadResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t* data, bool status)
+void BauSystemB::memoryExtReadResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t *data, bool status)
 {
 }
 
-void BauSystemB::memoryExtReadAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t* data)
+void BauSystemB::memoryExtReadAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t *data)
 {
 }
 
-void BauSystemB::memoryExtWriteLocalConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t* data, bool status)
+void BauSystemB::memoryExtWriteLocalConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t *data, bool status)
 {
 }
 
-void BauSystemB::memoryExtWriteResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t* data, bool status)
+void BauSystemB::memoryExtWriteResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t *data, bool status)
 {
 }
 
-void BauSystemB::memoryExtWriteAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t* data)
+void BauSystemB::memoryExtWriteAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t *data)
 {
 }
 
@@ -828,15 +920,15 @@ void BauSystemB::userMemoryReadLocalConfirm(AckType ack, Priority priority, HopC
 {
 }
 
-void BauSystemB::userMemoryReadResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t* memoryData, bool status)
+void BauSystemB::userMemoryReadResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t *memoryData, bool status)
 {
 }
 
-void BauSystemB::userMemoryReadAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t* memoryData)
+void BauSystemB::userMemoryReadAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t *memoryData)
 {
 }
 
-void BauSystemB::userMemoryWriteLocalConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t* memoryData, bool status)
+void BauSystemB::userMemoryWriteLocalConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number, uint32_t memoryAddress, uint8_t *memoryData, bool status)
 {
 }
 
@@ -848,11 +940,11 @@ void BauSystemB::userManufacturerInfoIndication(Priority priority, HopCountType 
 {
 }
 
-void BauSystemB::userManufacturerInfoResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t* info, bool status)
+void BauSystemB::userManufacturerInfoResponseConfirm(AckType ack, Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t *info, bool status)
 {
 }
 
-void BauSystemB::userManufacturerInfoAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t* info)
+void BauSystemB::userManufacturerInfoAppLayerConfirm(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t *info)
 {
 }
 
@@ -884,20 +976,171 @@ void BauSystemB::keyWriteAppLayerConfirm(Priority priority, HopCountType hopType
 {
 }
 
-void BauSystemB::domainAddressSerialNumberWriteIndication(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t* rfDoA,
-                                                             const uint8_t* knxSerialNumber)
+void BauSystemB::domainAddressSerialNumberWriteIndication(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t *rfDoA,
+                                                          const uint8_t *knxSerialNumber)
 {
 }
 
-void BauSystemB::domainAddressSerialNumberReadIndication(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t* knxSerialNumber)
+void BauSystemB::domainAddressSerialNumberReadIndication(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t *knxSerialNumber)
 {
 }
 
-void BauSystemB::domainAddressSerialNumberWriteLocalConfirm(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t* rfDoA,
-                                                             const uint8_t* knxSerialNumber, bool status)
+void BauSystemB::domainAddressSerialNumberWriteLocalConfirm(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t *rfDoA,
+                                                            const uint8_t *knxSerialNumber, bool status)
 {
 }
 
-void BauSystemB::domainAddressSerialNumberReadLocalConfirm(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t* knxSerialNumber, bool status)
+void BauSystemB::domainAddressSerialNumberReadLocalConfirm(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t *knxSerialNumber, bool status)
 {
+}
+
+void BauSystemB::updateGroupObject(GroupObject &go, uint8_t *data, uint8_t length)
+{
+    uint8_t *goData = go.valueRef();
+    if (length != go.valueSize())
+    {
+        go.commFlag(Error);
+        return;
+    }
+
+    memcpy(goData, data, length);
+
+    if (go.commFlag() != WriteRequest)
+    {
+        go.commFlag(Updated);
+#ifdef SMALL_GROUPOBJECT
+        GroupObject::processClassCallback(go);
+#else
+        GroupObjectUpdatedHandler handler = go.callback();
+        if (handler)
+            handler(go);
+#endif
+    }
+    else
+    {
+        go.commFlag(Updated);
+    }
+}
+
+void BauSystemB::sendNextGroupTelegram()
+{
+    if (!configured())
+        return;
+
+    static uint16_t startIdx = 1;
+
+    GroupObjectTableObject &table = _groupObjTable;
+    uint16_t objCount = table.entryCount();
+
+    for (uint16_t asap = startIdx; asap <= objCount; asap++)
+    {
+        GroupObject &go = table.get(asap);
+
+        ComFlag flag = go.commFlag();
+        if (flag != ReadRequest && flag != WriteRequest)
+            continue;
+
+        if (flag == WriteRequest)
+        {
+#ifdef SMALL_GROUPOBJECT
+            GroupObject::processClassCallback(go);
+#else
+            GroupObjectUpdatedHandler handler = go.callback();
+            if (handler)
+                handler(go);
+#endif
+        }
+        if (!go.communicationEnable())
+        {
+            go.commFlag(Ok);
+            continue;
+        }
+
+        SecurityControl goSecurity;
+        goSecurity.toolAccess = false; // Secured group communication never uses the toolkey. ETS knows all keys, also the group keys.
+
+#ifdef USE_DATASECURE
+        // Get security flags from Security Interface Object for this group object
+        goSecurity.dataSecurity = _secIfObj.getGroupObjectSecurity(asap);
+#else
+        goSecurity.dataSecurity = DataSecurity::None;
+#endif
+
+        if (flag == WriteRequest && go.transmitEnable())
+        {
+            uint8_t *data = go.valueRef();
+            _appLayer.groupValueWriteRequest(AckRequested, asap, go.priority(), NetworkLayerParameter, goSecurity, data,
+                                             go.sizeInTelegram());
+        }
+        else if (flag == ReadRequest)
+        {
+            _appLayer.groupValueReadRequest(AckRequested, asap, go.priority(), NetworkLayerParameter, goSecurity);
+        }
+
+        go.commFlag(Transmitting);
+
+        startIdx = asap + 1;
+        return;
+    }
+
+    startIdx = 1;
+}
+
+ApplicationLayer &BauSystemB::applicationLayer()
+{
+    return _appLayer;
+}
+
+GroupObjectTableObject &BauSystemB::groupObjectTable()
+{
+    return _groupObjTable;
+}
+
+bool BauSystemB::configured()
+{
+    // _configured is set to true initially, if the device was configured with ETS it will be set to true after restart
+
+    if (!_configured)
+        return false;
+
+    _configured = _groupObjTable.loadState() == LS_LOADED && _addrTable.loadState() == LS_LOADED && _assocTable.loadState() == LS_LOADED && _appProgram.loadState() == LS_LOADED;
+
+#ifdef USE_DATASECURE
+    _configured &= _secIfObj.loadState() == LS_LOADED;
+#endif
+
+    return _configured;
+}
+
+void BauSystemB::loop()
+{
+    _transLayer.loop();
+    sendNextGroupTelegram();
+    nextRestartState();
+#ifdef USE_DATASECURE
+    _appLayer.loop();
+#endif
+}
+
+bool BauSystemB::isAckRequired(uint16_t address, bool isGrpAddr)
+{
+    if (isGrpAddr)
+    {
+        // ACK for broadcasts
+        if (address == 0)
+            return true;
+        // is group address in group address table? ACK if yes.
+        return _addrTable.contains(address);
+    }
+
+    // Also ACK for our own individual address
+    if (address  == _deviceObj.individualAddress())
+        return true;
+
+    if (address == 0)
+    {
+        println("Invalid broadcast detected: destination address is 0, but address type is \"individual\"");
+    }
+
+    return false;
 }

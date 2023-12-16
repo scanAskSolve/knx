@@ -13,7 +13,7 @@
 #include <string.h>
 
 // Activate trace output
-//#define DBG_TRACE
+#define DBG_TRACE
 
 // NCN5120
 #define NCN5120
@@ -560,7 +560,10 @@ void TpUartDataLinkLayer::dataConBytesReceived(uint8_t* buffer, uint16_t length,
 }
 
 void TpUartDataLinkLayer::enabled(bool value)
-{
+{   
+    
+    print("value1:"); println(value);
+    print("_enabled1:"); println(_enabled);
     if (value && !_enabled)
     {
         _platform.setupUart();
@@ -573,6 +576,7 @@ void TpUartDataLinkLayer::enabled(bool value)
         while (true)
         {
             int resp = _platform.readUart();
+            print("resp"); println(resp);
             if (resp == U_RESET_IND)
             {
                 flag = true;
@@ -584,7 +588,8 @@ void TpUartDataLinkLayer::enabled(bool value)
                 break;
             }
         }
-
+        
+            print("flag"); println(flag);
         if (flag)
         {
             _enabled = true;
@@ -598,11 +603,13 @@ void TpUartDataLinkLayer::enabled(bool value)
         }
         return;
     }
-
+    print("value2:"); println(value);
+    print("_enabled2:"); println(_enabled);
     if (!value && _enabled)
     {
         _enabled = false;
         stopChip();
+        println("_platform.closeUart");
         _platform.closeUart();
         return;
     }

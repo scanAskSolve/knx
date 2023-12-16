@@ -7,6 +7,7 @@
 #include "string.h"
 #include "bits.h"
 #include "stdio.h"
+#include "bau_systemB.h"
 
 const SecurityControl ApplicationLayer::noSecurity {.toolAccess=false, .dataSecurity=DataSecurity::None};
 
