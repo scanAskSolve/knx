@@ -48,6 +48,8 @@ BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _m
     }
 }
 
+
+
 BauSystemB::BauSystemB(ArduinoPlatform& platform)
     : _memory(platform, _deviceObj), _appProgram(_memory), _platform(platform),
                                                                               _addrTable(_memory),
@@ -65,7 +67,23 @@ BauSystemB::BauSystemB(ArduinoPlatform& platform)
 #endif           
 {
     _memory.addSaveRestore(&_appProgram);
-    
+
+    _appLayer.transportLayer(_transLayer);
+    _appLayer.associationTableObject(_assocTable);
+#ifdef USE_DATASECURE
+    _appLayer.groupAddressTable(_addrTable);
+#endif
+    _transLayer.networkLayer(_netLayer);
+    _transLayer.groupAddressTable(_addrTable);
+
+        _memory.addSaveRestore(&_deviceObj);
+        _memory.addSaveRestore(&_groupObjTable); // changed order for better memory management
+        _memory.addSaveRestore(&_addrTable);
+        _memory.addSaveRestore(&_assocTable);
+#ifdef USE_DATASECURE
+        _memory.addSaveRestore(&_secIfObj);
+#endif
+
     _netLayer.getInterface().dataLinkLayer(_dlLayer);
 #ifdef USE_CEMI_SERVER
     _cemiServerObject.setMediumTypeAsSupported(DptMedium::KNX_TP1);
