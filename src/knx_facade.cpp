@@ -11,14 +11,14 @@
 #endif
 
 #if MASK_VERSION == 0x07B0
-    //KnxFacade<Stm32Platform, Bau07B0> knx(buttonEvent);
+    //KnxFacade<Stm32Platform, BauSystemB> knx(buttonEvent);
     KnxFacade knx(buttonEvent);
 #else
     #error "Mask version not supported on ARDUINO_ARCH_STM32"
 #endif
 
 //****************************************************************************
-//KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction) : _platformPtr(new Stm32Platform()), _bauPtr(new Bau07B0(*_platformPtr)), _bau(*_bauPtr)
+//KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction) : _platformPtr(new Stm32Platform()), _bauPtr(new BauSystemB(*_platformPtr)), _bau(*_bauPtr)
 KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction)
 {
     manufacturerId(0xfa);
@@ -41,7 +41,7 @@ ArduinoPlatform& KnxFacade::platform()
     return *_platformPtr;
 }
 
-Bau07B0& KnxFacade::bau()
+BauSystemB& KnxFacade::bau()
 {
     return _bau;
 }

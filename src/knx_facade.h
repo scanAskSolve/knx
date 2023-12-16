@@ -3,7 +3,7 @@
 #include "arduino_platform.h"
 #include "knx/bits.h"
 #include "knx/config.h"
-#include "knx/bau07B0.h"
+#include "knx/bau_systemB.h"
 
 #ifndef USERDATA_SAVE_SIZE
 #define USERDATA_SAVE_SIZE 0
@@ -30,7 +30,7 @@ typedef void (*ProgLedOnCallback)();
 typedef void (*ProgLedOffCallback)();
 
 class ArduinoPlatform;
-class Bau07B0;
+class BauSystemB;
 
 class KnxFacade : private DeviceObject
 {
@@ -42,7 +42,7 @@ class KnxFacade : private DeviceObject
 
     ArduinoPlatform& platform();
 
-    Bau07B0& bau();
+    BauSystemB& bau();
 
     bool enabled();
 
@@ -167,8 +167,8 @@ class KnxFacade : private DeviceObject
 
   //private:
     ArduinoPlatform* _platformPtr  = new ArduinoPlatform(&KNX_SERIAL);
-    Bau07B0* _bauPtr = new Bau07B0(*_platformPtr);
-    Bau07B0& _bau = *_bauPtr;
+    BauSystemB* _bauPtr = new BauSystemB(*_platformPtr);
+    BauSystemB& _bau = *_bauPtr;
     ProgLedOnCallback _progLedOnCallback = 0;
     ProgLedOffCallback _progLedOffCallback = 0;
     uint32_t _ledPinActiveOn = KNX_LED_ACTIVE_ON;
@@ -201,7 +201,7 @@ void buttonEvent();
     // predefined global instance for TP only
     #if MASK_VERSION == 0x07B0
         extern KnxFacade knx;
-        //extern KnxFacade<Stm32Platform, Bau07B0> knx;
+        //extern KnxFacade<Stm32Platform, BauSystemB> knx;
     #else
         #error "Mask version not supported on ARDUINO_ARCH_STM32"
     #endif

@@ -35,11 +35,12 @@ public:
 
   virtual bool isAckRequired(uint16_t address, bool isGrpAddr);
 
+  BauSystemB(ArduinoPlatform& platform);
   BauSystemB(ArduinoPlatform &platform,BauSystemType bauSystemB);
   virtual void loop();
   bool configured();
-  virtual bool enabled() = 0;
-  virtual void enabled(bool value) = 0;
+  virtual bool enabled();
+  virtual void enabled(bool value);
 
   ArduinoPlatform &platform();
   ApplicationProgramObject &parameters();
@@ -70,8 +71,8 @@ public:
 
 public:
   ApplicationLayer &applicationLayer();
-  virtual InterfaceObject *getInterfaceObject(uint8_t idx) = 0;
-  virtual InterfaceObject *getInterfaceObject(ObjectType objectType, uint8_t objectInstance) = 0;
+  virtual InterfaceObject *getInterfaceObject(uint8_t idx);
+  virtual InterfaceObject *getInterfaceObject(ObjectType objectType, uint8_t objectInstance);
 
   virtual void memoryWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number,
                                      uint16_t memoryAddress, uint8_t *data);

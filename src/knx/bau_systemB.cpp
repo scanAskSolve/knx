@@ -25,6 +25,7 @@ BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _m
 #endif
                                                                               _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device),
                                                                               _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks&) *this)
+
 {
     _memory.addSaveRestore(&_appProgram);
     if (bauSystemB == BauSystemType::DEVICEB)
@@ -45,6 +46,53 @@ BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _m
         _memory.addSaveRestore(&_secIfObj);
 #endif
     }
+}
+
+BauSystemB::BauSystemB(ArduinoPlatform& platform)
+    : _memory(platform, _deviceObj), _appProgram(_memory), _platform(platform),
+                                                                              _addrTable(_memory),
+                                                                              _assocTable(_memory), _groupObjTable(_memory),
+#ifdef USE_DATASECURE
+                                                                              _appLayer(_deviceObj, _secIfObj, *this),
+#else
+                                                                               _appLayer(*this),
+#endif
+                                                                              _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device),
+                                                                              _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks&) *this)
+
+#ifdef USE_CEMI_SERVER
+    , _cemiServer(*this)
+#endif           
+{
+    _memory.addSaveRestore(&_appProgram);
+    
+    _netLayer.getInterface().dataLinkLayer(_dlLayer);
+#ifdef USE_CEMI_SERVER
+    _cemiServerObject.setMediumTypeAsSupported(DptMedium::KNX_TP1);
+    _cemiServer.dataLinkLayer(_dlLayer);
+    _dlLayer.cemiServer(_cemiServer);
+    _memory.addSaveRestore(&_cemiServerObject);
+#endif
+    // Set Mask Version in Device Object depending on the BAU
+    _deviceObj.maskVersion(0x07B0);
+
+    // Set which interface objects are available in the device object
+    // This differs from BAU to BAU with different medium types.
+    // See PID_IO_LIST
+    Property* prop = _deviceObj.property(PID_IO_LIST);
+    prop->write(1, (uint16_t) OT_DEVICE);
+    prop->write(2, (uint16_t) OT_ADDR_TABLE);
+    prop->write(3, (uint16_t) OT_ASSOC_TABLE);
+    prop->write(4, (uint16_t) OT_GRP_OBJ_TABLE);
+    prop->write(5, (uint16_t) OT_APPLICATION_PROG);
+#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
+    prop->write(6, (uint16_t) OT_SECURITY);
+    prop->write(7, (uint16_t) OT_CEMI_SERVER);
+#elif defined(USE_DATASECURE)
+    prop->write(6, (uint16_t) OT_SECURITY);
+#elif defined(USE_CEMI_SERVER)
+    prop->write(6, (uint16_t) OT_CEMI_SERVER);
+#endif
 }
 
 void BauSystemB::readMemory()
@@ -1114,12 +1162,19 @@ bool BauSystemB::configured()
 
 void BauSystemB::loop()
 {
+    _dlLayer.loop();
+
     _transLayer.loop();
     sendNextGroupTelegram();
     nextRestartState();
 #ifdef USE_DATASECURE
     _appLayer.loop();
 #endif
+
+#ifdef USE_CEMI_SERVER    
+    _cemiServer.loop();
+#endif    
+
 }
 
 bool BauSystemB::isAckRequired(uint16_t address, bool isGrpAddr)
@@ -1143,4 +1198,78 @@ bool BauSystemB::isAckRequired(uint16_t address, bool isGrpAddr)
     }
 
     return false;
+}
+
+InterfaceObject* BauSystemB::getInterfaceObject(uint8_t idx)
+{
+    switch (idx)
+    {
+        case 0:
+            return &_deviceObj;
+        case 1:
+            return &_addrTable;
+        case 2:
+            return &_assocTable;
+        case 3:
+            return &_groupObjTable;
+        case 4:
+            return &_appProgram;
+        case 5: // would be app_program 2
+            return nullptr;
+#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
+        case 6:
+            return &_secIfObj;
+        case 7:
+            return &_cemiServerObject;
+#elif defined(USE_CEMI_SERVER)
+        case 6:
+            return &_cemiServerObject;
+#elif defined(USE_DATASECURE)
+        case 6:
+            return &_secIfObj;
+#endif
+        default:
+            return nullptr;
+    }
+}
+
+InterfaceObject* BauSystemB::getInterfaceObject(ObjectType objectType, uint8_t objectInstance)
+{
+    // We do not use it right now. 
+    // Required for coupler mode as there are multiple router objects for example
+    (void) objectInstance;
+
+    switch (objectType)
+    {
+        case OT_DEVICE:
+            return &_deviceObj;
+        case OT_ADDR_TABLE:
+            return &_addrTable;
+        case OT_ASSOC_TABLE:
+            return &_assocTable;
+        case OT_GRP_OBJ_TABLE:
+            return &_groupObjTable;
+        case OT_APPLICATION_PROG:
+            return &_appProgram;
+#ifdef USE_DATASECURE
+        case OT_SECURITY:
+            return &_secIfObj;
+#endif
+#ifdef USE_CEMI_SERVER
+        case OT_CEMI_SERVER:
+            return &_cemiServerObject;
+#endif            
+        default:
+            return nullptr;
+    }
+}
+
+bool BauSystemB::enabled()
+{
+    return _dlLayer.enabled();
+}
+
+void BauSystemB::enabled(bool value)
+{
+    _dlLayer.enabled(value);
 }
