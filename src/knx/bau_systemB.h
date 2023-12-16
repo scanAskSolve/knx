@@ -14,7 +14,7 @@
 #include "memory.h"
 #include "knx_types.h"
 #include "group_object_table_object.h"
-
+#include "tpuart_data_link_layer.h"
 
 #include "device_object.h"
 #include "address_table_object.h"
@@ -29,9 +29,12 @@ enum BauSystemType{
 };
 
 // class BauSystemB : protected BusAccessUnit
-class BauSystemB
+class BauSystemB : public ITpUartCallBacks
 {
 public:
+
+  virtual bool isAckRequired(uint16_t address, bool isGrpAddr);
+
   BauSystemB(ArduinoPlatform &platform,BauSystemType bauSystemB);
   virtual void loop();
   bool configured();
@@ -264,4 +267,5 @@ public:
   NetworkLayer _netLayer;
 
   bool _configured = true;
+  TpUartDataLinkLayer _dlLayer;
 };

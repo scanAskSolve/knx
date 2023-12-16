@@ -23,7 +23,8 @@ BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _m
 #else
                                                                                _appLayer(*this),
 #endif
-                                                                              _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device)
+                                                                              _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device),
+                                                                              _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks&) *this)
 {
     _memory.addSaveRestore(&_appProgram);
     if (bauSystemB == BauSystemType::DEVICEB)
@@ -1119,4 +1120,27 @@ void BauSystemB::loop()
 #ifdef USE_DATASECURE
     _appLayer.loop();
 #endif
+}
+
+bool BauSystemB::isAckRequired(uint16_t address, bool isGrpAddr)
+{
+    if (isGrpAddr)
+    {
+        // ACK for broadcasts
+        if (address == 0)
+            return true;
+        // is group address in group address table? ACK if yes.
+        return _addrTable.contains(address);
+    }
+
+    // Also ACK for our own individual address
+    if (address  == _deviceObj.individualAddress())
+        return true;
+
+    if (address == 0)
+    {
+        println("Invalid broadcast detected: destination address is 0, but address type is \"individual\"");
+    }
+
+    return false;
 }

@@ -9,8 +9,7 @@
 using namespace std;
 
 Bau07B0::Bau07B0(ArduinoPlatform& platform)
-    : BauSystemB(platform,BauSystemType::DEVICEB),
-      _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks&) *this)
+    : BauSystemB(platform,BauSystemType::DEVICEB)
 #ifdef USE_CEMI_SERVER
     , _cemiServer(*this)
 #endif           
@@ -125,29 +124,6 @@ void Bau07B0::loop()
 #ifdef USE_CEMI_SERVER    
     _cemiServer.loop();
 #endif    
-}
-
-bool Bau07B0::isAckRequired(uint16_t address, bool isGrpAddr)
-{
-    if (isGrpAddr)
-    {
-        // ACK for broadcasts
-        if (address == 0)
-            return true;
-        // is group address in group address table? ACK if yes.
-        return _addrTable.contains(address);
-    }
-
-    // Also ACK for our own individual address
-    if (address  == _deviceObj.individualAddress())
-        return true;
-
-    if (address == 0)
-    {
-        println("Invalid broadcast detected: destination address is 0, but address type is \"individual\"");
-    }
-
-    return false;
 }
 
 #endif
