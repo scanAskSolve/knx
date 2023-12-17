@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include <cstdint>
+#include <stdint.h>
 
 #include "dpt.h"
 #include "knx_value.h"

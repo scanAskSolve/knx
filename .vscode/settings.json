@@ -23,7 +23,9 @@
         "xmemory": "cpp",
         "xtr1common": "cpp",
         "algorithm": "cpp",
-        "iterator": "cpp"
+        "iterator": "cpp",
+        "istream": "cpp",
+        "ctime": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

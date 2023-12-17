@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdint>
-#include <ctime>
+#include <stdint.h>
+#include <time.h>
 
 class KNXValue
 {

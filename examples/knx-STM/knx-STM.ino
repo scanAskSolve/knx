@@ -1,4 +1,3 @@
-//#include <Arduino.h>
 #include <knx.h>
 
 // create named references for easy access to group objects

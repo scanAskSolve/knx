@@ -1,11 +1,17 @@
 #include "arduino_platform.h"
 #include "knx/bits.h"
 #include <EEPROM.h>
-#include <Arduino.h>
+
+/*#ifndef STM32_UART
+#define STM32_UART
+#endif*/
+//#define STM32_UART
 
 #ifndef KNX_NO_PRINT
 Stream* ArduinoPlatform::SerialDebug = &KNX_DEBUG_SERIAL;
-
+#ifdef STM32_UART
+Stream* ArduinoPlatform::SerialDebug = &KNX_DEBUG_SERIAL;
+#endif
 #endif
 
 ArduinoPlatform::ArduinoPlatform() : _knxSerial(nullptr)
