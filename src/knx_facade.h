@@ -26,8 +26,8 @@
 typedef const uint8_t* (*RestoreCallback)(const uint8_t* buffer);
 typedef uint8_t* (*SaveCallback)(uint8_t* buffer);
 typedef void (*IsrFunctionPtr)();
-typedef void (*ProgLedOnCallback)();
-typedef void (*ProgLedOffCallback)();
+//typedef void (*ProgLedOnCallback)();
+//typedef void (*ProgLedOffCallback)();
 
 class ArduinoPlatform;
 class BauSystemB;
@@ -75,9 +75,9 @@ class KnxFacade : private DeviceObject
 
     void ledPin(uint32_t value);
 
-    void setProgLedOffCallback(ProgLedOffCallback progLedOffCallback);
+    //void setProgLedOffCallback(ProgLedOffCallback progLedOffCallback);
 
-    void setProgLedOnCallback(ProgLedOnCallback progLedOnCallback);
+    //void setProgLedOnCallback(ProgLedOnCallback progLedOnCallback);
 
   
     int32_t buttonPin();
@@ -169,8 +169,8 @@ class KnxFacade : private DeviceObject
     ArduinoPlatform* _platformPtr  = new ArduinoPlatform(&KNX_SERIAL);
     BauSystemB* _bauPtr = new BauSystemB(*_platformPtr);
     BauSystemB& _bau = *_bauPtr;
-    ProgLedOnCallback _progLedOnCallback = 0;
-    ProgLedOffCallback _progLedOffCallback = 0;
+    //ProgLedOnCallback _progLedOnCallback = 0;
+    //ProgLedOffCallback _progLedOffCallback = 0;
     uint32_t _ledPinActiveOn = KNX_LED_ACTIVE_ON;
     uint32_t _ledPin = KNX_LED;
     int32_t _buttonPin = KNX_BUTTON;

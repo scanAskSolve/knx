@@ -33,7 +33,10 @@ void TEST_Function() {
     bool LED_NOW = SWITCH1.value();
     if(LED_NOW != LED_S){
     LED_S = LED_NOW;
-    digitalWrite(PB11,LED_S);
+    if(LED_S)
+      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+    else
+      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
     Serial.print("LED_S: ");
     Serial.println(LED_S);
   }
@@ -51,15 +54,11 @@ void setup() {
   ArduinoPlatform::SerialDebug = &Serial;
   
  
-
-
-    //digitalWrite(27,knx.paramByte(0) && 0x80);
     pinMode(PB11, OUTPUT);
-    pinMode(PC13,OUTPUT);
-    /*for(int i = 0; i < 2;i++){
-        digitalWrite(PC13,LOW);
+    /*for(int i = 0; i < 5;i++){
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
         delay(1000);
-        digitalWrite(PC13,HIGH);
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
         delay(1000);
     }*/
 

@@ -107,7 +107,7 @@ void KnxFacade::ledPin(uint32_t value)
     _ledPin = value;
 }
 
-void KnxFacade::setProgLedOffCallback(ProgLedOffCallback progLedOffCallback)
+/*void KnxFacade::setProgLedOffCallback(ProgLedOffCallback progLedOffCallback)
 {
     _progLedOffCallback = progLedOffCallback;
 }
@@ -115,7 +115,7 @@ void KnxFacade::setProgLedOffCallback(ProgLedOffCallback progLedOffCallback)
 void KnxFacade::setProgLedOnCallback(ProgLedOnCallback progLedOnCallback)
 {
     _progLedOnCallback = progLedOnCallback;
-}
+}*/
 
 
 int32_t KnxFacade::buttonPin()
@@ -194,8 +194,9 @@ void KnxFacade::version(uint16_t value)
 
 void KnxFacade::start()
 {
-    if (_progLedOffCallback == 0 || _progLedOnCallback == 0)
-        pinMode(ledPin(), OUTPUT);
+    /*if (_progLedOffCallback == 0 || _progLedOnCallback == 0)
+        pinMode(ledPin(), OUTPUT);*/
+    pinMode(ledPin(), OUTPUT);
 
     progLedOff();
     pinMode(buttonPin(), INPUT_PULLUP);
@@ -366,18 +367,20 @@ void KnxFacade::saveSize(uint16_t size)
 
 void KnxFacade::progLedOn()
 {
-    if (_progLedOnCallback == 0)
+    /*if (_progLedOnCallback == 0)
         digitalWrite(ledPin(), _ledPinActiveOn);
     else
-        _progLedOnCallback();
+        _progLedOnCallback();*/
+    digitalWrite(ledPin(), _ledPinActiveOn);
 }
 
 void KnxFacade::progLedOff()
 {
-    if (_progLedOffCallback == 0)
+    /*if (_progLedOffCallback == 0)
         digitalWrite(ledPin(), HIGH - _ledPinActiveOn);
     else
-        _progLedOffCallback();
+        _progLedOffCallback();*/
+    digitalWrite(ledPin(), HIGH - _ledPinActiveOn);
 }
 
 
