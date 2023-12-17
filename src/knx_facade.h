@@ -13,11 +13,11 @@
     #include "stm32_platform.h"
 #endif*/
 
-#ifndef KNX_LED
+/*#ifndef KNX_LED
     #define KNX_LED LED_BUILTIN
-#endif
+#endif*/
 #ifndef KNX_LED_ACTIVE_ON
-    #define KNX_LED_ACTIVE_ON 0
+    #define KNX_LED_ACTIVE_ON GPIO_PIN_RESET
 #endif
 #ifndef KNX_BUTTON
     #define KNX_BUTTON -1
@@ -25,9 +25,15 @@
 
 typedef const uint8_t* (*RestoreCallback)(const uint8_t* buffer);
 typedef uint8_t* (*SaveCallback)(uint8_t* buffer);
-typedef void (*IsrFunctionPtr)();
+//typedef void (*IsrFunctionPtr)();
 //typedef void (*ProgLedOnCallback)();
 //typedef void (*ProgLedOffCallback)();
+
+typedef struct
+{
+    GPIO_TypeDef *GPIOx; 
+    uint16_t GPIO_Pin;
+} GPIO_infoTypeDef;
 
 class ArduinoPlatform;
 class BauSystemB;
@@ -36,7 +42,8 @@ class KnxFacade : private DeviceObject
 {
   public:
 
-    KnxFacade(IsrFunctionPtr buttonISRFunction);
+    //KnxFacade(IsrFunctionPtr buttonISRFunction);
+    KnxFacade();
 
     ~KnxFacade(); 
 
@@ -62,27 +69,29 @@ class KnxFacade : private DeviceObject
     /**
      * returns HIGH if led is active on HIGH, LOW otherwise
      */
-    uint32_t ledPinActiveOn();
+    GPIO_PinState ledPinActiveOn();
 
     /**
      * Sets if the programming led is active on HIGH or LOW. 
      * 
      * Set to HIGH for GPIO--RESISTOR--LED--GND or to LOW for GPIO--LED--RESISTOR--VDD
      */
-    void ledPinActiveOn(uint32_t value);
+    void ledPinActiveOn(GPIO_PinState value);
 
-    uint32_t ledPin();
+    //uint32_t ledPin();
+    GPIO_infoTypeDef ledPin();
 
-    void ledPin(uint32_t value);
+    //void ledPin(uint32_t value);
+    void ledPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
 
     //void setProgLedOffCallback(ProgLedOffCallback progLedOffCallback);
 
     //void setProgLedOnCallback(ProgLedOnCallback progLedOnCallback);
 
   
-    int32_t buttonPin();
+    GPIO_infoTypeDef buttonPin();
 
-    void buttonPin(int32_t value);
+    void buttonPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
 
     void readMemory();
 
@@ -104,7 +113,7 @@ class KnxFacade : private DeviceObject
 
     void start();
 
-    void setButtonISRFunction(IsrFunctionPtr progButtonISRFuncPtr);
+    //void setButtonISRFunction(IsrFunctionPtr progButtonISRFuncPtr);
 
     void setSaveCallback(SaveCallback func);
 
@@ -171,15 +180,18 @@ class KnxFacade : private DeviceObject
     BauSystemB& _bau = *_bauPtr;
     //ProgLedOnCallback _progLedOnCallback = 0;
     //ProgLedOffCallback _progLedOffCallback = 0;
-    uint32_t _ledPinActiveOn = KNX_LED_ACTIVE_ON;
-    uint32_t _ledPin = KNX_LED;
-    int32_t _buttonPin = KNX_BUTTON;
+    GPIO_PinState _ledPinActiveOn = KNX_LED_ACTIVE_ON;
+    //uint32_t _ledPin = KNX_LED;
+    GPIO_infoTypeDef _ledPin;
+    //int32_t _buttonPin = KNX_BUTTON;
+    GPIO_infoTypeDef _buttonPin;
+
     SaveCallback _saveCallback = 0;
     RestoreCallback _restoreCallback = 0;
     volatile bool _toggleProgMode = false;
     bool _progLedState = false;
     uint16_t _saveSize = USERDATA_SAVE_SIZE;
-    IsrFunctionPtr _progButtonISRFuncPtr = 0;
+    //IsrFunctionPtr _progButtonISRFuncPtr = 0;
 
     uint8_t* save(uint8_t* buffer);
 
