@@ -45,7 +45,7 @@ class KnxFacade : private DeviceObject
     //KnxFacade(IsrFunctionPtr buttonISRFunction);
     KnxFacade();
 
-    ~KnxFacade(); 
+    //~KnxFacade(); 
 
     ArduinoPlatform& platform();
 

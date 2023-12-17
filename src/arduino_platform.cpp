@@ -1,11 +1,11 @@
 #include "arduino_platform.h"
 #include "knx/bits.h"
 #include <EEPROM.h>
-
 #include <Arduino.h>
 
 #ifndef KNX_NO_PRINT
 Stream* ArduinoPlatform::SerialDebug = &KNX_DEBUG_SERIAL;
+
 #endif
 
 ArduinoPlatform::ArduinoPlatform() : _knxSerial(nullptr)
@@ -24,14 +24,24 @@ void ArduinoPlatform::fatalError()
 {
     while (true)
     {
-#ifdef KNX_LED
-        static const long LED_BLINK_PERIOD = 200;
+        //#ifdef KNX_LED
+            /*static const long LED_BLINK_PERIOD = 200;
 
-        if ((HAL_GetTick() % LED_BLINK_PERIOD) > (LED_BLINK_PERIOD / 2))
-            digitalWrite(KNX_LED, HIGH);
-        else
-            digitalWrite(KNX_LED, LOW);
-#endif
+            if ((HAL_GetTick() % LED_BLINK_PERIOD) > (LED_BLINK_PERIOD / 2)){
+                //digitalWrite(KNX_LED, HIGH);
+                //HAL_GPIO_WritePin(_ledPin.GPIOx, _ledPin.GPIO_Pin, GPIO_PIN_SET);
+                progLedOn();
+            }
+            else{
+                //digitalWrite(KNX_LED, LOW);
+                //HAL_GPIO_WritePin(_ledPin.GPIOx, _ledPin.GPIO_Pin, GPIO_PIN_RESET);
+                progLedOff();
+            }*/
+        //#endif
+
+        //EDA Not fix 
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+        HAL_Delay(200);
     }
 }
 
@@ -320,26 +330,7 @@ void ArduinoPlatform::commitToEeprom()
     HAL_FLASH_Unlock();
     eeprom_buffer_flush();
 }
-/*#ifndef KNX_NO_SPI
 
-void ArduinoPlatform::setupSpi()
-{
-    SPI.begin();
-    SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));
-}
-
-void ArduinoPlatform::closeSpi()
-{
-    SPI.endTransaction();
-    SPI.end();
-}
-
-int ArduinoPlatform::readWriteSpi(uint8_t *data, size_t len)
-{
-    SPI.transfer(data, len);
-    return 0;
-}
-#endif*/
 
 void ArduinoPlatform::restart()
 {

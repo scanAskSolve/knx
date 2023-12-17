@@ -73,13 +73,7 @@ class ArduinoPlatform
     virtual void commitToEeprom();
 
     virtual void restart();
-/*#ifndef KNX_NO_SPI
 
-    void setupSpi() override;
-    void closeSpi() override;
-    int readWriteSpi (uint8_t *data, size_t len) override;
-    
-#endif*/
 #ifndef KNX_NO_PRINT
     static Stream* SerialDebug;
 

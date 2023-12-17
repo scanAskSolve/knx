@@ -3,7 +3,7 @@
 
 #include "tpuart_data_link_layer.h"
 #include "bits.h"
-#include "platform.h"
+//#include "platform.h"
 
 #include "device_object.h"
 #include "address_table_object.h"

@@ -29,14 +29,14 @@ KnxFacade::KnxFacade()
     //setButtonISRFunction(buttonEvent);
 }
 
-KnxFacade:: ~KnxFacade()
+/*KnxFacade:: ~KnxFacade()
 {
     if (_bauPtr)
         delete _bauPtr;
 
     if (_platformPtr)
         delete _platformPtr;
-}
+}*/
 
 ArduinoPlatform& KnxFacade::platform()
 {
