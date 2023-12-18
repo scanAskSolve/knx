@@ -23,7 +23,14 @@
         "xmemory": "cpp",
         "xtr1common": "cpp",
         "algorithm": "cpp",
-        "iterator": "cpp"
+        "iterator": "cpp",
+        "locale": "cpp",
+        "thread": "cpp",
+        "xlocale": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

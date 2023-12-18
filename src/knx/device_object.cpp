@@ -1,6 +1,5 @@
-//#include <cstring>
+// #include <cstring>
 #include "string.h"
-
 
 #include "device_object.h"
 #include "bits.h"
@@ -11,99 +10,97 @@
 
 DeviceObject::DeviceObject()
 {
-    // Default to KNXA (0xFA)
-    // Note: ETS does not accept a SN 00FA00000000 in data secure mode.
-    //       ETS says that 00FA00000000 looks "suspicious" in the log file.
     uint8_t serialNumber[] = {0x00, 0xFA, 0x01, 0x02, 0x03, 0x04};
     uint8_t hardwareType[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-    Property* properties[] =
-    {
-        new Property(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_DEVICE),
-        new Property(PID_SERIAL_NUMBER, false, PDT_GENERIC_06, 1, ReadLv3 | WriteLv0, serialNumber), 
-        new Property(this, PID_MANUFACTURER_ID, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0,
-            [](DeviceObject* io, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t 
-            { 
-                if(start == 0)
+    Property *properties[] =
+        {
+            new Property(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_DEVICE),
+            new Property(PID_SERIAL_NUMBER, false, PDT_GENERIC_06, 1, ReadLv3 | WriteLv0, serialNumber),
+            new Property(this, PID_MANUFACTURER_ID, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0,
+                         [](DeviceObject *io, uint16_t start, uint8_t count, uint8_t *data) -> uint8_t
+                         {
+                             if (start == 0)
+                             {
+                                 uint16_t currentNoOfElements = 1;
+                                 pushWord(currentNoOfElements, data);
+                                 return 1;
+                             }
+
+                             pushByteArray(io->propertyData(PID_SERIAL_NUMBER), 2, data);
+                             return 1;
+                         }),
+            new Property(PID_DEVICE_CONTROL, true, PDT_BITSET8, 1, ReadLv3 | WriteLv3, (uint8_t)0),
+            new Property(PID_ORDER_INFO, false, PDT_GENERIC_10, 1, ReadLv3 | WriteLv0),
+            new Property(PID_VERSION, false, PDT_VERSION, 1, ReadLv3 | WriteLv0, (uint16_t)3),
+            new Property(PID_ROUTING_COUNT, true, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv3, (uint8_t)(6 << 4)),
+            new Property(
+                this, PID_PROG_MODE, true, PDT_BITSET8, 1, ReadLv3 | WriteLv3,
+                [](DeviceObject *io, uint16_t start, uint8_t count, uint8_t *data) -> uint8_t
                 {
-                    uint16_t currentNoOfElements = 1;
-                    pushWord(currentNoOfElements, data);
+                    if (start == 0)
+                    {
+                        uint16_t currentNoOfElements = 1;
+                        pushWord(currentNoOfElements, data);
+                        return 1;
+                    }
+
+                    *data = io->_prgMode;
                     return 1;
-                }
-                
-                pushByteArray(io->propertyData(PID_SERIAL_NUMBER), 2, data);
-                return 1;
-            }),
-        new Property(PID_DEVICE_CONTROL, true, PDT_BITSET8, 1, ReadLv3 | WriteLv3, (uint8_t)0),
-        new Property(PID_ORDER_INFO, false, PDT_GENERIC_10, 1, ReadLv3 | WriteLv0),
-        new Property(PID_VERSION, false, PDT_VERSION, 1, ReadLv3 | WriteLv0, (uint16_t)3),
-        new Property(PID_ROUTING_COUNT, true, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv3, (uint8_t)(6 << 4)),
-        new Property(this, PID_PROG_MODE, true, PDT_BITSET8, 1, ReadLv3 | WriteLv3, 
-            [](DeviceObject* io, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t 
-            { 
-                if(start == 0)
+                },
+                [](DeviceObject *io, uint16_t start, uint8_t count, const uint8_t *data) -> uint8_t
                 {
-                    uint16_t currentNoOfElements = 1;
-                    pushWord(currentNoOfElements, data);
+                    if (start == 0)
+                        return 1;
+
+                    io->_prgMode = *data;
                     return 1;
-                }
+                }),
+            new Property(PID_MAX_APDU_LENGTH, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)254),
+            new Property(this, PID_SUBNET_ADDR, false, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv0,
+                         [](DeviceObject *io, uint16_t start, uint8_t count, uint8_t *data) -> uint8_t
+                         {
+                             if (start == 0)
+                             {
+                                 uint16_t currentNoOfElements = 1;
+                                 pushWord(currentNoOfElements, data);
+                                 return 1;
+                             }
 
-                *data = io->_prgMode;
-                return 1;
-            },
-            [](DeviceObject* io, uint16_t start, uint8_t count, const uint8_t* data) -> uint8_t 
-            { 
-                if(start == 0)
-                    return 1;
+                             *data = ((io->_ownAddress >> 8) & 0xff);
 
-                io->_prgMode = *data;
-                return 1;
-            }),
-        new Property(PID_MAX_APDU_LENGTH, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)254),
-        new Property(this, PID_SUBNET_ADDR, false, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv0,
-            [](DeviceObject* io, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t 
-            { 
-                if(start == 0)
-                {
-                    uint16_t currentNoOfElements = 1;
-                    pushWord(currentNoOfElements, data);
-                    return 1;
-                }
+                             return 1;
+                         }),
+            new Property(this, PID_DEVICE_ADDR, false, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv0,
+                         [](DeviceObject *io, uint16_t start, uint8_t count, uint8_t *data) -> uint8_t
+                         {
+                             if (start == 0)
+                             {
+                                 uint16_t currentNoOfElements = 1;
+                                 pushWord(currentNoOfElements, data);
+                                 return 1;
+                             }
 
-                *data = ((io->_ownAddress >> 8) & 0xff);
-
-                return 1;
-            }),
-        new Property(this, PID_DEVICE_ADDR, false, PDT_UNSIGNED_CHAR, 1, ReadLv3 | WriteLv0,
-            [](DeviceObject* io, uint16_t start, uint8_t count, uint8_t* data) -> uint8_t 
-            { 
-                if(start == 0)
-                {
-                    uint16_t currentNoOfElements = 1;
-                    pushWord(currentNoOfElements, data);
-                    return 1;
-                }
-
-                *data = (io->_ownAddress & 0xff);
-                return 1;
-            }),
-        new Property(PID_IO_LIST, false, PDT_UNSIGNED_INT, 8, ReadLv3 | WriteLv0),
-        new Property(PID_HARDWARE_TYPE, true, PDT_GENERIC_06, 1, ReadLv3 | WriteLv3, hardwareType),
-        new Property(PID_DEVICE_DESCRIPTOR, false, PDT_GENERIC_02, 1, ReadLv3 | WriteLv0),
+                             *data = (io->_ownAddress & 0xff);
+                             return 1;
+                         }),
+            new Property(PID_IO_LIST, false, PDT_UNSIGNED_INT, 8, ReadLv3 | WriteLv0),
+            new Property(PID_HARDWARE_TYPE, true, PDT_GENERIC_06, 1, ReadLv3 | WriteLv3, hardwareType),
+            new Property(PID_DEVICE_DESCRIPTOR, false, PDT_GENERIC_02, 1, ReadLv3 | WriteLv0),
 #ifdef USE_RF
-        new Property(PID_RF_DOMAIN_ADDRESS_CEMI_SERVER, true, PDT_GENERIC_06, 1, ReadLv3 | WriteLv3),
+            new Property(PID_RF_DOMAIN_ADDRESS_CEMI_SERVER, true, PDT_GENERIC_06, 1, ReadLv3 | WriteLv3),
 #endif
-    };
+        };
     initializeProperties(sizeof(properties), properties);
 }
 
-uint8_t* DeviceObject::save(uint8_t* buffer)
+uint8_t *DeviceObject::save(uint8_t *buffer)
 {
     buffer = pushWord(_ownAddress, buffer);
     return InterfaceObject::save(buffer);
 }
 
-const uint8_t* DeviceObject::restore(const uint8_t* buffer)
+const uint8_t *DeviceObject::restore(const uint8_t *buffer)
 {
     buffer = popWord(_ownAddress, buffer);
     return InterfaceObject::restore(buffer);
@@ -124,18 +121,17 @@ void DeviceObject::individualAddress(uint16_t value)
     _ownAddress = value;
 }
 
-#define USER_STOPPED  0x1
+#define USER_STOPPED 0x1
 #define OWN_ADDR_DUPL 0x2
-#define VERIFY_MODE   0x4
-#define SAFE_STATE    0x8
-
+#define VERIFY_MODE 0x4
+#define SAFE_STATE 0x8
 
 void DeviceObject::individualAddressDuplication(bool value)
 {
-    Property* prop = property(PID_DEVICE_CONTROL);
+    Property *prop = property(PID_DEVICE_CONTROL);
     uint8_t data;
     prop->read(data);
-    
+
     if (value)
         data |= OWN_ADDR_DUPL;
     else
@@ -145,7 +141,7 @@ void DeviceObject::individualAddressDuplication(bool value)
 
 bool DeviceObject::verifyMode()
 {
-    Property* prop = property(PID_DEVICE_CONTROL);
+    Property *prop = property(PID_DEVICE_CONTROL);
     uint8_t data;
     prop->read(data);
     return (data & VERIFY_MODE) > 0;
@@ -153,7 +149,7 @@ bool DeviceObject::verifyMode()
 
 void DeviceObject::verifyMode(bool value)
 {
-    Property* prop = property(PID_DEVICE_CONTROL);
+    Property *prop = property(PID_DEVICE_CONTROL);
     uint8_t data;
     prop->read(data);
 
@@ -207,33 +203,33 @@ void DeviceObject::bauNumber(uint32_t value)
     propertyValue(PID_SERIAL_NUMBER, data);
 }
 
-const uint8_t* DeviceObject::orderNumber()
+const uint8_t *DeviceObject::orderNumber()
 {
-    Property* prop = property(PID_ORDER_INFO);
+    Property *prop = property(PID_ORDER_INFO);
     return prop->data();
 }
 
-void DeviceObject::orderNumber(const uint8_t* value)
+void DeviceObject::orderNumber(const uint8_t *value)
 {
-    Property* prop = property(PID_ORDER_INFO);
+    Property *prop = property(PID_ORDER_INFO);
     prop->write(value);
 }
 
-const uint8_t* DeviceObject::hardwareType()
+const uint8_t *DeviceObject::hardwareType()
 {
-    Property* prop = property(PID_HARDWARE_TYPE);
+    Property *prop = property(PID_HARDWARE_TYPE);
     return prop->data();
 }
 
-void DeviceObject::hardwareType(const uint8_t* value)
+void DeviceObject::hardwareType(const uint8_t *value)
 {
-    Property* prop = property(PID_HARDWARE_TYPE);
+    Property *prop = property(PID_HARDWARE_TYPE);
     prop->write(value);
 }
 
 uint16_t DeviceObject::version()
 {
-    Property* prop = property(PID_VERSION);
+    Property *prop = property(PID_VERSION);
     uint16_t value;
     prop->read(value);
     return value;
@@ -241,13 +237,13 @@ uint16_t DeviceObject::version()
 
 void DeviceObject::version(uint16_t value)
 {
-    Property* prop = property(PID_VERSION);
+    Property *prop = property(PID_VERSION);
     prop->write(value);
 }
 
 uint16_t DeviceObject::maskVersion()
 {
-    Property* prop = property(PID_DEVICE_DESCRIPTOR);
+    Property *prop = property(PID_DEVICE_DESCRIPTOR);
     uint16_t value;
     prop->read(value);
     return value;
@@ -255,13 +251,13 @@ uint16_t DeviceObject::maskVersion()
 
 void DeviceObject::maskVersion(uint16_t value)
 {
-    Property* prop = property(PID_DEVICE_DESCRIPTOR);
+    Property *prop = property(PID_DEVICE_DESCRIPTOR);
     prop->write(value);
 }
 
 uint16_t DeviceObject::maxApduLength()
 {
-    Property* prop = property(PID_MAX_APDU_LENGTH);
+    Property *prop = property(PID_MAX_APDU_LENGTH);
     uint16_t value;
     prop->read(value);
     return value;
@@ -269,26 +265,43 @@ uint16_t DeviceObject::maxApduLength()
 
 void DeviceObject::maxApduLength(uint16_t value)
 {
-    Property* prop = property(PID_MAX_APDU_LENGTH);
+    Property *prop = property(PID_MAX_APDU_LENGTH);
     prop->write(value);
 }
 
-const uint8_t* DeviceObject::rfDomainAddress()
+const uint8_t *DeviceObject::rfDomainAddress()
 {
-    Property* prop = property(PID_RF_DOMAIN_ADDRESS_CEMI_SERVER);
+    Property *prop = property(PID_RF_DOMAIN_ADDRESS_CEMI_SERVER);
     return prop->data();
 }
 
-void DeviceObject::rfDomainAddress(uint8_t* value)
+void DeviceObject::rfDomainAddress(uint8_t *value)
 {
-    Property* prop = property(PID_RF_DOMAIN_ADDRESS_CEMI_SERVER);
+    Property *prop = property(PID_RF_DOMAIN_ADDRESS_CEMI_SERVER);
     prop->write(value);
 }
 
 uint8_t DeviceObject::defaultHopCount()
 {
-    Property* prop = property(PID_ROUTING_COUNT);
+    Property *prop = property(PID_ROUTING_COUNT);
     uint8_t value;
     prop->read(value);
     return (value >> 4) & 0x07;
+}
+
+void DeviceObject::propertyValue(PropertyID id, uint8_t *value)
+{
+    Property *prop = property(id);
+    prop->write(value);
+}
+const uint8_t* DeviceObject::propertyData(PropertyID id)
+{
+    Property* prop = property(id);
+    return prop->data();
+}
+
+const uint8_t* DeviceObject::propertyData(PropertyID id, uint16_t elementIndex)
+{
+    Property* prop = property(id);
+    return prop->data(elementIndex);
 }
