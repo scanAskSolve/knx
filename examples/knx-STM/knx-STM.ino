@@ -60,8 +60,8 @@ void setup() {
   }*/
   
   Serial.begin(115200);
-  ArduinoPlatform::SerialDebug = &Serial;
   //ArduinoPlatform(&Serial);
+  //knx.Set_chip_platform(&Serial2);
   MX_GPIO_Init();
  
     //pinMode(PB11, OUTPUT);
@@ -72,7 +72,7 @@ void setup() {
         delay(1000);
     }*/
 
-  randomSeed(HAL_GetTick());
+  //randomSeed(HAL_GetTick());
 
 
   // read adress table, association table, groupobject table and parameters from eeprom

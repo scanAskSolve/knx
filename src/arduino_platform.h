@@ -1,6 +1,6 @@
-// #include "knx/platform.h"
 #pragma once
 #include "Arduino.h"
+
 #include "knx/save_restore.h"
 #ifndef KNX_DEBUG_SERIAL
 #define KNX_DEBUG_SERIAL Serial
@@ -26,9 +26,8 @@ enum NvMemoryType
 class ArduinoPlatform
 {
   public:
-    ArduinoPlatform();
     ArduinoPlatform(HardwareSerial* knxSerial);
-    //~ArduinoPlatform();
+    //ArduinoPlatform(UART_HandleTypeDef* knxSerial);
     // basic stuff
     void fatalError();
 

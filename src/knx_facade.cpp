@@ -28,14 +28,16 @@ KnxFacade::KnxFacade()
     _bau.addSaveRestore(this);
     //setButtonISRFunction(buttonEvent);
 }
-
-/*KnxFacade:: ~KnxFacade()
+/*void KnxFacade::Set_chip_platform(HardwareSerial* PORT)
 {
-    if (_bauPtr)
-        delete _bauPtr;
-
-    if (_platformPtr)
-        delete _platformPtr;
+    //_platformPtr  = new ArduinoPlatform(PORT);
+    ArduinoPlatform* _platformPtr  = new ArduinoPlatform(PORT);
+    _bau = *new BauSystemB(*_platformPtr);
+    manufacturerId(0xfa);
+    bauNumber(platform().uniqueSerialNumber());
+    _bau.addSaveRestore(this);
+    //_bauPtr = new BauSystemB(*_platformPtr);
+    //_bau = *_bauPtr
 }*/
 
 ArduinoPlatform& KnxFacade::platform()
@@ -221,7 +223,13 @@ void KnxFacade::start()
 
     //EDA Use HAL_GPIO_EXTI_Callback!!!!!
     attachInterrupt(digitalPinToInterrupt(PA0), buttonEvent, CHANGE);
-
+    /*println("");
+    if(_platformPtr == nullptr){
+        _platformPtr->fatalError();
+    }
+    else{
+        enabled(true);
+    }*/
     enabled(true);
 }
 

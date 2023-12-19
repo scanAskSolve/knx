@@ -2,11 +2,11 @@
 
 #include "config.h"
 // #include "bau.h"
-#include "security_interface_object.h"
+//#include "security_interface_object.h"
 #include "association_table_object.h"
 #include "application_program_object.h"
 #include "application_layer.h"
-#include "secure_application_layer.h"
+//#include "secure_application_layer.h"
 #include "transport_layer.h"
 #include "network_layer.h"
 #include "data_link_layer.h"
@@ -34,7 +34,7 @@ class BauSystemB
 public:
 
   virtual bool isAckRequired(uint16_t address, bool isGrpAddr);
-
+  
   BauSystemB(ArduinoPlatform& platform);
   BauSystemB(ArduinoPlatform &platform,BauSystemType bauSystemB);
   virtual void loop();
@@ -258,12 +258,7 @@ public:
   AddressTableObject _addrTable;
   AssociationTableObject _assocTable;
   GroupObjectTableObject _groupObjTable;
-#ifdef USE_DATASECURE
-  SecureApplicationLayer _appLayer;
-  SecurityInterfaceObject _secIfObj;
-#else
   ApplicationLayer _appLayer;
-#endif
   TransportLayer _transLayer;
   NetworkLayer _netLayer;
 

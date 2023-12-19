@@ -15,8 +15,8 @@
 // Activate trace output
 //#define DBG_TRACE
 
-// NCN5120
-#define NCN5120
+// NCN5130
+#define NCN5130
 
 // services Host -> Controller :
 // internal commands, device specific
@@ -523,7 +523,7 @@ bool TpUartDataLinkLayer::resetChipTick()
 
 void TpUartDataLinkLayer::stopChip()
 {
-#ifdef NCN5120
+#ifdef NCN5130
     uint8_t cmd = U_STOP_MODE_REQ;
     _platform.writeUart(cmd);
     while (true)

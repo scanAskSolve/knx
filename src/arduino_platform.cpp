@@ -14,17 +14,11 @@ Stream* ArduinoPlatform::SerialDebug = &KNX_DEBUG_SERIAL;
 #endif
 #endif
 
-ArduinoPlatform::ArduinoPlatform() : _knxSerial(nullptr)
-{
-}
-
 ArduinoPlatform::ArduinoPlatform(HardwareSerial* knxSerial) : _knxSerial(knxSerial)
 {
 }
-/*ArduinoPlatform::~ArduinoPlatform()
+/*ArduinoPlatform::ArduinoPlatform(UART_HandleTypeDef* knxSerial) : _knxSerial(knxSerial)
 {
-        //delete [] _eepromPtr;
-	free(_eepromPtr);	
 }*/
 void ArduinoPlatform::fatalError()
 {

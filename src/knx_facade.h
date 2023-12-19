@@ -1,6 +1,7 @@
 #pragma once
 
 #include "arduino_platform.h"
+
 #include "knx/bits.h"
 #include "knx/config.h"
 #include "knx/bau_systemB.h"
@@ -8,6 +9,7 @@
 #ifndef USERDATA_SAVE_SIZE
 #define USERDATA_SAVE_SIZE 0
 #endif
+
 /*
 #ifdef ARDUINO_ARCH_STM32
     #include "stm32_platform.h"
@@ -42,10 +44,9 @@ class KnxFacade : private DeviceObject
 {
   public:
 
-    //KnxFacade(IsrFunctionPtr buttonISRFunction);
     KnxFacade();
 
-    //~KnxFacade(); 
+    //void Set_chip_platform(HardwareSerial* PORT);
 
     ArduinoPlatform& platform();
 
@@ -175,9 +176,15 @@ class KnxFacade : private DeviceObject
     BeforeRestartCallback beforeRestartCallback();
 
   //private:
+    //ArduinoPlatform* _platformPtr  = new ArduinoPlatform(&huart2);
     ArduinoPlatform* _platformPtr  = new ArduinoPlatform(&KNX_SERIAL);
-    BauSystemB* _bauPtr = new BauSystemB(*_platformPtr);
-    BauSystemB& _bau = *_bauPtr;
+    //ArduinoPlatform* _platformPtr  = nullptr;
+    //BauSystemB* _bauPtr = new BauSystemB(*_platformPtr);
+    //BauSystemB* _bauPtr;
+    //BauSystemB& _bau = *_bauPtr;
+    BauSystemB& _bau = *new BauSystemB(*_platformPtr);
+    //BauSystemB& _bau = *new BauSystemB();
+    //BauSystemB& _bau;
     //ProgLedOnCallback _progLedOnCallback = 0;
     //ProgLedOffCallback _progLedOffCallback = 0;
     GPIO_PinState _ledPinActiveOn = KNX_LED_ACTIVE_ON;
