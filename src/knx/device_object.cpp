@@ -305,3 +305,26 @@ const uint8_t* DeviceObject::propertyData(PropertyID id, uint16_t elementIndex)
     Property* prop = property(id);
     return prop->data(elementIndex);
 }
+void DeviceObject::readProperty(PropertyID id, uint16_t start, uint8_t& count, uint8_t* data)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        count = 0;
+        return;
+    }
+
+    count = prop->read(start, count, data);
+}
+
+void DeviceObject::writeProperty(PropertyID id, uint16_t start, uint8_t* data, uint8_t& count)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        count = 0;
+        return;
+    }
+
+    count = prop->write(start, count, data);
+}

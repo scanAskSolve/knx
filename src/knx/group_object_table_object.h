@@ -26,4 +26,6 @@ class GroupObjectTableObject : public TableObject
     uint16_t* _tableData = 0;
     GroupObject* _groupObjects = 0;
     uint16_t _groupObjectCount = 0;
+   void readProperty(PropertyID id, uint16_t start, uint8_t &count, uint8_t *data);
+    void writeProperty(PropertyID id, uint16_t start, uint8_t *data, uint8_t &count);
 };

@@ -91,3 +91,26 @@ void AddressTableObject::beforeStateChange(LoadState& newState)
 
     _groupAddresses = (uint16_t*)data();
 }
+void AddressTableObject::readProperty(PropertyID id, uint16_t start, uint8_t& count, uint8_t* data)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        count = 0;
+        return;
+    }
+
+    count = prop->read(start, count, data);
+}
+
+void AddressTableObject::writeProperty(PropertyID id, uint16_t start, uint8_t* data, uint8_t& count)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        count = 0;
+        return;
+    }
+
+    count = prop->write(start, count, data);
+}

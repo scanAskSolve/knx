@@ -92,3 +92,26 @@ double ApplicationProgramObject::getFloat(uint32_t addr, ParameterFloatEncodings
             break;
     }
 }
+void ApplicationProgramObject::readProperty(PropertyID id, uint16_t start, uint8_t& count, uint8_t* data)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        count = 0;
+        return;
+    }
+
+    count = prop->read(start, count, data);
+}
+
+void ApplicationProgramObject::writeProperty(PropertyID id, uint16_t start, uint8_t* data, uint8_t& count)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        count = 0;
+        return;
+    }
+
+    count = prop->write(start, count, data);
+}

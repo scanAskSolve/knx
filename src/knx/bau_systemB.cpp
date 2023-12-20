@@ -732,11 +732,31 @@ void BauSystemB::propertyValueWrite(ObjectType objectType, uint8_t objectInstanc
                                     uint8_t &numberOfElements, uint16_t startIndex,
                                     uint8_t *data, uint32_t length)
 {
-    InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
-    if (obj)
-        obj->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-    else
-        numberOfElements = 0;
+    // InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
+
+    switch (objectType)
+    {
+        case OT_DEVICE:
+            _deviceObj.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        case OT_ADDR_TABLE:
+            _addrTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        case OT_ASSOC_TABLE:
+            _assocTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        case OT_GRP_OBJ_TABLE:
+            _groupObjTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        case OT_APPLICATION_PROG:
+            _appProgram.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+#ifdef USE_DATASECURE
+        case OT_SECURITY:
+            _secIfObj->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+#endif
+#ifdef USE_CEMI_SERVER
+        case OT_CEMI_SERVER:
+            _cemiServerObject->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+#endif            
+        default:
+            numberOfElements = 0;
+    }
 }
 
 Memory &BauSystemB::memory()

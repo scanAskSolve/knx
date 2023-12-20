@@ -160,3 +160,26 @@ int32_t AssociationTableObject::nextAsap(uint16_t tsap, uint16_t& startIdx)
     }
     return -1;
 }
+void AssociationTableObject::readProperty(PropertyID id, uint16_t start, uint8_t& count, uint8_t* data)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        count = 0;
+        return;
+    }
+
+    count = prop->read(start, count, data);
+}
+
+void AssociationTableObject::writeProperty(PropertyID id, uint16_t start, uint8_t* data, uint8_t& count)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        count = 0;
+        return;
+    }
+
+    count = prop->write(start, count, data);
+}

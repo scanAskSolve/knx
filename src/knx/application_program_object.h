@@ -15,4 +15,6 @@ class ApplicationProgramObject : public TableObject
     uint16_t getWord(uint32_t addr);
     uint32_t getInt(uint32_t addr);
     double getFloat(uint32_t addr, ParameterFloatEncodings encoding);
+   void readProperty(PropertyID id, uint16_t start, uint8_t &count, uint8_t *data);
+    void writeProperty(PropertyID id, uint16_t start, uint8_t *data, uint8_t &count);
 };

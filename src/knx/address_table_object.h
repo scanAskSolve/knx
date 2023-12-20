@@ -54,4 +54,7 @@ class AddressTableObject : public TableObject
 
   private:
     uint16_t* _groupAddresses = 0;
+  public:
+    void readProperty(PropertyID id, uint16_t start, uint8_t &count, uint8_t *data);
+    void writeProperty(PropertyID id, uint16_t start, uint8_t *data, uint8_t &count);
 };

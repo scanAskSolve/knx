@@ -47,8 +47,10 @@ private:
     uint16_t _ownAddress = 65535; // 15.15.255;
 
 public:
-   void propertyValue(PropertyID id, uint8_t *value);
+    void propertyValue(PropertyID id, uint8_t *value);
 
-    const uint8_t* propertyData(PropertyID id);
-    const uint8_t* propertyData(PropertyID id, uint16_t elementIndex);
+    const uint8_t *propertyData(PropertyID id);
+    const uint8_t *propertyData(PropertyID id, uint16_t elementIndex);
+    void readProperty(PropertyID id, uint16_t start, uint8_t &count, uint8_t *data);
+    void writeProperty(PropertyID id, uint16_t start, uint8_t *data, uint8_t &count);
 };
