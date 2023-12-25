@@ -1,7 +1,5 @@
-//#include <cstring>
+// #include <cstring>
 #include "string.h"
-
-
 
 #include "address_table_object.h"
 #include "bits.h"
@@ -9,13 +7,12 @@
 
 using namespace std;
 
-AddressTableObject::AddressTableObject(Memory& memory)
+AddressTableObject::AddressTableObject(Memory &memory)
     : TableObject(memory)
-{	
-    Property* properties[] =
-    {
-		new Property(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_ADDR_TABLE)
-    };
+{
+    Property *properties[] =
+        {
+            new Property(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_ADDR_TABLE)};
 
     TableObject::initializeProperties(sizeof(properties), properties);
 }
@@ -31,7 +28,7 @@ uint16_t AddressTableObject::entryCount()
 
 uint16_t AddressTableObject::getGroupAddress(uint16_t tsap)
 {
-    if (loadState() != LS_LOADED || tsap > entryCount() )
+    if (loadState() != LS_LOADED || tsap > entryCount())
         return 0;
 
     return ntohs(_groupAddresses[tsap]);
@@ -40,38 +37,38 @@ uint16_t AddressTableObject::getGroupAddress(uint16_t tsap)
 uint16_t AddressTableObject::getTsap(uint16_t addr)
 {
     uint16_t size = entryCount();
-    #ifdef USE_BINSEARCH
+#ifdef USE_BINSEARCH
 
-    uint16_t low,high,i;
+    uint16_t low, high, i;
     low = 1;
     high = size;
 
-    while(low <= high)
+    while (low <= high)
     {
-        i = (low+high)/2;
+        i = (low + high) / 2;
         uint16_t ga = ntohs(_groupAddresses[i]);
         if (ga == addr)
             return i;
-        if(addr < ga)
+        if (addr < ga)
             high = i - 1;
         else
-            low = i + 1 ;
+            low = i + 1;
     }
-    #else
+#else
     for (uint16_t i = 1; i <= size; i++)
         if (ntohs(_groupAddresses[i]) == addr)
             return i;
-    #endif
+#endif
     return 0;
 }
 
 #pragma region SaveRestore
 
-const uint8_t* AddressTableObject::restore(const uint8_t* buffer)
+const uint8_t *AddressTableObject::restore(const uint8_t *buffer)
 {
     buffer = TableObject::restore(buffer);
 
-    _groupAddresses = (uint16_t*)data();
+    _groupAddresses = (uint16_t *)data();
 
     return buffer;
 }
@@ -83,17 +80,17 @@ bool AddressTableObject::contains(uint16_t addr)
     return (getTsap(addr) > 0);
 }
 
-void AddressTableObject::beforeStateChange(LoadState& newState)
+void AddressTableObject::beforeStateChange(LoadState &newState)
 {
     TableObject::beforeStateChange(newState);
     if (newState != LS_LOADED)
         return;
 
-    _groupAddresses = (uint16_t*)data();
+    _groupAddresses = (uint16_t *)data();
 }
-void AddressTableObject::readProperty(PropertyID id, uint16_t start, uint8_t& count, uint8_t* data)
+void AddressTableObject::readProperty(PropertyID id, uint16_t start, uint8_t &count, uint8_t *data)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         count = 0;
@@ -103,9 +100,9 @@ void AddressTableObject::readProperty(PropertyID id, uint16_t start, uint8_t& co
     count = prop->read(start, count, data);
 }
 
-void AddressTableObject::writeProperty(PropertyID id, uint16_t start, uint8_t* data, uint8_t& count)
+void AddressTableObject::writeProperty(PropertyID id, uint16_t start, uint8_t *data, uint8_t &count)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         count = 0;

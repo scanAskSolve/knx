@@ -1,19 +1,15 @@
-//#include <cstring>
+// #include <cstring>
 #include "string.h"
-
-
 
 #include "group_object_table_object.h"
 #include "group_object.h"
 #include "bits.h"
 #include "property.h"
 
-GroupObjectTableObject::GroupObjectTableObject(Memory& memory) : TableObject(memory)
+GroupObjectTableObject::GroupObjectTableObject(Memory &memory) : TableObject(memory)
 {
-    Property* properties[]
-    {
-        new Property(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_GRP_OBJ_TABLE)
-    };
+    Property *properties[]{
+        new Property(PID_OBJECT_TYPE, false, PDT_UNSIGNED_INT, 1, ReadLv3 | WriteLv0, (uint16_t)OT_GRP_OBJ_TABLE)};
     TableObject::initializeProperties(sizeof(properties), properties);
 }
 
@@ -30,22 +26,22 @@ uint16_t GroupObjectTableObject::entryCount()
     return ntohs(_tableData[0]);
 }
 
-GroupObject& GroupObjectTableObject::get(uint16_t asap)
+GroupObject &GroupObjectTableObject::get(uint16_t asap)
 {
     return _groupObjects[asap - 1];
 }
 
-const uint8_t* GroupObjectTableObject::restore(const uint8_t* buffer)
+const uint8_t *GroupObjectTableObject::restore(const uint8_t *buffer)
 {
     buffer = TableObject::restore(buffer);
 
-    _tableData = (uint16_t*)data();
+    _tableData = (uint16_t *)data();
     initGroupObjects();
 
     return buffer;
 }
 
-GroupObject& GroupObjectTableObject::nextUpdatedObject(bool& valid)
+GroupObject &GroupObjectTableObject::nextUpdatedObject(bool &valid)
 {
     static uint16_t startIdx = 1;
 
@@ -53,7 +49,7 @@ GroupObject& GroupObjectTableObject::nextUpdatedObject(bool& valid)
 
     for (uint16_t asap = startIdx; asap <= objCount; asap++)
     {
-        GroupObject& go = get(asap);
+        GroupObject &go = get(asap);
 
         if (go.commFlag() == Updated)
         {
@@ -69,7 +65,7 @@ GroupObject& GroupObjectTableObject::nextUpdatedObject(bool& valid)
     return get(1);
 }
 
-void GroupObjectTableObject::groupObjects(GroupObject * objs, uint16_t size)
+void GroupObjectTableObject::groupObjects(GroupObject *objs, uint16_t size)
 {
     freeGroupObjects();
     _groupObjects = objs;
@@ -77,13 +73,13 @@ void GroupObjectTableObject::groupObjects(GroupObject * objs, uint16_t size)
     initGroupObjects();
 }
 
-void GroupObjectTableObject::beforeStateChange(LoadState& newState)
+void GroupObjectTableObject::beforeStateChange(LoadState &newState)
 {
     TableObject::beforeStateChange(newState);
     if (newState != LS_LOADED)
         return;
 
-    _tableData = (uint16_t*)data();
+    _tableData = (uint16_t *)data();
 
     if (!initGroupObjects())
     {
@@ -96,24 +92,24 @@ bool GroupObjectTableObject::initGroupObjects()
 {
     if (!_tableData)
         return false;
-    
+
     freeGroupObjects();
 
     uint16_t goCount = ntohs(_tableData[0]);
-    
+
     _groupObjects = new GroupObject[goCount];
     _groupObjectCount = goCount;
 
     for (uint16_t asap = 1; asap <= goCount; asap++)
     {
-        GroupObject& go = _groupObjects[asap - 1];
+        GroupObject &go = _groupObjects[asap - 1];
         go._asap = asap;
         go._table = this;
-        
+
         go._dataLength = go.goSize();
         go._data = new uint8_t[go._dataLength];
         memset(go._data, 0, go._dataLength);
-        
+
         if (go.valueReadOnInit())
             go.requestObjectRead();
     }
@@ -125,13 +121,13 @@ void GroupObjectTableObject::freeGroupObjects()
 {
     if (_groupObjects)
         delete[] _groupObjects;
-    
+
     _groupObjectCount = 0;
     _groupObjects = 0;
 }
-void GroupObjectTableObject::readProperty(PropertyID id, uint16_t start, uint8_t& count, uint8_t* data)
+void GroupObjectTableObject::readProperty(PropertyID id, uint16_t start, uint8_t &count, uint8_t *data)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         count = 0;
@@ -141,9 +137,9 @@ void GroupObjectTableObject::readProperty(PropertyID id, uint16_t start, uint8_t
     count = prop->read(start, count, data);
 }
 
-void GroupObjectTableObject::writeProperty(PropertyID id, uint16_t start, uint8_t* data, uint8_t& count)
+void GroupObjectTableObject::writeProperty(PropertyID id, uint16_t start, uint8_t *data, uint8_t &count)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         count = 0;

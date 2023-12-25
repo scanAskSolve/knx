@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdio.h>
 
-
 enum NmReadSerialNumberType
 {
     NM_Read_SerialNumber_By_ProgrammingMode = 0x01,
@@ -21,22 +20,22 @@ BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _m
 #ifdef USE_DATASECURE
                                                                               _appLayer(_deviceObj, _secIfObj, *this),
 #else
-                                                                               _appLayer(*this),
+                                                                              _appLayer(*this),
 #endif
                                                                               _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device),
-                                                                              _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks&) *this)
+                                                                              _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks &)*this)
 
 {
     _memory.addSaveRestore(&_appProgram);
     if (bauSystemB == BauSystemType::DEVICEB)
     {
-    _appLayer.transportLayer(_transLayer);
-    _appLayer.associationTableObject(_assocTable);
+        _appLayer.transportLayer(_transLayer);
+        _appLayer.associationTableObject(_assocTable);
 #ifdef USE_DATASECURE
-    _appLayer.groupAddressTable(_addrTable);
+        _appLayer.groupAddressTable(_addrTable);
 #endif
-    _transLayer.networkLayer(_netLayer);
-    _transLayer.groupAddressTable(_addrTable);
+        _transLayer.networkLayer(_netLayer);
+        _transLayer.groupAddressTable(_addrTable);
 
         _memory.addSaveRestore(&_deviceObj);
         _memory.addSaveRestore(&_groupObjTable); // changed order for better memory management
@@ -48,23 +47,22 @@ BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _m
     }
 }
 
-
-
-BauSystemB::BauSystemB(ArduinoPlatform& platform)
+BauSystemB::BauSystemB(ArduinoPlatform &platform)
     : _memory(platform, _deviceObj), _appProgram(_memory), _platform(platform),
-                                                                              _addrTable(_memory),
-                                                                              _assocTable(_memory), _groupObjTable(_memory),
+      _addrTable(_memory),
+      _assocTable(_memory), _groupObjTable(_memory),
 #ifdef USE_DATASECURE
-                                                                              _appLayer(_deviceObj, _secIfObj, *this),
+      _appLayer(_deviceObj, _secIfObj, *this),
 #else
-                                                                               _appLayer(*this),
+      _appLayer(*this),
 #endif
-                                                                              _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device),
-                                                                              _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks&) *this)
+      _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device),
+      _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks &)*this)
 
 #ifdef USE_CEMI_SERVER
-    , _cemiServer(*this)
-#endif           
+      ,
+      _cemiServer(*this)
+#endif
 {
     _memory.addSaveRestore(&_appProgram);
 
@@ -76,12 +74,12 @@ BauSystemB::BauSystemB(ArduinoPlatform& platform)
     _transLayer.networkLayer(_netLayer);
     _transLayer.groupAddressTable(_addrTable);
 
-        _memory.addSaveRestore(&_deviceObj);
-        _memory.addSaveRestore(&_groupObjTable); // changed order for better memory management
-        _memory.addSaveRestore(&_addrTable);
-        _memory.addSaveRestore(&_assocTable);
+    _memory.addSaveRestore(&_deviceObj);
+    _memory.addSaveRestore(&_groupObjTable); // changed order for better memory management
+    _memory.addSaveRestore(&_addrTable);
+    _memory.addSaveRestore(&_assocTable);
 #ifdef USE_DATASECURE
-        _memory.addSaveRestore(&_secIfObj);
+    _memory.addSaveRestore(&_secIfObj);
 #endif
 
     _netLayer.getInterface().dataLinkLayer(_dlLayer);
@@ -97,19 +95,19 @@ BauSystemB::BauSystemB(ArduinoPlatform& platform)
     // Set which interface objects are available in the device object
     // This differs from BAU to BAU with different medium types.
     // See PID_IO_LIST
-    Property* prop = _deviceObj.property(PID_IO_LIST);
-    prop->write(1, (uint16_t) OT_DEVICE);
-    prop->write(2, (uint16_t) OT_ADDR_TABLE);
-    prop->write(3, (uint16_t) OT_ASSOC_TABLE);
-    prop->write(4, (uint16_t) OT_GRP_OBJ_TABLE);
-    prop->write(5, (uint16_t) OT_APPLICATION_PROG);
+    Property *prop = _deviceObj.property(PID_IO_LIST);
+    prop->write(1, (uint16_t)OT_DEVICE);
+    prop->write(2, (uint16_t)OT_ADDR_TABLE);
+    prop->write(3, (uint16_t)OT_ASSOC_TABLE);
+    prop->write(4, (uint16_t)OT_GRP_OBJ_TABLE);
+    prop->write(5, (uint16_t)OT_APPLICATION_PROG);
 #if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-    prop->write(6, (uint16_t) OT_SECURITY);
-    prop->write(7, (uint16_t) OT_CEMI_SERVER);
+    prop->write(6, (uint16_t)OT_SECURITY);
+    prop->write(7, (uint16_t)OT_CEMI_SERVER);
 #elif defined(USE_DATASECURE)
-    prop->write(6, (uint16_t) OT_SECURITY);
+    prop->write(6, (uint16_t)OT_SECURITY);
 #elif defined(USE_CEMI_SERVER)
-    prop->write(6, (uint16_t) OT_CEMI_SERVER);
+    prop->write(6, (uint16_t)OT_CEMI_SERVER);
 #endif
 }
 
@@ -736,26 +734,26 @@ void BauSystemB::propertyValueWrite(ObjectType objectType, uint8_t objectInstanc
 
     switch (objectType)
     {
-        case OT_DEVICE:
-            _deviceObj.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-        case OT_ADDR_TABLE:
-            _addrTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-        case OT_ASSOC_TABLE:
-            _assocTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-        case OT_GRP_OBJ_TABLE:
-            _groupObjTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-        case OT_APPLICATION_PROG:
-            _appProgram.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+    case OT_DEVICE:
+        _deviceObj.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+    case OT_ADDR_TABLE:
+        _addrTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+    case OT_ASSOC_TABLE:
+        _assocTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+    case OT_GRP_OBJ_TABLE:
+        _groupObjTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+    case OT_APPLICATION_PROG:
+        _appProgram.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
 #ifdef USE_DATASECURE
-        case OT_SECURITY:
-            _secIfObj->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+    case OT_SECURITY:
+        _secIfObj->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
 #endif
 #ifdef USE_CEMI_SERVER
-        case OT_CEMI_SERVER:
-            _cemiServerObject->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-#endif            
-        default:
-            numberOfElements = 0;
+    case OT_CEMI_SERVER:
+        _cemiServerObject->writeProperty((PropertyID)propertyId, startindex, data, numberofelements);
+#endif
+    default:
+        numberOfElements = 0;
     }
 }
 
@@ -1209,10 +1207,9 @@ void BauSystemB::loop()
     _appLayer.loop();
 #endif
 
-#ifdef USE_CEMI_SERVER    
+#ifdef USE_CEMI_SERVER
     _cemiServer.loop();
-#endif    
-
+#endif
 }
 
 bool BauSystemB::isAckRequired(uint16_t address, bool isGrpAddr)
@@ -1227,7 +1224,7 @@ bool BauSystemB::isAckRequired(uint16_t address, bool isGrpAddr)
     }
 
     // Also ACK for our own individual address
-    if (address  == _deviceObj.individualAddress())
+    if (address == _deviceObj.individualAddress())
         return true;
 
     if (address == 0)
@@ -1238,67 +1235,67 @@ bool BauSystemB::isAckRequired(uint16_t address, bool isGrpAddr)
     return false;
 }
 
-InterfaceObject* BauSystemB::getInterfaceObject(uint8_t idx)
+InterfaceObject *BauSystemB::getInterfaceObject(uint8_t idx)
 {
     switch (idx)
     {
-        case 0:
-            return &_deviceObj;
-        case 1:
-            return &_addrTable;
-        case 2:
-            return &_assocTable;
-        case 3:
-            return &_groupObjTable;
-        case 4:
-            return &_appProgram;
-        case 5: // would be app_program 2
-            return nullptr;
+    case 0:
+        return &_deviceObj;
+    case 1:
+        return &_addrTable;
+    case 2:
+        return &_assocTable;
+    case 3:
+        return &_groupObjTable;
+    case 4:
+        return &_appProgram;
+    case 5: // would be app_program 2
+        return nullptr;
 #if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-        case 6:
-            return &_secIfObj;
-        case 7:
-            return &_cemiServerObject;
+    case 6:
+        return &_secIfObj;
+    case 7:
+        return &_cemiServerObject;
 #elif defined(USE_CEMI_SERVER)
-        case 6:
-            return &_cemiServerObject;
+    case 6:
+        return &_cemiServerObject;
 #elif defined(USE_DATASECURE)
-        case 6:
-            return &_secIfObj;
+    case 6:
+        return &_secIfObj;
 #endif
-        default:
-            return nullptr;
+    default:
+        return nullptr;
     }
 }
 
-InterfaceObject* BauSystemB::getInterfaceObject(ObjectType objectType, uint8_t objectInstance)
+InterfaceObject *BauSystemB::getInterfaceObject(ObjectType objectType, uint8_t objectInstance)
 {
-    // We do not use it right now. 
+    // We do not use it right now.
     // Required for coupler mode as there are multiple router objects for example
-    (void) objectInstance;
+    (void)objectInstance;
 
     switch (objectType)
     {
-        case OT_DEVICE:
-            return &_deviceObj;
-        case OT_ADDR_TABLE:
-            return &_addrTable;
-        case OT_ASSOC_TABLE:
-            return &_assocTable;
-        case OT_GRP_OBJ_TABLE:
-            return &_groupObjTable;
-        case OT_APPLICATION_PROG:
-            return &_appProgram;
+    case OT_DEVICE:
+        return &_deviceObj;
+    case OT_ADDR_TABLE:
+        return &_addrTable;
+    case OT_ASSOC_TABLE:
+        return &_assocTable;
+    case OT_GRP_OBJ_TABLE:
+        return &_groupObjTable;
+    case OT_APPLICATION_PROG:
+        return &_appProgram;
 #ifdef USE_DATASECURE
-        case OT_SECURITY:
-            return &_secIfObj;
+    case OT_SECURITY:
+        return &_secIfObj;
 #endif
 #ifdef USE_CEMI_SERVER
-        case OT_CEMI_SERVER:
-            return &_cemiServerObject;
-#endif            
-        default:
-            return nullptr;
+    case OT_CEMI_SERVER:
+        return &_cemiServerObject;
+#endif
+    default:
+        return nullptr;
     }
 }
 

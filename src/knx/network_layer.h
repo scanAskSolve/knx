@@ -20,7 +20,7 @@ class NetworkLayer
 {
 
 public:
-  NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer,LayerType leyertype);
+  NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer, LayerType leyertype);
   NetworkLayerEntity &getInterface();
   static constexpr uint8_t kInterfaceIndex = 0;
 
@@ -33,11 +33,11 @@ public:
   };
   LayerType _layerType;
 
-  NetworkLayerEntity* _netLayerEntities_coupler[2] = {0};
-  NetworkLayerEntity* _netLayerEntities_device[1] = {0};
+  NetworkLayerEntity *_netLayerEntities_coupler[2] = {0};
+  NetworkLayerEntity *_netLayerEntities_device[1] = {0};
 
-  RouterObject* _rtObjPrimary {nullptr};
-  RouterObject* _rtObjSecondary {nullptr};
+  RouterObject *_rtObjPrimary{nullptr};
+  RouterObject *_rtObjSecondary{nullptr};
 
   CouplerType _couplerType;
   uint16_t _currentAddress;

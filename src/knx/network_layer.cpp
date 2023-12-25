@@ -7,19 +7,18 @@
 #include "apdu.h"
 #include "router_object.h"
 
-NetworkLayer::NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer,LayerType layerType) : _deviceObj(deviceObj), _transportLayer(layer)
+NetworkLayer::NetworkLayer(DeviceObject &deviceObj, TransportLayer &layer, LayerType layerType) : _deviceObj(deviceObj), _transportLayer(layer)
 {
     _layerType = layerType;
     if (_layerType == device)
     {
         _netLayerEntities_device[0] = new NetworkLayerEntity(*this, kInterfaceIndex);
-        
     }
-    else{
+    else
+    {
         _hopCount = _deviceObj.defaultHopCount();
     }
 }
-
 
 uint8_t NetworkLayer::hopCount() const
 {

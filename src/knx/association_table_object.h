@@ -22,7 +22,8 @@ private:
   void prepareBinarySearch();
   uint16_t *_tableData = 0;
   uint16_t sortedEntryCount;
-  public:
+
+public:
   void readProperty(PropertyID id, uint16_t start, uint8_t &count, uint8_t *data);
   void writeProperty(PropertyID id, uint16_t start, uint8_t *data, uint8_t &count);
 };

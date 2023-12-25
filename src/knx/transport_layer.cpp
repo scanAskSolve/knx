@@ -7,13 +7,13 @@
 #include "bits.h"
 #include <stdio.h>
 
-TransportLayer::TransportLayer(ApplicationLayer& layer): _savedFrame(0),
-    _savedFrameConnecting(0), _applicationLayer(layer)
+TransportLayer::TransportLayer(ApplicationLayer &layer) : _savedFrame(0),
+                                                          _savedFrameConnecting(0), _applicationLayer(layer)
 {
     _currentState = Closed;
 }
 
-void TransportLayer::networkLayer(NetworkLayer& layer)
+void TransportLayer::networkLayer(NetworkLayer &layer)
 {
     _networkLayer = &layer;
 }
@@ -23,15 +23,15 @@ void TransportLayer::groupAddressTable(AddressTableObject &addrTable)
     _groupAddressTable = &addrTable;
 }
 
-void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType hopType, Priority priority, uint16_t source, TPDU& tpdu)
+void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType hopType, Priority priority, uint16_t source, TPDU &tpdu)
 {
-    //if (tpdu.apdu().length() > 0)
+    // if (tpdu.apdu().length() > 0)
     //{
-    //    print.print("<- TL  ");
-    //    tpdu.printPDU();
-    //    print.print("<- TL  ");
-    //    tpdu.apdu().printPDU();
-    //}
+    //     print.print("<- TL  ");
+    //     tpdu.printPDU();
+    //     print.print("<- TL  ");
+    //     tpdu.apdu().printPDU();
+    // }
 
     uint8_t sequenceNo = tpdu.sequenceNumber();
     switch (tpdu.type())
@@ -44,11 +44,11 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
         {
             if (sequenceNo == _seqNoRecv)
             {
-                //E4
+                // E4
                 switch (_currentState)
                 {
                 case Closed:
-                    //A0 nothing
+                    // A0 nothing
                     break;
                 case OpenIdle:
                 case OpenWait:
@@ -60,13 +60,13 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
                     break;
                 }
             }
-            else if(sequenceNo == ((_seqNoRecv -1) & 0xF))
+            else if (sequenceNo == ((_seqNoRecv - 1) & 0xF))
             {
-                //E5
+                // E5
                 switch (_currentState)
                 {
                 case Closed:
-                    //A0
+                    // A0
                     break;
                 case OpenIdle:
                 case OpenWait:
@@ -77,11 +77,11 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
             }
             else
             {
-                //E6
+                // E6
                 switch (_currentState)
                 {
                 case Closed:
-                    //A0
+                    // A0
                     break;
                 case OpenIdle:
                 case OpenWait:
@@ -95,13 +95,13 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
         }
         else
         {
-            //E7
+            // E7
             switch (_currentState)
             {
             case Closed:
             case OpenIdle:
             case OpenWait:
-                //A0
+                // A0
                 break;
             case Connecting:
                 A10(source);
@@ -112,7 +112,7 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
     case Connect:
         if (source == _connectionAddress)
         {
-            //E0
+            // E0
             switch (_currentState)
             {
             case Closed:
@@ -122,13 +122,13 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
             case OpenWait:
             case OpenIdle:
             case Connecting:
-                //A0: do nothing
+                // A0: do nothing
                 break;
             }
         }
         else
         {
-            //E1
+            // E1
             switch (_currentState)
             {
             case Closed:
@@ -146,11 +146,11 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
     case Disconnect:
         if (source == _connectionAddress)
         {
-            //E2
+            // E2
             switch (_currentState)
             {
             case Closed:
-                //A0 do nothing
+                // A0 do nothing
                 break;
             case OpenIdle:
             case OpenWait:
@@ -164,8 +164,8 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
         }
         else
         {
-            //E3
-            //A0: do nothing
+            // E3
+            // A0: do nothing
         }
         break;
     case Ack:
@@ -173,12 +173,12 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
         {
             if (sequenceNo == _seqNoSend)
             {
-                //E8
+                // E8
                 switch (_currentState)
                 {
                 case Closed:
                 case OpenIdle:
-                    //A0
+                    // A0
                     break;
                 case OpenWait:
                     _currentState = OpenIdle;
@@ -192,24 +192,24 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
             }
             else
             {
-                //E9
+                // E9
                 switch (_currentState)
                 {
                 case Closed:
                 case OpenIdle:
-                    //A0
+                    // A0
                     break;
                 case OpenWait:
                 case Connecting:
                     _currentState = Closed;
                     A6(source);
                     break;
-                 }
+                }
             }
         }
         else
         {
-            //E10
+            // E10
             switch (_currentState)
             {
             case Connecting:
@@ -225,13 +225,13 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
         {
             if (sequenceNo != _seqNoSend)
             {
-                //E11
+                // E11
                 switch (_currentState)
                 {
                 case Closed:
                 case OpenIdle:
                 case OpenWait:
-                    //A0
+                    // A0
                     break;
                 case Connecting:
                     _currentState = Closed;
@@ -243,11 +243,11 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
             {
                 if (_repCount < _maxRepCount)
                 {
-                    //E12
+                    // E12
                     switch (_currentState)
                     {
                     case Closed:
-                        //A0
+                        // A0
                         break;
                     case Connecting:
                     case OpenIdle:
@@ -261,11 +261,11 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
                 }
                 else
                 {
-                    //E13
+                    // E13
                     switch (_currentState)
                     {
                     case Closed:
-                        //A0
+                        // A0
                         break;
                     case OpenIdle:
                     case OpenWait:
@@ -279,13 +279,13 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
         }
         else
         {
-            //E14
+            // E14
             switch (_currentState)
             {
             case Closed:
             case OpenIdle:
             case OpenWait:
-                //A0
+                // A0
                 break;
             case Connecting:
                 A10(source);
@@ -300,7 +300,7 @@ void TransportLayer::dataIndividualIndication(uint16_t destination, HopCountType
     }
 }
 
-void TransportLayer::dataIndividualConfirm(AckType ack, uint16_t destination, HopCountType hopType, Priority priority, TPDU& tpdu, bool status)
+void TransportLayer::dataIndividualConfirm(AckType ack, uint16_t destination, HopCountType hopType, Priority priority, TPDU &tpdu, bool status)
 {
     TpduType type = tpdu.type();
     switch (type)
@@ -309,19 +309,19 @@ void TransportLayer::dataIndividualConfirm(AckType ack, uint16_t destination, Ho
         _applicationLayer.dataIndividualConfirm(ack, hopType, priority, destination, tpdu.apdu(), status);
         break;
     case DataConnected:
-        //E22
-        //A0: do nothing
+        // E22
+        // A0: do nothing
         break;
     case Connect:
         if (status)
         {
-            //E19
+            // E19
             switch (_currentState)
             {
             case Closed:
             case OpenIdle:
             case OpenWait:
-                //A0: do nothing
+                // A0: do nothing
                 break;
             case Connecting:
                 _currentState = OpenIdle;
@@ -331,13 +331,13 @@ void TransportLayer::dataIndividualConfirm(AckType ack, uint16_t destination, Ho
         }
         else
         {
-            //E20
+            // E20
             switch (_currentState)
             {
             case Closed:
             case OpenIdle:
             case OpenWait:
-                //A0: do nothing
+                // A0: do nothing
                 break;
             case Connecting:
                 A5(destination);
@@ -346,16 +346,16 @@ void TransportLayer::dataIndividualConfirm(AckType ack, uint16_t destination, Ho
         }
         break;
     case Disconnect:
-        //E21
-        //A0: do nothing
+        // E21
+        // A0: do nothing
         break;
     case Ack:
-        //E23
-        //A0: do nothing
+        // E23
+        // A0: do nothing
         break;
     case Nack:
-        //E24
-        //A0: do nothing
+        // E24
+        // A0: do nothing
         break;
     default:
         break;
@@ -363,7 +363,7 @@ void TransportLayer::dataIndividualConfirm(AckType ack, uint16_t destination, Ho
     }
 }
 
-void TransportLayer::dataGroupIndication(uint16_t destination, HopCountType hopType, Priority priority, uint16_t source, TPDU& tpdu)
+void TransportLayer::dataGroupIndication(uint16_t destination, HopCountType hopType, Priority priority, uint16_t source, TPDU &tpdu)
 {
     if (_groupAddressTable == nullptr)
         return;
@@ -371,68 +371,68 @@ void TransportLayer::dataGroupIndication(uint16_t destination, HopCountType hopT
     uint16_t tsap = _groupAddressTable->getTsap(destination);
     if (tsap == 0)
         return;
-    
+
     _applicationLayer.dataGroupIndication(hopType, priority, tsap, tpdu.apdu());
 }
 
-void TransportLayer::dataGroupConfirm(AckType ack, uint16_t source, uint16_t destination, HopCountType hopType, Priority priority, TPDU& tpdu, bool status)
+void TransportLayer::dataGroupConfirm(AckType ack, uint16_t source, uint16_t destination, HopCountType hopType, Priority priority, TPDU &tpdu, bool status)
 {
     _applicationLayer.dataGroupConfirm(ack, hopType, priority, destination, tpdu.apdu(), status);
 }
 
-void TransportLayer::dataBroadcastIndication(HopCountType hopType, Priority priority, uint16_t source, TPDU& tpdu)
+void TransportLayer::dataBroadcastIndication(HopCountType hopType, Priority priority, uint16_t source, TPDU &tpdu)
 {
     _applicationLayer.dataBroadcastIndication(hopType, priority, source, tpdu.apdu());
 }
 
-void TransportLayer::dataBroadcastConfirm(AckType ack, HopCountType hopType, Priority priority, TPDU& tpdu, bool status)
+void TransportLayer::dataBroadcastConfirm(AckType ack, HopCountType hopType, Priority priority, TPDU &tpdu, bool status)
 {
     _applicationLayer.dataBroadcastConfirm(ack, hopType, priority, tpdu.apdu(), status);
 }
 
-void TransportLayer::dataSystemBroadcastIndication(HopCountType hopType, Priority priority, uint16_t source, TPDU& tpdu)
+void TransportLayer::dataSystemBroadcastIndication(HopCountType hopType, Priority priority, uint16_t source, TPDU &tpdu)
 {
     _applicationLayer.dataSystemBroadcastIndication(hopType, priority, source, tpdu.apdu());
 }
 
-void TransportLayer::dataSystemBroadcastConfirm(AckType ack, HopCountType hopType, TPDU& tpdu, Priority priority, bool status)
+void TransportLayer::dataSystemBroadcastConfirm(AckType ack, HopCountType hopType, TPDU &tpdu, Priority priority, bool status)
 {
     _applicationLayer.dataSystemBroadcastConfirm(hopType, priority, tpdu.apdu(), status);
 }
 
-void TransportLayer::dataGroupRequest(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU& apdu)
+void TransportLayer::dataGroupRequest(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU &apdu)
 {
     if (_groupAddressTable == nullptr)
         return;
 
     uint16_t groupAdress = _groupAddressTable->getGroupAddress(tsap);
-    TPDU& tpdu = apdu.frame().tpdu();
+    TPDU &tpdu = apdu.frame().tpdu();
     _networkLayer->dataGroupRequest(ack, groupAdress, hopType, priority, tpdu);
 }
 
-void TransportLayer::dataBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, APDU& apdu)
+void TransportLayer::dataBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, APDU &apdu)
 {
-    TPDU& tpdu = apdu.frame().tpdu();
+    TPDU &tpdu = apdu.frame().tpdu();
     _networkLayer->dataBroadcastRequest(ack, hopType, priority, tpdu);
 }
 
-void TransportLayer::dataSystemBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, APDU& apdu)
+void TransportLayer::dataSystemBroadcastRequest(AckType ack, HopCountType hopType, Priority priority, APDU &apdu)
 {
-    TPDU& tpdu = apdu.frame().tpdu();
+    TPDU &tpdu = apdu.frame().tpdu();
     return _networkLayer->dataSystemBroadcastRequest(ack, hopType, priority, tpdu);
 }
 
-void TransportLayer::dataIndividualRequest(AckType ack, HopCountType hopType, Priority priority, uint16_t destination, APDU& apdu)
+void TransportLayer::dataIndividualRequest(AckType ack, HopCountType hopType, Priority priority, uint16_t destination, APDU &apdu)
 {
-    //print.print("-> TL  ");
-    //apdu.printPDU();
-    TPDU& tpdu = apdu.frame().tpdu();
+    // print.print("-> TL  ");
+    // apdu.printPDU();
+    TPDU &tpdu = apdu.frame().tpdu();
     _networkLayer->dataIndividualRequest(ack, destination, hopType, priority, tpdu);
 }
 
 void TransportLayer::connectRequest(uint16_t destination, Priority priority)
 {
-    //E25
+    // E25
     switch (_currentState)
     {
     case Closed:
@@ -450,7 +450,7 @@ void TransportLayer::connectRequest(uint16_t destination, Priority priority)
 
 void TransportLayer::disconnectRequest(uint16_t tsap, Priority priority)
 {
-    //E26
+    // E26
     switch (_currentState)
     {
     case Closed:
@@ -465,15 +465,15 @@ void TransportLayer::disconnectRequest(uint16_t tsap, Priority priority)
     }
 }
 
-void TransportLayer::dataConnectedRequest(uint16_t tsap, Priority priority, APDU& apdu)
+void TransportLayer::dataConnectedRequest(uint16_t tsap, Priority priority, APDU &apdu)
 {
-    //print.print("-> TL  ");
-    //apdu.printPDU();
-    //E15
+    // print.print("-> TL  ");
+    // apdu.printPDU();
+    // E15
     switch (_currentState)
     {
     case Closed:
-        //A0
+        // A0
         break;
     case OpenIdle:
         _currentState = OpenWait;
@@ -490,11 +490,11 @@ void TransportLayer::dataConnectedRequest(uint16_t tsap, Priority priority, APDU
 
 void TransportLayer::connectionTimeoutIndication()
 {
-    //E16
+    // E16
     switch (_currentState)
     {
     case Closed:
-        //A0: do nothing
+        // A0: do nothing
         break;
     case OpenIdle:
     case OpenWait:
@@ -509,13 +509,13 @@ void TransportLayer::ackTimeoutIndication()
 {
     if (_repCount < _maxRepCount)
     {
-        //E17
+        // E17
         switch (_currentState)
         {
         case Closed:
         case OpenIdle:
         case Connecting:
-            //A0: do nothing
+            // A0: do nothing
             break;
         case OpenWait:
             A9();
@@ -524,13 +524,13 @@ void TransportLayer::ackTimeoutIndication()
     }
     else
     {
-        //E18
+        // E18
         switch (_currentState)
         {
         case Closed:
         case OpenIdle:
         case Connecting:
-            //A0: do nothing
+            // A0: do nothing
             break;
         case OpenWait:
             _currentState = Closed;
@@ -557,17 +557,15 @@ uint16_t TransportLayer::getConnectionAddress()
 void TransportLayer::loop()
 {
     uint32_t milliseconds = HAL_GetTick();
-    if (_connectionTimeoutEnabled 
-        && (milliseconds - _connectionTimeoutStartMillis) > _connectionTimeoutMillis)
+    if (_connectionTimeoutEnabled && (milliseconds - _connectionTimeoutStartMillis) > _connectionTimeoutMillis)
         connectionTimeoutIndication();
 
-    if (_ackTimeoutEnabled
-        && (milliseconds - _ackTimeoutStartMillis) > _ackTimeoutMillis)
+    if (_ackTimeoutEnabled && (milliseconds - _ackTimeoutStartMillis) > _ackTimeoutMillis)
         ackTimeoutIndication();
 
     if (_savedConnectingValid)
     {
-        //retry saved event
+        // retry saved event
         _savedConnectingValid = false;
         dataConnectedRequest(_savedTsapConnecting, _savedPriorityConnecting, _savedFrameConnecting.apdu());
     }
@@ -576,11 +574,11 @@ void TransportLayer::loop()
 void TransportLayer::sendControlTelegram(TpduType pduType, uint8_t seqNo)
 {
     CemiFrame frame(0);
-    TPDU& tpdu = frame.tpdu();
+    TPDU &tpdu = frame.tpdu();
     tpdu.type(pduType);
     tpdu.sequenceNumber(seqNo);
     _networkLayer->dataIndividualRequest(AckRequested, _connectionAddress, NetworkLayerParameter,
-        SystemPriority, tpdu);
+                                         SystemPriority, tpdu);
 }
 
 void TransportLayer::A0()
@@ -597,14 +595,14 @@ void TransportLayer::A1(uint16_t source)
     enableConnectionTimeout();
 }
 
-void incSeqNr(uint8_t& seqNr)
+void incSeqNr(uint8_t &seqNr)
 {
     seqNr += 1;
     if (seqNr > 0xf)
         seqNr = 0;
 }
 
-void TransportLayer::A2(uint16_t source, Priority priority, APDU& apdu)
+void TransportLayer::A2(uint16_t source, Priority priority, APDU &apdu)
 {
     sendControlTelegram(Ack, _seqNoRecv);
     incSeqNr(_seqNoRecv);
@@ -612,13 +610,13 @@ void TransportLayer::A2(uint16_t source, Priority priority, APDU& apdu)
     enableConnectionTimeout();
 }
 
-void TransportLayer::A3(uint16_t source, Priority priority, TPDU& recTpdu)
+void TransportLayer::A3(uint16_t source, Priority priority, TPDU &recTpdu)
 {
     sendControlTelegram(Ack, recTpdu.sequenceNumber());
     enableConnectionTimeout();
 }
 
-void TransportLayer::A4(uint16_t source, Priority priority, TPDU& recTpdu)
+void TransportLayer::A4(uint16_t source, Priority priority, TPDU &recTpdu)
 {
     sendControlTelegram(Nack, recTpdu.sequenceNumber());
     enableConnectionTimeout();
@@ -639,10 +637,10 @@ void TransportLayer::A6(uint16_t tsap)
     disableAckTimeout();
 }
 
-void TransportLayer::A7(Priority priority, APDU& apdu)
+void TransportLayer::A7(Priority priority, APDU &apdu)
 {
     _savedPriority = priority;
-    TPDU& tpdu = apdu.frame().tpdu();
+    TPDU &tpdu = apdu.frame().tpdu();
     tpdu.type(DataConnected);
     tpdu.sequenceNumber(_seqNoSend);
     _savedFrame = apdu.frame();
@@ -662,7 +660,7 @@ void TransportLayer::A8()
 
 void TransportLayer::A9()
 {
-    TPDU& tpdu = _savedFrame.tpdu();
+    TPDU &tpdu = _savedFrame.tpdu();
     // tpdu is still initialized from last send
     _networkLayer->dataIndividualRequest(AckRequested, _connectionAddress, NetworkLayerParameter, _savedPriority, tpdu);
     _repCount += 1;
@@ -673,13 +671,13 @@ void TransportLayer::A9()
 void TransportLayer::A10(uint16_t source)
 {
     CemiFrame frame(0);
-    TPDU& tpdu = frame.tpdu();
+    TPDU &tpdu = frame.tpdu();
     tpdu.type(Disconnect);
     tpdu.sequenceNumber(0);
     _networkLayer->dataIndividualRequest(AckRequested, source, NetworkLayerParameter, SystemPriority, tpdu);
 }
 
-void TransportLayer::A11(uint16_t tsap, Priority priority, APDU& apdu)
+void TransportLayer::A11(uint16_t tsap, Priority priority, APDU &apdu)
 {
     _savedTsapConnecting = tsap;
     _savedPriorityConnecting = priority;
@@ -691,7 +689,7 @@ void TransportLayer::A12(uint16_t destination, Priority priority)
 {
     _connectionAddress = destination;
     CemiFrame frame(0);
-    TPDU& tpdu = frame.tpdu();
+    TPDU &tpdu = frame.tpdu();
     tpdu.type(Connect);
     _networkLayer->dataIndividualRequest(AckRequested, destination, NetworkLayerParameter, priority, tpdu);
     _seqNoRecv = 0;
@@ -707,7 +705,7 @@ void TransportLayer::A13(uint16_t destination)
 void TransportLayer::A14(uint16_t tsap, Priority priority)
 {
     CemiFrame frame(0);
-    TPDU& tpdu = frame.tpdu();
+    TPDU &tpdu = frame.tpdu();
     tpdu.type(Disconnect);
     tpdu.sequenceNumber(0);
     _networkLayer->dataIndividualRequest(AckRequested, _connectionAddress, NetworkLayerParameter, SystemPriority, tpdu);
