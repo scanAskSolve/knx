@@ -159,3 +159,13 @@ void ApplicationProgramObject::readPropertyDescription(uint8_t& propertyId, uint
         access = prop->Access();
     }
 }
+uint8_t ApplicationProgramObject::propertySize(PropertyID id)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        return 0;
+    }
+
+    return prop->ElementSize();
+}

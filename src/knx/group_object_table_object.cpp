@@ -192,3 +192,13 @@ void GroupObjectTableObject::readPropertyDescription(uint8_t& propertyId, uint8_
         access = prop->Access();
     }
 }
+uint8_t GroupObjectTableObject::propertySize(PropertyID id)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        return 0;
+    }
+
+    return prop->ElementSize();
+}

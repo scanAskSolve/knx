@@ -372,3 +372,13 @@ void DeviceObject::readPropertyDescription(uint8_t& propertyId, uint8_t& propert
         access = prop->Access();
     }
 }
+uint8_t DeviceObject::propertySize(PropertyID id)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        return 0;
+    }
+
+    return prop->ElementSize();
+}

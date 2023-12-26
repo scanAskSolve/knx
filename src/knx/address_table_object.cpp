@@ -155,3 +155,13 @@ void AddressTableObject::readPropertyDescription(uint8_t& propertyId, uint8_t& p
         access = prop->Access();
     }
 }
+uint8_t AddressTableObject::propertySize(PropertyID id)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        return 0;
+    }
+
+    return prop->ElementSize();
+}
