@@ -115,3 +115,47 @@ void ApplicationProgramObject::writeProperty(PropertyID id, uint16_t start, uint
 
     count = prop->write(start, count, data);
 }
+void ApplicationProgramObject::readPropertyDescription(uint8_t& propertyId, uint8_t& propertyIndex, bool& writeEnable, uint8_t& type, uint16_t& numberOfElements, uint8_t& access)
+{
+    uint8_t count = _propertyCount;
+
+    numberOfElements = 0;
+    if (_properties == nullptr || count == 0)
+        return;
+
+    Property* prop = nullptr;
+
+    // from KNX spec. 03.03.07 Application Layer (page 56) - 3.4.3.3  A_PropertyDescription_Read-service
+    // Summary: either propertyId OR propertyIndex, but not both at the same time
+    if (propertyId != 0)
+    {
+        for (uint8_t i = 0; i < count; i++)
+        {
+            Property* p = _properties[i];
+            if (p->Id() != propertyId)
+                continue;
+
+            prop = p;
+            propertyIndex = i;
+            break;
+        }
+    }
+    else
+    {
+        // If propertyId is zero, propertyIndex shall be used.
+        // Response: propertyIndex of received A_PropertyDescription_Read
+        if (propertyIndex < count)
+        {
+            prop = _properties[propertyIndex];
+        }
+    }
+
+    if (prop != nullptr)
+    {
+        propertyId = prop->Id();
+        writeEnable = prop->WriteEnable();
+        type = prop->Type();
+        numberOfElements = prop->MaxElements();
+        access = prop->Access();
+    }
+}

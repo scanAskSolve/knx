@@ -304,9 +304,33 @@ void BauSystemB::propertyDescriptionReadIndication(Priority priority, HopCountTy
     uint8_t type = 0;
     uint16_t numberOfElements = 0;
     uint8_t access = 0;
-    InterfaceObject *obj = getInterfaceObject(objectIndex);
-    if (obj)
-        obj->readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
+    switch (objectIndex)
+    {
+    case 0:
+        _deviceObj.readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
+    case 1:
+        _addrTable.readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
+    case 2:
+        _assocTable.readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
+    case 3:
+         _groupObjTable.readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
+    case 4:
+         _appProgram.readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
+    case 5: // would be app_program 2
+         nullptr;
+#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
+    case 6:
+         _secIfObj.(pid, propertyIndex, writeEnable, type, numberOfElements, access);
+    case 7:
+         _cemiServerObject.readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
+#elif defined(USE_CEMI_SERVER)
+    case 6:
+         _cemiServerObject.readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
+#elif defined(USE_DATASECURE)
+    case 6:
+         _secIfObj.readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
+#endif
+    }
 
     applicationLayer().propertyDescriptionReadResponse(AckRequested, priority, hopType, asap, secCtrl, objectIndex, pid, propertyIndex,
                                                        writeEnable, type, numberOfElements, access);
