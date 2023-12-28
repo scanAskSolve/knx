@@ -382,3 +382,34 @@ uint8_t DeviceObject::propertySize(PropertyID id)
 
     return prop->ElementSize();
 }
+void DeviceObject::command(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        resultLength = 0;
+        return;;
+    }
+
+    prop->command(data, length, resultData, resultLength);
+}
+
+void DeviceObject::state(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+{
+    Property* prop = property(id);
+    if (prop == nullptr)
+    {
+        resultLength = 0;
+        return;;
+    }
+
+    prop->state(data, length, resultData, resultLength);
+}
+Property* DeviceObject::property(PropertyID id)
+{
+    for (int i = 0; i < _propertyCount; i++)
+        if (_properties[i]->Id() == id)
+            return _properties[i];
+
+    return nullptr;
+}

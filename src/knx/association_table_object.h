@@ -28,4 +28,7 @@ public:
   void writeProperty(PropertyID id, uint16_t start, uint8_t *data, uint8_t &count);
 void readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &writeEnable, uint8_t &type, uint16_t &numberOfElements, uint8_t &access);
  uint8_t propertySize(PropertyID id);
+ void command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+  void state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+  Property *property(PropertyID id);
 };
