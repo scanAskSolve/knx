@@ -348,9 +348,43 @@ void BauSystemB::propertyDescriptionReadIndication(Priority priority, HopCountTy
 void BauSystemB::propertyValueWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t objectIndex,
                                               uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t *data, uint8_t length)
 {
-    InterfaceObject *obj = getInterfaceObject(objectIndex);
-    if (obj)
-        obj->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+    // InterfaceObject *obj = getInterfaceObject(objectIndex);
+switch (objectIndex)
+    {
+    case 0:
+        _deviceObj.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        break;
+    case 1:
+        _addrTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        break;
+    case 2:
+        _assocTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        break;
+    case 3:
+        _groupObjTable.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        break;
+    case 4:
+        _appProgram.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        break;
+    case 5: // would be app_program 2
+        nullptr;
+#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
+    case 6:
+        _secIfObj.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        break;
+    case 7:
+        _cemiServerObject.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        break;
+#elif defined(USE_CEMI_SERVER)
+    case 6:
+        _cemiServerObject.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        break;
+#elif defined(USE_DATASECURE)
+    case 6:
+        _secIfObj.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
+        break;
+#endif
+    }
     propertyValueReadIndication(priority, hopType, asap, secCtrl, objectIndex, propertyId, numberOfElements, startIndex);
 }
 
