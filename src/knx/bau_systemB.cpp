@@ -437,22 +437,122 @@ void BauSystemB::propertyValueReadIndication(Priority priority, HopCountType hop
 {
     uint8_t size = 0;
     uint8_t elementCount = numberOfElements;
-    InterfaceObject *obj = getInterfaceObject(objectIndex);
-    if (obj)
+    // InterfaceObject *obj = getInterfaceObject(objectIndex);
+switch (objectIndex)
     {
-        uint8_t elementSize = obj->propertySize((PropertyID)propertyId);
+        uint8_t elementSize;
+    case 0:
+        elementSize = _deviceObj.propertySize((PropertyID)propertyId);
         if (startIndex > 0)
             size = elementSize * numberOfElements;
         else
             size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
+
+        break;
+    case 1:
+        elementSize = _addrTable.propertySize((PropertyID)propertyId);
+        if (startIndex > 0)
+            size = elementSize * numberOfElements;
+        else
+            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
+
+        break;
+    case 2:
+        elementSize = _assocTable.propertySize((PropertyID)propertyId);
+        if (startIndex > 0)
+            size = elementSize * numberOfElements;
+        else
+            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
+
+        break;
+    case 3:
+        elementSize = _groupObjTable.propertySize((PropertyID)propertyId);
+        if (startIndex > 0)
+            size = elementSize * numberOfElements;
+        else
+            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
+
+        break;
+    case 4:
+        elementSize = _appProgram.propertySize((PropertyID)propertyId);
+        if (startIndex > 0)
+            size = elementSize * numberOfElements;
+        else
+            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
+
+        break;
+    case 5: // would be app_program 2
+        nullptr;
+#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
+    case 6:
+        elementSize = _secifobj.propertySize((PropertyID)propertyId);
+        if (startIndex > 0)
+            size = elementSize * numberOfElements;
+        else
+            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
+
+        break;
+    case 7:
+        elementSize = _cemiServerObject.propertySize((PropertyID)propertyId);
+        if (startIndex > 0)
+            size = elementSize * numberOfElements;
+        else
+            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
+
+        break;
+#elif defined(USE_CEMI_SERVER)
+    case 6:
+        elementSize = _cemiServerObject.propertySize((PropertyID)propertyId);
+        if (startIndex > 0)
+            size = elementSize * numberOfElements;
+        else
+            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
+
+        break;
+#elif defined(USE_DATASECURE)
+    case 6:
+        elementSize = _secifobj.propertySize((PropertyID)propertyId);
+        if (startIndex > 0)
+            size = elementSize * numberOfElements;
+        else
+            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
+
+        break;
+#endif
+    default:
+        elementCount=0;
     }
-    else
-        elementCount = 0;
-
-    uint8_t data[size];
-    if (obj)
-        obj->readProperty((PropertyID)propertyId, startIndex, elementCount, data);
-
+uint8_t data[size];
+    switch (objectIndex)
+    {
+    case OT_DEVICE:
+        _deviceObj.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+        break;
+    case OT_ADDR_TABLE:
+        _addrTable.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+        break;
+    case OT_ASSOC_TABLE:
+        _assocTable.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+        break;
+    case OT_GRP_OBJ_TABLE:
+        _groupObjTable.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+        break;
+    case OT_APPLICATION_PROG:
+        _appProgram.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+        break;
+#ifdef USE_DATASECURE
+    case OT_SECURITY:
+        _secIfObj.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+        break;
+#endif
+#ifdef USE_CEMI_SERVER
+    case OT_CEMI_SERVER:
+        _cemiServerObject.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+        break;
+#endif
+    }
+    
+    
     if (elementCount == 0)
         size = 0;
 
