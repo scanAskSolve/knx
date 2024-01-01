@@ -523,36 +523,42 @@ switch (objectIndex)
         elementCount=0;
     }
 uint8_t data[size];
-    switch (objectIndex)
+ switch (objectIndex)
     {
-    case OT_DEVICE:
-        _deviceObj.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+    case 0:
+        _deviceObj.readProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
         break;
-    case OT_ADDR_TABLE:
-        _addrTable.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+    case 1:
+        _addrTable.readProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
         break;
-    case OT_ASSOC_TABLE:
-        _assocTable.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+    case 2:
+        _assocTable.readProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
         break;
-    case OT_GRP_OBJ_TABLE:
-        _groupObjTable.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+    case 3:
+        _groupObjTable.readProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
         break;
-    case OT_APPLICATION_PROG:
-        _appProgram.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+    case 4:
+        _appProgram.readProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
         break;
-#ifdef USE_DATASECURE
-    case OT_SECURITY:
-        _secIfObj.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
+    case 5: // would be app_program 2
+        nullptr;
+#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
+    case 6:
+        _secIfObj.readProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
+        break;
+    case 7:
+        _cemiServerObject.readProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
+        break;
+#elif defined(USE_CEMI_SERVER)
+    case 6:
+        _cemiServerObject.writeProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
+        break;
+#elif defined(USE_DATASECURE)
+    case 6:
+        _secIfObj.writeProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
         break;
 #endif
-#ifdef USE_CEMI_SERVER
-    case OT_CEMI_SERVER:
-        _cemiServerObject.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
-        break;
-#endif
-    }
-    
-    
+    }   
     if (elementCount == 0)
         size = 0;
 
@@ -678,13 +684,12 @@ void BauSystemB::functionPropertyCommandIndication(Priority priority, HopCountTy
 
     bool handled = false;
 
-    // InterfaceObject *obj = getInterfaceObject(objectIndex);
-switch (objectIndex)
+    InterfaceObject *obj = getInterfaceObject(objectIndex);
+    if (obj)
     {
-    case 0:
-        if (_deviceObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
+        if (obj->property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
         {
-            _deviceObj.command((PropertyID)propertyId, data, length, resultData, resultLength);
+            obj->command((PropertyID)propertyId, data, length, resultData, resultLength);
             handled = true;
         }
         else
@@ -693,118 +698,9 @@ switch (objectIndex)
                 if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
                     handled = true;
         }
-        break;
-    case 1:
-        if (_addrTable.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _addrTable.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 2:
-        if (_assocTable.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _assocTable.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 3:
-        if (_groupObjTable.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _groupObjTable.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 4:
-        if (_appProgram.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _appProgram.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 5: // would be app_program 2
-        nullptr;
-#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-    case 6:
-        if (_secIfObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _secIfObj.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 7:
-        if (_cemiServerObject.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _cemiServerObject.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#elif defined(USE_CEMI_SERVER)
-    case 6:
-        if (_cemiServerObject.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _cemiServerObject.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#elif defined(USE_DATASECURE)
-    case 6:
-        if (_secIfObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _secIfObj.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#endif
-    default:
+    }
+    else
+    {
         if (_functionProperty != 0)
             if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
                 handled = true;
@@ -823,13 +719,12 @@ void BauSystemB::functionPropertyStateIndication(Priority priority, HopCountType
 
     bool handled = true;
 
-    // InterfaceObject *obj = getInterfaceObject(objectIndex);
-switch (objectIndex)
+    InterfaceObject *obj = getInterfaceObject(objectIndex);
+    if (obj)
     {
-    case 0:
-        if (_deviceObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
+        if (obj->property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
         {
-            _deviceObj.state((PropertyID)propertyId, data, length, resultData, resultLength);
+            obj->state((PropertyID)propertyId, data, length, resultData, resultLength);
             handled = true;
         }
         else
@@ -838,121 +733,12 @@ switch (objectIndex)
                 if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
                     handled = true;
         }
-        break;
-    case 1:
-        if (_addrTable.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _addrTable.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 2:
-        if (_assocTable.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _assocTable.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 3:
-        if (_groupObjTable.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _groupObjTable.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 4:
-        if (_appProgram.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _appProgram.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 5: // would be app_program 2
-        nullptr;
-#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-    case 6:
-        if (_secIfObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _secIfObj.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 7:
-        if (_cemiServerObject.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _cemiServerObject.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#elif defined(USE_CEMI_SERVER)
-    case 6:
-        if (_cemiServerObject.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _cemiServerObject.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#elif defined(USE_DATASECURE)
-    case 6:
-        if (_secIfObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _secIfObj.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#endif
-    default:
+    }
+    else
+    {
         if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
+            if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
+                handled = true;
     }
 
     // only return a value it was handled by a property or function

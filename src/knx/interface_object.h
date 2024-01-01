@@ -80,7 +80,7 @@ public:
      * 
      * @param[out] data The requested data of the property.
      */
-     virtual void readProperty(PropertyID id, uint16_t start, uint8_t& count, uint8_t* data);
+     void readProperty(PropertyID id, uint16_t start, uint8_t& count, uint8_t* data);
     /**
      * Write property of the interface object. If the interface object does not have the property this 
      * method does nothing. See section 4.8.4.4 of @cite knx:3/4/1.
