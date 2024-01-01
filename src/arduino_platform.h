@@ -1,6 +1,6 @@
-// #include "knx/platform.h"
 #pragma once
 #include "Arduino.h"
+
 #include "knx/save_restore.h"
 #ifndef KNX_DEBUG_SERIAL
 #define KNX_DEBUG_SERIAL Serial
@@ -26,9 +26,8 @@ enum NvMemoryType
 class ArduinoPlatform
 {
   public:
-    ArduinoPlatform();
     ArduinoPlatform(HardwareSerial* knxSerial);
-    //~ArduinoPlatform();
+    //ArduinoPlatform(UART_HandleTypeDef* knxSerial);
     // basic stuff
     void fatalError();
 
@@ -73,13 +72,7 @@ class ArduinoPlatform
     virtual void commitToEeprom();
 
     virtual void restart();
-/*#ifndef KNX_NO_SPI
 
-    void setupSpi() override;
-    void closeSpi() override;
-    int readWriteSpi (uint8_t *data, size_t len) override;
-    
-#endif*/
 #ifndef KNX_NO_PRINT
     static Stream* SerialDebug;
 

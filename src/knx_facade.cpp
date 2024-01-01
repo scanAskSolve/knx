@@ -12,29 +12,33 @@
 
 #if MASK_VERSION == 0x07B0
     //KnxFacade<Stm32Platform, BauSystemB> knx(buttonEvent);
-    KnxFacade knx(buttonEvent);
+    //KnxFacade knx(buttonEvent);
+    KnxFacade knx;
 #else
     #error "Mask version not supported on ARDUINO_ARCH_STM32"
 #endif
 
 //****************************************************************************
 //KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction) : _platformPtr(new Stm32Platform()), _bauPtr(new BauSystemB(*_platformPtr)), _bau(*_bauPtr)
-KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction)
+//KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction)
+KnxFacade::KnxFacade()
 {
     manufacturerId(0xfa);
     bauNumber(platform().uniqueSerialNumber());
     _bau.addSaveRestore(this);
-    setButtonISRFunction(buttonISRFunction);
+    //setButtonISRFunction(buttonEvent);
 }
-
-KnxFacade:: ~KnxFacade()
+/*void KnxFacade::Set_chip_platform(HardwareSerial* PORT)
 {
-    if (_bauPtr)
-        delete _bauPtr;
-
-    if (_platformPtr)
-        delete _platformPtr;
-}
+    //_platformPtr  = new ArduinoPlatform(PORT);
+    ArduinoPlatform* _platformPtr  = new ArduinoPlatform(PORT);
+    _bau = *new BauSystemB(*_platformPtr);
+    manufacturerId(0xfa);
+    bauNumber(platform().uniqueSerialNumber());
+    _bau.addSaveRestore(this);
+    //_bauPtr = new BauSystemB(*_platformPtr);
+    //_bau = *_bauPtr
+}*/
 
 ArduinoPlatform& KnxFacade::platform()
 {
@@ -82,7 +86,7 @@ bool KnxFacade::configured()
 /**
  * returns HIGH if led is active on HIGH, LOW otherwise
  */
-uint32_t KnxFacade::ledPinActiveOn()
+GPIO_PinState KnxFacade::ledPinActiveOn()
 {
     return _ledPinActiveOn;
 }
@@ -92,22 +96,25 @@ uint32_t KnxFacade::ledPinActiveOn()
  * 
  * Set to HIGH for GPIO--RESISTOR--LED--GND or to LOW for GPIO--LED--RESISTOR--VDD
  */
-void KnxFacade::ledPinActiveOn(uint32_t value)
+void KnxFacade::ledPinActiveOn(GPIO_PinState value)
 {
     _ledPinActiveOn = value;
 }
 
-uint32_t KnxFacade::ledPin()
+GPIO_infoTypeDef KnxFacade::ledPin()
 {
     return _ledPin;
 }
 
-void KnxFacade::ledPin(uint32_t value)
+void KnxFacade::ledPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
-    _ledPin = value;
+    //_ledPin = value;
+    _ledPin.GPIO_Pin = GPIO_Pin;
+    _ledPin.GPIOx = GPIOx;
+
 }
 
-void KnxFacade::setProgLedOffCallback(ProgLedOffCallback progLedOffCallback)
+/*void KnxFacade::setProgLedOffCallback(ProgLedOffCallback progLedOffCallback)
 {
     _progLedOffCallback = progLedOffCallback;
 }
@@ -115,17 +122,19 @@ void KnxFacade::setProgLedOffCallback(ProgLedOffCallback progLedOffCallback)
 void KnxFacade::setProgLedOnCallback(ProgLedOnCallback progLedOnCallback)
 {
     _progLedOnCallback = progLedOnCallback;
-}
+}*/
 
 
-int32_t KnxFacade::buttonPin()
+GPIO_infoTypeDef KnxFacade::buttonPin()
 {
     return _buttonPin;
 }
 
-void KnxFacade::buttonPin(int32_t value)
+void KnxFacade::buttonPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
-    _buttonPin = value;
+    //_buttonPin = value;
+    _buttonPin.GPIO_Pin = GPIO_Pin;
+    _buttonPin.GPIOx = GPIOx;
 }
 
 void KnxFacade::readMemory()
@@ -194,13 +203,14 @@ void KnxFacade::version(uint16_t value)
 
 void KnxFacade::start()
 {
-    if (_progLedOffCallback == 0 || _progLedOnCallback == 0)
-        pinMode(ledPin(), OUTPUT);
+    /*if (_progLedOffCallback == 0 || _progLedOnCallback == 0)
+        pinMode(ledPin(), OUTPUT);*/
+    //pinMode(ledPin(), OUTPUT);
 
-    progLedOff();
-    pinMode(buttonPin(), INPUT_PULLUP);
+    //progLedOff();
+    //pinMode(buttonPin(), INPUT_PULLUP);
 
-    if (_progButtonISRFuncPtr && _buttonPin >= 0)
+    /*if (_progButtonISRFuncPtr && _buttonPin >= 0)
     {
         // Workaround for https://github.com/arduino/ArduinoCore-samd/issues/587
         #if (ARDUINO_API_VERSION >= 10200)
@@ -208,15 +218,25 @@ void KnxFacade::start()
         #else
             attachInterrupt(_buttonPin, _progButtonISRFuncPtr, CHANGE);
         #endif
-    }
+    }*/
+    //attachInterrupt(_buttonPin, _progButtonISRFuncPtr, CHANGE);
 
+    //EDA Use HAL_GPIO_EXTI_Callback!!!!!
+    attachInterrupt(digitalPinToInterrupt(PA0), buttonEvent, CHANGE);
+    /*println("");
+    if(_platformPtr == nullptr){
+        _platformPtr->fatalError();
+    }
+    else{
+        enabled(true);
+    }*/
     enabled(true);
 }
 
-void KnxFacade::setButtonISRFunction(IsrFunctionPtr progButtonISRFuncPtr)
+/*void KnxFacade::setButtonISRFunction(IsrFunctionPtr progButtonISRFuncPtr)
 {
     _progButtonISRFuncPtr = progButtonISRFuncPtr;
-}
+}*/
 
 void KnxFacade::setSaveCallback(SaveCallback func)
 {
@@ -366,18 +386,27 @@ void KnxFacade::saveSize(uint16_t size)
 
 void KnxFacade::progLedOn()
 {
-    if (_progLedOnCallback == 0)
+    /*if (_progLedOnCallback == 0)
         digitalWrite(ledPin(), _ledPinActiveOn);
     else
-        _progLedOnCallback();
+        _progLedOnCallback();*/
+    //digitalWrite(ledPin(), _ledPinActiveOn);
+    HAL_GPIO_WritePin(_ledPin.GPIOx, _ledPin.GPIO_Pin, _ledPinActiveOn);
 }
 
 void KnxFacade::progLedOff()
 {
-    if (_progLedOffCallback == 0)
+    /*if (_progLedOffCallback == 0)
         digitalWrite(ledPin(), HIGH - _ledPinActiveOn);
     else
-        _progLedOffCallback();
+        _progLedOffCallback();*/
+    //digitalWrite(ledPin(), HIGH - _ledPinActiveOn);
+    if(_ledPinActiveOn == GPIO_PIN_SET){
+        HAL_GPIO_WritePin(_ledPin.GPIOx, _ledPin.GPIO_Pin, GPIO_PIN_RESET);
+    }
+    else{
+        HAL_GPIO_WritePin(_ledPin.GPIOx, _ledPin.GPIO_Pin, GPIO_PIN_SET);
+    }
 }
 
 
@@ -391,8 +420,11 @@ void buttonEvent()
             if (HAL_GetTick() - lastPressed > 200)
             {  
                 knx.toggleProgMode();
+                //KnxFacade::toggleProgMode();
                 lastPressed = HAL_GetTick();
             }
         }
         lastEvent = HAL_GetTick();
     }
+
+  

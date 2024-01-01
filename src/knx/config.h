@@ -64,7 +64,7 @@
 #define KNX_NO_SPI
 // Do not use the default UART (Arduino variants), it must be defined by ArduinoPlatform::knxUart
 // (combined with other flags (HWSERIAL_NONE for stm32) - avoid allocation of RX/TX buffers for all serial lines)
-//#define KNX_NO_DEFAULT_UART 
+//#define KNX_NO_DEFAULT_UART
 
 #endif
 

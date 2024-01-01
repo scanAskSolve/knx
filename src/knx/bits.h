@@ -1,7 +1,5 @@
 #pragma  once
 
-//#include <cstddef>
-//#include <cstdint>
 
 #include <stddef.h>
 #include <stdint.h>
@@ -27,33 +25,6 @@
 #define ABS(x)    ((x > 0) ? (x) : (-x))
 #endif
 #include <Arduino.h>
-/*
-#ifndef KNX_NO_PRINT
-void print(const char[]);
-void print(char);
-void print(unsigned char, int = DEC);
-void print(int, int = DEC);
-void print(unsigned int, int = DEC);
-void print(long, int = DEC);
-void print(unsigned long, int = DEC);
-void print(long long, int = DEC);
-void print(unsigned long long, int = DEC);
-void print(double);
-
-void println(const char[]);
-void println(char);
-void println(unsigned char, int = DEC);
-void println(int, int = DEC);
-void println(unsigned int, int = DEC);
-void println(long, int = DEC);
-void println(unsigned long, int = DEC);
-void println(long long, int = DEC);
-void println(unsigned long long, int = DEC);
-void println(double);
-void println(void);
-
-void printHex(const char* suffix, const uint8_t *data, size_t length, bool newline = true);
-#endif*/
 
 const uint8_t* popByte(uint8_t& b, const uint8_t* data);
 const uint8_t* popWord(uint16_t& w, const uint8_t* data);
@@ -79,10 +50,3 @@ enum ParameterFloatEncodings
     Float_Enc_IEEE754Double = 2, // 8 Byte. C++ double
 };
 
-
-#if defined(ARDUINO_ARCH_SAMD)
-// temporary undef until framework-arduino-samd > 1.8.9 is released. See https://github.com/arduino/ArduinoCore-samd/pull/399 for a PR should will probably address this
-#undef max
-#undef min
-// end of temporary undef
-#endif
