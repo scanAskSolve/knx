@@ -34,9 +34,9 @@ public:
   bool isRfSbcRoutingEnabled();
   bool isIpSbcRoutingEnabled();
 
-  void masterReset(EraseCode eraseCode, uint8_t channel) override;
+  void masterReset(EraseCode eraseCode, uint8_t channel) ;
 
-  const uint8_t* restore(const uint8_t* buffer) override;
+  const uint8_t* restore(const uint8_t* buffer) ;
 
 protected:
   void beforeStateChange(LoadState& newState) override;

@@ -67,7 +67,7 @@ public:
     /**
      * Destructor
      */
-     virtual ~InterfaceObject();
+     ~InterfaceObject();
     /**
      * Read a property of the interface object. See section 4.8.4.2 of @cite knx:3/4/1.
      * 
@@ -94,7 +94,7 @@ public:
      * 
      * @param[in] data The data that should be written.
      */
-     virtual void writeProperty(PropertyID id, uint16_t start, uint8_t* data, uint8_t& count);
+     void writeProperty(PropertyID id, uint16_t start, uint8_t* data, uint8_t& count);
     /**
      * Gets the size of of property in bytes.
      * 
@@ -102,7 +102,7 @@ public:
      * 
      * @returns the size in byte or 0 if the interface object does not have the property
      */
-     virtual uint8_t propertySize(PropertyID id);
+     uint8_t propertySize(PropertyID id);
     /**
      * Call command of a function property of the interface object. Property type must be PDT_FUNCTION
      *
@@ -116,7 +116,7 @@ public:
      *
      * @param[out] resultData The result data for the function
      */
-    virtual void command(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t &resultLength);
+    void command(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t &resultLength);
     /**
      * Get state of a function property of the interface object. Property type must be PDT_FUNCTION
      *
@@ -130,7 +130,7 @@ public:
      *
      * @param[out] resultData The result data for the function
      */
-    virtual void state(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t &resultLength);
+    void state(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t &resultLength);
     /**
      * Read the Description of a property of the interface object. The output parameters are only valid if nuberOfElements is not zero.
      * 
@@ -153,7 +153,7 @@ public:
 
 // every interface object shall implement this
     // However, for the time being we provide an empty default implementation
-  virtual void masterReset(EraseCode eraseCode, uint8_t channel);
+  void masterReset(EraseCode eraseCode, uint8_t channel);
 /**
      * Gets property with PropertyID id if it exists and nullptr otherwise.
      */
@@ -166,12 +166,12 @@ public:
      */
   const Property *property(PropertyID id) const;
 
-  virtual uint8_t *save(uint8_t *buffer);
-  virtual const uint8_t *restore(const uint8_t *buffer);
-  virtual uint16_t saveSize();
+  uint8_t *save(uint8_t *buffer);
+  const uint8_t *restore(const uint8_t *buffer);
+  uint16_t saveSize();
 
 protected:
-  virtual void initializeProperties(size_t propertiesSize, Property **properties);
+  void initializeProperties(size_t propertiesSize, Property **properties);
 
   Property **_properties = nullptr;
   uint8_t _propertyCount = 0;

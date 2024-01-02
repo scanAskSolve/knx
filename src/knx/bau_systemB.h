@@ -71,8 +71,8 @@ public:
 
 public:
   ApplicationLayer &applicationLayer();
-  virtual InterfaceObject *getInterfaceObject(uint8_t idx);
-  virtual InterfaceObject *getInterfaceObject(ObjectType objectType, uint8_t objectInstance);
+  // virtual InterfaceObject *getInterfaceObject(uint8_t idx);
+  // virtual InterfaceObject *getInterfaceObject(ObjectType objectType, uint8_t objectInstance);
 
   virtual void memoryWriteIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint8_t number,
                                      uint16_t memoryAddress, uint8_t *data);

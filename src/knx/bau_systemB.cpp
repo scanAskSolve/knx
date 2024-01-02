@@ -2244,69 +2244,69 @@ bool BauSystemB::isAckRequired(uint16_t address, bool isGrpAddr)
     return false;
 }
 
-InterfaceObject *BauSystemB::getInterfaceObject(uint8_t idx)
-{
-    switch (idx)
-    {
-    case 0:
-        return &_deviceObj;
-    case 1:
-        return &_addrTable;
-    case 2:
-        return &_assocTable;
-    case 3:
-        return &_groupObjTable;
-    case 4:
-        return &_appProgram;
-    case 5: // would be app_program 2
-        return nullptr;
-#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-    case 6:
-        return &_secIfObj;
-    case 7:
-        return &_cemiServerObject;
-#elif defined(USE_CEMI_SERVER)
-    case 6:
-        return &_cemiServerObject;
-#elif defined(USE_DATASECURE)
-    case 6:
-        return &_secIfObj;
-#endif
-    default:
-        return nullptr;
-    }
-}
+// InterfaceObject *BauSystemB::getInterfaceObject(uint8_t idx)
+// {
+//     switch (idx)
+//     {
+//     case 0:
+//         return &_deviceObj;
+//     case 1:
+//         return &_addrTable;
+//     case 2:
+//         return &_assocTable;
+//     case 3:
+//         return &_groupObjTable;
+//     case 4:
+//         return &_appProgram;
+//     case 5: // would be app_program 2
+//         return nullptr;
+// #if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
+//     case 6:
+//         return &_secIfObj;
+//     case 7:
+//         return &_cemiServerObject;
+// #elif defined(USE_CEMI_SERVER)
+//     case 6:
+//         return &_cemiServerObject;
+// #elif defined(USE_DATASECURE)
+//     case 6:
+//         return &_secIfObj;
+// #endif
+//     default:
+//         return nullptr;
+//     }
+// }
 
-InterfaceObject *BauSystemB::getInterfaceObject(ObjectType objectType, uint8_t objectInstance)
-{
-    // We do not use it right now.
-    // Required for coupler mode as there are multiple router objects for example
-    (void)objectInstance;
+// InterfaceObject *BauSystemB::getInterfaceObject(ObjectType objectType, uint8_t objectInstance)
+// {
+//     // We do not use it right now.
+//     // Required for coupler mode as there are multiple router objects for example
+//     (void)objectInstance;
 
-    switch (objectType)
-    {
-    case OT_DEVICE:
-        return &_deviceObj;
-    case OT_ADDR_TABLE:
-        return &_addrTable;
-    case OT_ASSOC_TABLE:
-        return &_assocTable;
-    case OT_GRP_OBJ_TABLE:
-        return &_groupObjTable;
-    case OT_APPLICATION_PROG:
-        return &_appProgram;
-#ifdef USE_DATASECURE
-    case OT_SECURITY:
-        return &_secIfObj;
-#endif
-#ifdef USE_CEMI_SERVER
-    case OT_CEMI_SERVER:
-        return &_cemiServerObject;
-#endif
-    default:
-        return nullptr;
-    }
-}
+//     switch (objectType)
+//     {
+//     case OT_DEVICE:
+//         return &_deviceObj;
+//     case OT_ADDR_TABLE:
+//         return &_addrTable;
+//     case OT_ASSOC_TABLE:
+//         return &_assocTable;
+//     case OT_GRP_OBJ_TABLE:
+//         return &_groupObjTable;
+//     case OT_APPLICATION_PROG:
+//         return &_appProgram;
+// #ifdef USE_DATASECURE
+//     case OT_SECURITY:
+//         return &_secIfObj;
+// #endif
+// #ifdef USE_CEMI_SERVER
+//     case OT_CEMI_SERVER:
+//         return &_cemiServerObject;
+// #endif
+//     default:
+//         return nullptr;
+//     }
+// }
 
 bool BauSystemB::enabled()
 {

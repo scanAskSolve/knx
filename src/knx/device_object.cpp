@@ -97,18 +97,44 @@ DeviceObject::DeviceObject()
 uint8_t *DeviceObject::save(uint8_t *buffer)
 {
     buffer = pushWord(_ownAddress, buffer);
-    return InterfaceObject::save(buffer);
+    for (int i = 0; i < _propertyCount; i++)
+    {
+        Property* prop = _properties[i];
+        if (!prop->WriteEnable())
+            continue;
+        
+        buffer = prop->save(buffer);
+    }
+    return buffer;
 }
 
 const uint8_t *DeviceObject::restore(const uint8_t *buffer)
 {
     buffer = popWord(_ownAddress, buffer);
-    return InterfaceObject::restore(buffer);
+    for (int i = 0; i < _propertyCount; i++)
+    {
+        Property* prop = _properties[i];
+        if (!prop->WriteEnable())
+            continue;
+
+        buffer = prop->restore(buffer);
+    }
+    return buffer;
 }
 
 uint16_t DeviceObject::saveSize()
 {
-    return 2 + InterfaceObject::saveSize();
+    uint16_t size = 0;
+
+    for (int i = 0; i < _propertyCount; i++)
+    {
+        Property* prop = _properties[i];
+        if (!prop->WriteEnable())
+            continue;
+
+        size += prop->saveSize();
+    }
+    return 2 + size;
 }
 
 uint16_t DeviceObject::individualAddress()
@@ -412,4 +438,15 @@ Property* DeviceObject::property(PropertyID id)
             return _properties[i];
 
     return nullptr;
+}
+void DeviceObject::masterReset(EraseCode eraseCode, uint8_t channel)
+{
+    // every interface object shall implement this
+    // However, for the time being we provide an empty default implementation
+}
+void DeviceObject::initializeProperties(size_t propertiesSize, Property** properties)
+{
+    _propertyCount = propertiesSize / sizeof(Property*);
+    _properties = new Property*[_propertyCount];
+    memcpy(_properties, properties, propertiesSize);
 }

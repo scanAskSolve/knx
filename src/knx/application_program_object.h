@@ -7,9 +7,9 @@ class ApplicationProgramObject : public TableObject
 {
   public:
     ApplicationProgramObject(Memory& memory);
-    uint8_t* save(uint8_t* buffer) override;
-    const uint8_t* restore(const uint8_t* buffer) override;
-    uint16_t saveSize() override;
+    uint8_t* save(uint8_t* buffer) ;
+    const uint8_t* restore(const uint8_t* buffer) ;
+    uint16_t saveSize() ;
     uint8_t* data(uint32_t addr);
     uint8_t getByte(uint32_t addr);
     uint16_t getWord(uint32_t addr);
@@ -22,4 +22,5 @@ class ApplicationProgramObject : public TableObject
  void command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
   void state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
   Property *property(PropertyID id);
+ void masterReset(EraseCode eraseCode, uint8_t channel);
 };

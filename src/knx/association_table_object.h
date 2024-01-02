@@ -7,13 +7,13 @@ class AssociationTableObject : public TableObject
 public:
   AssociationTableObject(Memory &memory);
 
-  const uint8_t *restore(const uint8_t *buffer) override;
+  const uint8_t *restore(const uint8_t *buffer) ;
 
   int32_t translateAsap(uint16_t asap);
   int32_t nextAsap(uint16_t tsap, uint16_t &startIdx);
 
 protected:
-  void beforeStateChange(LoadState &newState) override;
+  void beforeStateChange(LoadState &newState) ;
 
 private:
   uint16_t entryCount();
@@ -31,4 +31,5 @@ void readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &
  void command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
   void state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
   Property *property(PropertyID id);
+ void masterReset(EraseCode eraseCode, uint8_t channel);
 };

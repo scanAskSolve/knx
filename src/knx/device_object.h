@@ -4,7 +4,7 @@
 
 #define LEN_HARDWARE_TYPE 6
 
-class DeviceObject : public InterfaceObject
+class DeviceObject 
 {
 public:
     // increase this version anytime DeviceObject-API changes
@@ -58,4 +58,9 @@ public:
     void command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
     void state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
     Property *property(PropertyID id);
+ void masterReset(EraseCode eraseCode, uint8_t channel);
+
+  void initializeProperties(size_t propertiesSize, Property **properties);
+    Property **_properties = nullptr;
+    uint8_t _propertyCount = 0;
 };

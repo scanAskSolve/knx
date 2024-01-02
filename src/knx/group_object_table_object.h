@@ -15,7 +15,7 @@ public:
   GroupObject &nextUpdatedObject(bool &valid);
   void groupObjects(GroupObject *objs, uint16_t size);
 
-  const uint8_t *restore(const uint8_t *buffer) override;
+  const uint8_t *restore(const uint8_t *buffer) ;
 
   // protected:
   void beforeStateChange(LoadState &newState) override;
@@ -33,4 +33,5 @@ void readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &
  void command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
   void state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
   Property *property(PropertyID id);
+ void masterReset(EraseCode eraseCode, uint8_t channel);
 };

@@ -196,3 +196,8 @@ Property* AddressTableObject::property(PropertyID id)
 
     return nullptr;
 }
+void AddressTableObject::masterReset(EraseCode eraseCode, uint8_t channel)
+{
+    // every interface object shall implement this
+    // However, for the time being we provide an empty default implementation
+}
