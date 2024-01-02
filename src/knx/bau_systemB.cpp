@@ -1649,7 +1649,7 @@ void BauSystemB::propertyValueRead(ObjectType objectType, uint8_t objectInstance
     uint32_t size = 0;
     uint8_t elementCount = numberOfElements;
 
-    InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
+    // InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
 switch (objectType)
     {
 uint8_t elementSize;
