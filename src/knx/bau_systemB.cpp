@@ -973,10 +973,12 @@ void BauSystemB::functionPropertyExtCommandIndication(Priority priority, HopCoun
     uint8_t resultData[kFunctionPropertyResultBufferMaxSize];
     uint8_t resultLength = 1; // we always have to include the return code at least
 
-    InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
-    if (obj)
+    // InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
+switch (objectType)
     {
-        PropertyDataType propType = obj->property((PropertyID)propertyId)->Type();
+        PropertyDataType propType;
+    case OT_DEVICE:
+         propType = _deviceObj.property((PropertyID)propertyId)->Type();
 
         if (propType == PDT_FUNCTION)
         {
@@ -989,7 +991,7 @@ void BauSystemB::functionPropertyExtCommandIndication(Priority priority, HopCoun
             else
             {
                 resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
-                obj->command((PropertyID)propertyId, data, length, resultData, resultLength);
+                _deviceObj.command((PropertyID)propertyId, data, length, resultData, resultLength);
                 // resultLength was modified by the callee
             }
         }
@@ -997,11 +999,11 @@ void BauSystemB::functionPropertyExtCommandIndication(Priority priority, HopCoun
         {
             uint8_t count = 1;
             // write the event
-            obj->writeProperty((PropertyID)propertyId, 1, data, count);
+            _deviceObj.writeProperty((PropertyID)propertyId, 1, data, count);
             if (count == 1)
             {
                 // Read the current state (one byte only) for the response
-                obj->readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
+                _deviceObj.readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
                 resultLength = count ? 2 : 1;
                 resultData[0] = count ? ReturnCodes::Success : ReturnCodes::DataVoid;
             }
@@ -1014,9 +1016,252 @@ void BauSystemB::functionPropertyExtCommandIndication(Priority priority, HopCoun
         {
             resultData[0] = ReturnCodes::DataTypeConflict;
         }
-    }
-    else
-    {
+        break;
+    case OT_ADDR_TABLE:
+        propType = _addrTable.property((PropertyID)propertyId)->Type();
+
+        if (propType == PDT_FUNCTION)
+        {
+            // The first byte is reserved and 0 for PDT_FUNCTION
+            uint8_t reservedByte = data[0];
+            if (reservedByte != 0x00)
+            {
+                resultData[0] = ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
+                _addrTable.command((PropertyID)propertyId, data, length, resultData, resultLength);
+                // resultLength was modified by the callee
+            }
+        }
+        else if (propType == PDT_CONTROL)
+        {
+            uint8_t count = 1;
+            // write the event
+            _addrTable.writeProperty((PropertyID)propertyId, 1, data, count);
+            if (count == 1)
+            {
+                // Read the current state (one byte only) for the response
+                _addrTable.readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
+                resultLength = count ? 2 : 1;
+                resultData[0] = count ? ReturnCodes::Success : ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultData[0] = ReturnCodes::AddressVoid;
+            }
+        }
+        else
+        {
+            resultData[0] = ReturnCodes::DataTypeConflict;
+        }
+        break;
+    case OT_ASSOC_TABLE:
+        propType = _groupObjTable.property((PropertyID)propertyId)->Type();
+
+        if (propType == PDT_FUNCTION)
+        {
+            // The first byte is reserved and 0 for PDT_FUNCTION
+            uint8_t reservedByte = data[0];
+            if (reservedByte != 0x00)
+            {
+                resultData[0] = ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
+                _groupObjTable.command((PropertyID)propertyId, data, length, resultData, resultLength);
+                // resultLength was modified by the callee
+            }
+        }
+        else if (propType == PDT_CONTROL)
+        {
+            uint8_t count = 1;
+            // write the event
+            _groupObjTable.writeProperty((PropertyID)propertyId, 1, data, count);
+            if (count == 1)
+            {
+                // Read the current state (one byte only) for the response
+                _groupObjTable.readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
+                resultLength = count ? 2 : 1;
+                resultData[0] = count ? ReturnCodes::Success : ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultData[0] = ReturnCodes::AddressVoid;
+            }
+        }
+        else
+        {
+            resultData[0] = ReturnCodes::DataTypeConflict;
+        }
+        break;
+    case OT_GRP_OBJ_TABLE:
+        propType = _groupObjTable.property((PropertyID)propertyId)->Type();
+
+        if (propType == PDT_FUNCTION)
+        {
+            // The first byte is reserved and 0 for PDT_FUNCTION
+            uint8_t reservedByte = data[0];
+            if (reservedByte != 0x00)
+            {
+                resultData[0] = ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
+                _groupObjTable.command((PropertyID)propertyId, data, length, resultData, resultLength);
+                // resultLength was modified by the callee
+            }
+        }
+        else if (propType == PDT_CONTROL)
+        {
+            uint8_t count = 1;
+            // write the event
+            _groupObjTable.writeProperty((PropertyID)propertyId, 1, data, count);
+            if (count == 1)
+            {
+                // Read the current state (one byte only) for the response
+                _groupObjTable.readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
+                resultLength = count ? 2 : 1;
+                resultData[0] = count ? ReturnCodes::Success : ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultData[0] = ReturnCodes::AddressVoid;
+            }
+        }
+        else
+        {
+            resultData[0] = ReturnCodes::DataTypeConflict;
+        }
+        break;
+    case OT_APPLICATION_PROG:
+        propType = _appProgram.property((PropertyID)propertyId)->Type();
+
+        if (propType == PDT_FUNCTION)
+        {
+            // The first byte is reserved and 0 for PDT_FUNCTION
+            uint8_t reservedByte = data[0];
+            if (reservedByte != 0x00)
+            {
+                resultData[0] = ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
+                _appProgram.command((PropertyID)propertyId, data, length, resultData, resultLength);
+                // resultLength was modified by the callee
+            }
+        }
+        else if (propType == PDT_CONTROL)
+        {
+            uint8_t count = 1;
+            // write the event
+            _appProgram.writeProperty((PropertyID)propertyId, 1, data, count);
+            if (count == 1)
+            {
+                // Read the current state (one byte only) for the response
+                _appProgram.readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
+                resultLength = count ? 2 : 1;
+                resultData[0] = count ? ReturnCodes::Success : ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultData[0] = ReturnCodes::AddressVoid;
+            }
+        }
+        else
+        {
+            resultData[0] = ReturnCodes::DataTypeConflict;
+        }
+        break;
+#ifdef USE_DATASECURE
+    case OT_SECURITY:
+        propType = _secIfObj.property((PropertyID)propertyId)->Type();
+
+        if (propType == PDT_FUNCTION)
+        {
+            // The first byte is reserved and 0 for PDT_FUNCTION
+            uint8_t reservedByte = data[0];
+            if (reservedByte != 0x00)
+            {
+                resultData[0] = ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
+                _secIfObj.command((PropertyID)propertyId, data, length, resultData, resultLength);
+                // resultLength was modified by the callee
+            }
+        }
+        else if (propType == PDT_CONTROL)
+        {
+            uint8_t count = 1;
+            // write the event
+            _secIfObj.writeProperty((PropertyID)propertyId, 1, data, count);
+            if (count == 1)
+            {
+                // Read the current state (one byte only) for the response
+                _secIfObj.readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
+                resultLength = count ? 2 : 1;
+                resultData[0] = count ? ReturnCodes::Success : ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultData[0] = ReturnCodes::AddressVoid;
+            }
+        }
+        else
+        {
+            resultData[0] = ReturnCodes::DataTypeConflict;
+        }
+        break;
+#endif
+#ifdef USE_CEMI_SERVER
+    case OT_CEMI_SERVER:
+         propType = _cemiServerObject.property((PropertyID)propertyId)->Type();
+
+        if (propType == PDT_FUNCTION)
+        {
+            // The first byte is reserved and 0 for PDT_FUNCTION
+            uint8_t reservedByte = data[0];
+            if (reservedByte != 0x00)
+            {
+                resultData[0] = ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
+                _cemiServerObject.command((PropertyID)propertyId, data, length, resultData, resultLength);
+                // resultLength was modified by the callee
+            }
+        }
+        else if (propType == PDT_CONTROL)
+        {
+            uint8_t count = 1;
+            // write the event
+            _cemiServerObject.writeProperty((PropertyID)propertyId, 1, data, count);
+            if (count == 1)
+            {
+                // Read the current state (one byte only) for the response
+                _cemiServerObject.readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
+                resultLength = count ? 2 : 1;
+                resultData[0] = count ? ReturnCodes::Success : ReturnCodes::DataVoid;
+            }
+            else
+            {
+                resultData[0] = ReturnCodes::AddressVoid;
+            }
+        }
+        else
+        {
+            resultData[0] = ReturnCodes::DataTypeConflict;
+        }
+        break;
+#endif
+    default:
         resultData[0] = ReturnCodes::GenericError;
     }
 
