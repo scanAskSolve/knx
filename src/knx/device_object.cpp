@@ -91,7 +91,9 @@ DeviceObject::DeviceObject()
             new Property(PID_RF_DOMAIN_ADDRESS_CEMI_SERVER, true, PDT_GENERIC_06, 1, ReadLv3 | WriteLv3),
 #endif
         };
-    initializeProperties(sizeof(properties), properties);
+    _propertyCount =  sizeof(properties)/ sizeof(Property*);
+    _properties = new Property*[_propertyCount];
+    memcpy(_properties, properties, sizeof(properties));
 }
 
 uint8_t *DeviceObject::save(uint8_t *buffer)
