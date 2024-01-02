@@ -28,9 +28,9 @@ class TableObject: public InterfaceObject
      * This method returns the ::LoadState of the interface object.
      */
     LoadState loadState();
-    uint8_t* save(uint8_t* buffer) ;
-    const uint8_t* restore(const uint8_t* buffer) ;
-    uint16_t saveSize() ;
+    uint8_t* save(uint8_t* buffer) override;
+    const uint8_t* restore(const uint8_t* buffer) override;
+    uint16_t saveSize() override;
 
     static void beforeTablesUnloadCallback(BeforeTablesUnloadCallback func);
     static BeforeTablesUnloadCallback beforeTablesUnloadCallback();
@@ -53,7 +53,7 @@ class TableObject: public InterfaceObject
      */
     void errorCode(ErrorCode errorCode);
 
-    void initializeProperties(size_t propertiesSize, Property** properties) ;
+    void initializeProperties(size_t propertiesSize, Property** properties) override;
 
     static BeforeTablesUnloadCallback _beforeTablesUnload;
 
