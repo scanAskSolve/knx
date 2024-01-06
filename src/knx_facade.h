@@ -40,7 +40,8 @@ typedef struct
 class ArduinoPlatform;
 class BauSystemB;
 
-class KnxFacade : private DeviceObject
+// class KnxFacade : private DeviceObject
+class KnxFacade 
 {
   public:
 

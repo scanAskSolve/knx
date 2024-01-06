@@ -18,27 +18,16 @@
     #error "Mask version not supported on ARDUINO_ARCH_STM32"
 #endif
 
-//****************************************************************************
 //KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction) : _platformPtr(new Stm32Platform()), _bauPtr(new BauSystemB(*_platformPtr)), _bau(*_bauPtr)
 //KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction)
 KnxFacade::KnxFacade()
 {
     manufacturerId(0xfa);
     bauNumber(platform().uniqueSerialNumber());
-    _bau.addSaveRestore(this);
+    _bau.addSaveRestore(new DeviceObject());
     //setButtonISRFunction(buttonEvent);
 }
-/*void KnxFacade::Set_chip_platform(HardwareSerial* PORT)
-{
-    //_platformPtr  = new ArduinoPlatform(PORT);
-    ArduinoPlatform* _platformPtr  = new ArduinoPlatform(PORT);
-    _bau = *new BauSystemB(*_platformPtr);
-    manufacturerId(0xfa);
-    bauNumber(platform().uniqueSerialNumber());
-    _bau.addSaveRestore(this);
-    //_bauPtr = new BauSystemB(*_platformPtr);
-    //_bau = *_bauPtr
-}*/
+
 
 ArduinoPlatform& KnxFacade::platform()
 {
