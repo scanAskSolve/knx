@@ -22,12 +22,21 @@
 //KnxFacade::KnxFacade(IsrFunctionPtr buttonISRFunction)
 KnxFacade::KnxFacade()
 {
+    // manufacturerId(0xfa);
+    // bauNumber(platform().uniqueSerialNumber());
+    // _bau.addSaveRestore(new DeviceObject());
+}
+void KnxFacade::initKnxFacade(HardwareSerial* knxSerial)
+{
+    delete _platformPtr;
+    _platformPtr  =  new ArduinoPlatform(knxSerial);
+    BauSystemB _bau(*_platformPtr);
+    
     manufacturerId(0xfa);
     bauNumber(platform().uniqueSerialNumber());
     _bau.addSaveRestore(new DeviceObject());
     //setButtonISRFunction(buttonEvent);
 }
-
 
 ArduinoPlatform& KnxFacade::platform()
 {
