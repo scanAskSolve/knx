@@ -6,9 +6,9 @@
 #define KNX_DEBUG_SERIAL Serial
 #endif
 
-#ifndef KNX_SERIAL
+/*#ifndef KNX_SERIAL
 #define KNX_SERIAL Serial2
-#endif
+#endif*/
 
 #ifndef KNX_FLASH_SIZE
 #define KNX_FLASH_SIZE 1024

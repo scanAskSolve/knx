@@ -52,9 +52,9 @@ class KnxFacade
 
     //void Set_chip_platform(HardwareSerial* PORT);
 
-    ArduinoPlatform& platform();
+    //ArduinoPlatform& platform();
 
-    BauSystemB& bau();
+    //BauSystemB& bau();
 
     bool enabled();
 
@@ -182,16 +182,16 @@ class KnxFacade
   //private:
     //ArduinoPlatform* _platformPtr  = new ArduinoPlatform(&huart2);
 
-    ArduinoPlatform* _platformPtr  = new ArduinoPlatform(&KNX_SERIAL);
-    // ArduinoPlatform* _platformPtr ; 
+    //ArduinoPlatform* _platformPtr  = new ArduinoPlatform(&KNX_SERIAL);
+    //ArduinoPlatform* _platformPtr ; 
 
     //ArduinoPlatform* _platformPtr  = nullptr;
     //BauSystemB* _bauPtr = new BauSystemB(*_platformPtr);
     //BauSystemB* _bauPtr;
     //BauSystemB& _bau = *_bauPtr;
 
-    BauSystemB& _bau = *new BauSystemB(*_platformPtr);
-    // BauSystemB& _bau ;
+    //BauSystemB& _bau = *new BauSystemB(*_platformPtr);
+    BauSystemB *_bau;
 
     //BauSystemB& _bau = *new BauSystemB();
     //BauSystemB& _bau;

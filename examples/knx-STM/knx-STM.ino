@@ -62,6 +62,7 @@ void setup() {
   Serial.begin(115200);
   //ArduinoPlatform(&Serial);
   //knx.Set_chip_platform(&Serial2);
+  knx.initKnxFacade(&Serial2);
   MX_GPIO_Init();
  
     //pinMode(PB11, OUTPUT);

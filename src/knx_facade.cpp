@@ -28,44 +28,45 @@ KnxFacade::KnxFacade()
 }
 void KnxFacade::initKnxFacade(HardwareSerial* knxSerial)
 {
-    delete _platformPtr;
-    _platformPtr  =  new ArduinoPlatform(knxSerial);
-    BauSystemB _bau(*_platformPtr);
+    //delete _platformPtr;
+    ArduinoPlatform* _platformPtr  =  new ArduinoPlatform(knxSerial);
+    _bau = new BauSystemB(*_platformPtr);
+    //BauSystemB _bau(*_platformPtr);
     
     manufacturerId(0xfa);
-    bauNumber(platform().uniqueSerialNumber());
-    _bau.addSaveRestore(new DeviceObject());
+    bauNumber(_bau->platform().uniqueSerialNumber());
+    _bau->addSaveRestore(new DeviceObject());
     //setButtonISRFunction(buttonEvent);
 }
 
-ArduinoPlatform& KnxFacade::platform()
+/*ArduinoPlatform& KnxFacade::platform()
 {
     return *_platformPtr;
-}
+}*/
 
-BauSystemB& KnxFacade::bau()
+/*BauSystemB& KnxFacade::bau()
 {
     return _bau;
-}
+}*/
 
 bool KnxFacade::enabled()
 {
-    return _bau.enabled();
+    return _bau->enabled();
 }
 
 void KnxFacade::enabled(bool value)
 {
-    _bau.enabled(value);
+    _bau->enabled(value);
 }
 
 bool KnxFacade::progMode()
 {
-    return _bau.deviceObject().progMode();
+    return _bau->deviceObject().progMode();
 }
 
 void KnxFacade::progMode(bool value)
 {
-    _bau.deviceObject().progMode(value);
+    _bau->deviceObject().progMode(value);
 }
 
 /**
@@ -78,7 +79,7 @@ void KnxFacade::toggleProgMode()
 
 bool KnxFacade::configured()
 {
-    return _bau.configured();
+    return _bau->configured();
 }
 
 /**
@@ -137,17 +138,17 @@ void KnxFacade::buttonPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 
 void KnxFacade::readMemory()
 {
-    _bau.readMemory();
+    _bau->readMemory();
 }
 
 void KnxFacade::writeMemory()
 {
-    _bau.writeMemory();
+    _bau->writeMemory();
 }
 
 uint16_t KnxFacade::individualAddress()
 {
-    return _bau.deviceObject().individualAddress();
+    return _bau->deviceObject().individualAddress();
 }
 
 void KnxFacade::loop()
@@ -171,32 +172,32 @@ void KnxFacade::loop()
         progMode(!progMode());
         _toggleProgMode = false;
     }
-    _bau.loop();
+    _bau->loop();
 }
 
 void KnxFacade::manufacturerId(uint16_t value)
 {
-    _bau.deviceObject().manufacturerId(value);
+    _bau->deviceObject().manufacturerId(value);
 }
 
 void KnxFacade::bauNumber(uint32_t value)
 {
-    _bau.deviceObject().bauNumber(value);
+    _bau->deviceObject().bauNumber(value);
 }
 
 void KnxFacade::orderNumber(const uint8_t* value)
 {
-    _bau.deviceObject().orderNumber(value);
+    _bau->deviceObject().orderNumber(value);
 }
 
 void KnxFacade::hardwareType(const uint8_t* value)
 {
-    _bau.deviceObject().hardwareType(value);
+    _bau->deviceObject().hardwareType(value);
 }
 
 void KnxFacade::version(uint16_t value)
 {
-    _bau.deviceObject().version(value);
+    _bau->deviceObject().version(value);
 }
 
 void KnxFacade::start()
@@ -248,10 +249,10 @@ void KnxFacade::setRestoreCallback(RestoreCallback func)
 
 uint8_t* KnxFacade::paramData(uint32_t addr)
 {
-    if (!_bau.configured())
+    if (!_bau->configured())
         return nullptr;
 
-    return _bau.parameters().data(addr);
+    return _bau->parameters().data(addr);
 }
 
 // paramBit(address, shift)
@@ -282,18 +283,18 @@ uint8_t* KnxFacade::paramData(uint32_t addr)
 //   }
 bool KnxFacade::paramBit(uint32_t addr, uint8_t shift)
 {
-    if (!_bau.configured())
+    if (!_bau->configured())
         return 0;
 
-    return (bool) ((_bau.parameters().getByte(addr) >> (7-shift)) & 0x01); 
+    return (bool) ((_bau->parameters().getByte(addr) >> (7-shift)) & 0x01); 
 }
 
 uint8_t KnxFacade::paramByte(uint32_t addr)
 {
-    if (!_bau.configured())
+    if (!_bau->configured())
         return 0;
 
-    return _bau.parameters().getByte(addr);
+    return _bau->parameters().getByte(addr);
 }
 
 // Same usage than paramByte(addresse) for signed parameters
@@ -303,57 +304,57 @@ uint8_t KnxFacade::paramByte(uint32_t addr)
 // </ParameterType>
 int8_t KnxFacade::paramSignedByte(uint32_t addr)
 {
-    if (!_bau.configured())
+    if (!_bau->configured())
         return 0;
 
-    return (int8_t) _bau.parameters().getByte(addr);
+    return (int8_t) _bau->parameters().getByte(addr);
 }
 
 uint16_t KnxFacade::paramWord(uint32_t addr)
 {
-    if (!_bau.configured())
+    if (!_bau->configured())
         return 0;
 
-    return _bau.parameters().getWord(addr);
+    return _bau->parameters().getWord(addr);
 }
 
 uint32_t KnxFacade::paramInt(uint32_t addr)
 {
-    if (!_bau.configured())
+    if (!_bau->configured())
         return 0;
 
-    return _bau.parameters().getInt(addr);
+    return _bau->parameters().getInt(addr);
 }
 
 double KnxFacade::paramFloat(uint32_t addr, ParameterFloatEncodings enc)
 {
-    if (!_bau.configured())
+    if (!_bau->configured())
         return 0;
 
-    return _bau.parameters().getFloat(addr, enc);
+    return _bau->parameters().getFloat(addr, enc);
 }
 
 #if (MASK_VERSION == 0x07B0) || (MASK_VERSION == 0x27B0) || (MASK_VERSION == 0x57B0)
 GroupObject& KnxFacade::getGroupObject(uint16_t goNr)
 {
-    return _bau.groupObjectTable().get(goNr);
+    return _bau->groupObjectTable().get(goNr);
 }
 #endif
 
 void KnxFacade::restart(uint16_t individualAddress)
 {
     SecurityControl sc = {false, None};
-    _bau.restartRequest(individualAddress, sc);
+    _bau->restartRequest(individualAddress, sc);
 }
 
 void KnxFacade::beforeRestartCallback(BeforeRestartCallback func)
 {
-    _bau.beforeRestartCallback(func);
+    _bau->beforeRestartCallback(func);
 }
 
 BeforeRestartCallback KnxFacade::beforeRestartCallback()
 {
-    return _bau.beforeRestartCallback();
+    return _bau->beforeRestartCallback();
 }
 
 uint8_t* KnxFacade::save(uint8_t* buffer)
