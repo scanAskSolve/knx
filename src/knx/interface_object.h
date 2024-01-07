@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 #include "property.h"
-#include "save_restore.h"
+
 #include "knx_types.h"
 
 /** Enum for the type of an interface object. See Section 2.2 of knx:3/7/3 */

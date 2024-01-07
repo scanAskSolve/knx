@@ -1,4 +1,4 @@
-#include "knx_facade_EDA.h"
+#include "knx_facade.h"
 #include "knx/bits.h"
 
 
@@ -19,8 +19,6 @@
 #endif*/
 GPIO_PinState _ledPinActiveOn = KNX_LED_ACTIVE_ON;
 GPIO_infoTypeDef _ledPin;
-SaveCallback _saveCallback = 0;
-RestoreCallback _restoreCallback = 0;
 uint16_t _saveSize = USERDATA_SAVE_SIZE;
 GPIO_infoTypeDef _buttonPin;
 volatile bool _toggleProgMode = false;
@@ -29,24 +27,14 @@ bool _progLedState = false;
 BauSystemB *_bau;
 
 
-/*KnxFacade::KnxFacade()
-{
-    // manufacturerId(0xfa);
-    // bauNumber(platform().uniqueSerialNumber());
-    // _bau.addSaveRestore(new DeviceObject());
-};*/
-
 void initKnxFacade(HardwareSerial* knxSerial)
 {
-    //delete _platformPtr;
     ArduinoPlatform* _platformPtr  =  new ArduinoPlatform(knxSerial);
     _bau = new BauSystemB(*_platformPtr);
-    //BauSystemB _bau(*_platformPtr);
     
     manufacturerId(0xfa);
     bauNumber(_bau->platform().uniqueSerialNumber());
     _bau->addSaveRestore(new DeviceObject());
-    //setButtonISRFunction(buttonEvent);
 }
 
 bool enabled()
@@ -119,7 +107,6 @@ GPIO_infoTypeDef buttonPin()
 
 void buttonPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
-    //_buttonPin = value;
     _buttonPin.GPIO_Pin = GPIO_Pin;
     _buttonPin.GPIOx = GPIOx;
 }
@@ -195,15 +182,6 @@ void start()
     enabled(true);
 }
 
-void setSaveCallback(SaveCallback func)
-{
-    _saveCallback = func;
-}
-
-void setRestoreCallback(RestoreCallback func)
-{
-    _restoreCallback = func;
-}
 
 uint8_t* paramData(uint32_t addr)
 {
@@ -315,32 +293,6 @@ BeforeRestartCallback beforeRestartCallback()
     return _bau->beforeRestartCallback();
 }
 
-uint8_t* save(uint8_t* buffer)
-{
-    if (_saveCallback != 0)
-        return _saveCallback(buffer);
-
-    return buffer;
-}
-
-const uint8_t* restore(const uint8_t* buffer)
-{
-    if (_restoreCallback != 0)
-        return _restoreCallback(buffer);
-
-    return buffer;
-}
-
-uint16_t saveSize()
-{
-    return _saveSize;
-}
-
-void saveSize(uint16_t size)
-{
-    _saveSize = size;
-}
-
 void progLedOn()
 {
     HAL_GPIO_WritePin(_ledPin.GPIOx, _ledPin.GPIO_Pin, _ledPinActiveOn);
@@ -355,7 +307,6 @@ void progLedOff()
         HAL_GPIO_WritePin(_ledPin.GPIOx, _ledPin.GPIO_Pin, GPIO_PIN_SET);
     }
 }
-
 
 void buttonEvent()
 {

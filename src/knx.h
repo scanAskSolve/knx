@@ -245,7 +245,7 @@ knx-->Platform
 
  */
 
-#define EDA_TEST
+//#define EDA_TEST
 //#include "knx_facade.h"
 //#include "knx_facade_EDA.h"
 

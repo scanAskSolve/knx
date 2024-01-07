@@ -14,25 +14,12 @@
 #define KNX_LED_ACTIVE_ON GPIO_PIN_RESET
 #define KNX_BUTTON -1
 
-typedef const uint8_t* (*RestoreCallback)(const uint8_t* buffer);
-typedef uint8_t* (*SaveCallback)(uint8_t* buffer);
 
 typedef struct
 {
     GPIO_TypeDef *GPIOx; 
     uint16_t GPIO_Pin;
 } GPIO_infoTypeDef;
-
-class ArduinoPlatform;
-class BauSystemB;
-
-/*class KnxFacade 
-{
-  public:
-
-    KnxFacade();
-
-};*/
 
 void initKnxFacade(HardwareSerial* knxSerial);
 
@@ -91,9 +78,6 @@ void version(uint16_t value);
 
 void start();
 
-void setSaveCallback(SaveCallback func);
-
-void setRestoreCallback(RestoreCallback func);
 
 uint8_t* paramData(uint32_t addr);
 
@@ -144,7 +128,7 @@ double paramFloat(uint32_t addr, ParameterFloatEncodings enc);
 
 
 #if (MASK_VERSION == 0x07B0) || (MASK_VERSION == 0x27B0) || (MASK_VERSION == 0x57B0)
-GroupObject& getGroupObject(uint16_t goNr);
+    GroupObject& getGroupObject(uint16_t goNr);
 #endif
 
 void restart(uint16_t individualAddress);
@@ -152,15 +136,6 @@ void restart(uint16_t individualAddress);
 void beforeRestartCallback(BeforeRestartCallback func);
 
 BeforeRestartCallback beforeRestartCallback();
-
-
-uint8_t* save(uint8_t* buffer);
-
-const uint8_t* restore(const uint8_t* buffer);
-
-uint16_t saveSize();
-
-void saveSize(uint16_t size);
 
 
 void progLedOn();
