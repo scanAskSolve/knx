@@ -244,4 +244,13 @@ knx-->Platform
 @enduml
 
  */
-#include "knx_facade.h"
+
+#define EDA_TEST
+//#include "knx_facade.h"
+//#include "knx_facade_EDA.h"
+
+#ifdef EDA_TEST
+  #include "knx_facade_EDA.h" 
+#else
+  #include "knx_facade.h"
+#endif

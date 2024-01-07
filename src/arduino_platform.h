@@ -1,7 +1,7 @@
 #pragma once
 #include "Arduino.h"
 
-#include "knx/save_restore.h"
+//#include "knx/save_restore.h"
 #ifndef KNX_DEBUG_SERIAL
 #define KNX_DEBUG_SERIAL Serial
 #endif
@@ -73,10 +73,10 @@ class ArduinoPlatform
 
     virtual void restart();
 
-#ifndef KNX_NO_PRINT
+//#ifndef KNX_NO_PRINT
     static Stream* SerialDebug;
 
-#endif
+//#endif
 
   protected:
     HardwareSerial* _knxSerial;

@@ -8,7 +8,7 @@
 //#define STM32_UART
 
 #ifndef KNX_NO_PRINT
-Stream* ArduinoPlatform::SerialDebug = &KNX_DEBUG_SERIAL;
+Stream* ArduinoPlatform::SerialDebug = &Serial;
 #ifdef STM32_UART
 Stream* ArduinoPlatform::SerialDebug = &KNX_DEBUG_SERIAL;
 #endif

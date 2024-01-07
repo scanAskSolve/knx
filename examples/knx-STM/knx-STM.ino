@@ -1,7 +1,7 @@
 #include <knx.h>
 
 // create named references for easy access to group objects
-#define SWITCH1 knx.getGroupObject(1)
+#define SWITCH1 getGroupObject(1)
 long lastsend = 0;
 bool LED_S = 0;
 bool flag = 0;
@@ -24,7 +24,7 @@ void TEST_Function(){
 
   // write new value to groupobject
   if(flag == 0){
-    uint8_t RR = knx.paramByte(0);
+    uint8_t RR = paramByte(0);
     RR >>= 7;
     RR &= 0x01;
 
@@ -62,7 +62,7 @@ void setup() {
   Serial.begin(115200);
   //ArduinoPlatform(&Serial);
   //knx.Set_chip_platform(&Serial2);
-  knx.initKnxFacade(&Serial2);
+  initKnxFacade(&Serial2);
   MX_GPIO_Init();
  
     //pinMode(PB11, OUTPUT);
@@ -77,10 +77,10 @@ void setup() {
 
 
   // read adress table, association table, groupobject table and parameters from eeprom
-  knx.readMemory();
+  readMemory();
 
   // print values of parameters if device is already configured
-  if (knx.configured()) {
+  if (configured()) {
     // register callback for reset GO
       Serial.println("configured START");
       //goCurrent.dataPointType(DPT_Value_Temp);
@@ -92,39 +92,39 @@ void setup() {
     
     
     Serial.print("knx.paramByte(0): ");
-    Serial.println(knx.paramByte(0));
+    Serial.println(paramByte(0));
     Serial.print("knx.paramByte(1): ");
-    Serial.println(knx.paramByte(1));
+    Serial.println(paramByte(1));
     Serial.print("knx.paramByte(2): ");
-    Serial.println(knx.paramByte(2));
+    Serial.println(paramByte(2));
     Serial.print("knx.paramByte(3): ");
-    Serial.println(knx.paramByte(3));
+    Serial.println(paramByte(3));
     Serial.print("knx.paramByte(4): ");
-    Serial.println(knx.paramByte(4));
+    Serial.println(paramByte(4));
 
 
   }
   Serial.println("configured PASS");
 
   // pin or GPIO the programming led is connected to. Default is LED_BUILTIN
-   knx.ledPin(GPIOC, GPIO_PIN_13);
+   ledPin(GPIOC, GPIO_PIN_13);
   // is the led active on HIGH or low? Default is LOW
-   knx.ledPinActiveOn(GPIO_PIN_SET);
+   ledPinActiveOn(GPIO_PIN_SET);
   // pin or GPIO programming button is connected to. Default is 0
-   knx.buttonPin(GPIOA, GPIO_PIN_0);
+   buttonPin(GPIOA, GPIO_PIN_0);
 
   // start the framework.
-  knx.start();
+  start();
   
   Serial.println("knx.start");
 }
 
 void loop() {
   // don't delay here to much. Otherwise you might lose packages or mess up the timing with ETS
-  knx.loop();
+  KNX_loop();
 
   // only run the application code if the device was configured with ETS
-  if (!knx.configured())
+  if (!configured())
     return;
   TEST_Function();
 
