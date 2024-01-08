@@ -11,7 +11,7 @@ enum NmReadSerialNumberType
     NM_Read_SerialNumber_By_ManufacturerSpecific = 0xFE,
 };
 
-static constexpr auto kFunctionPropertyResultBufferMaxSize = 64;
+static constexpr auto kFunctionPropertyResultBufferMaxSize = 64; //EDA Fix V1.4
 static constexpr auto kRestartProcessTime = 3;
 
 BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _memory(platform, _deviceObj), _appProgram(_memory), _platform(platform),

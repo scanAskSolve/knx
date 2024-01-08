@@ -21,65 +21,65 @@ typedef struct
     uint16_t GPIO_Pin;
 } GPIO_infoTypeDef;
 
-void initKnxFacade(HardwareSerial* knxSerial);
+void KNX_initKnxFacade(HardwareSerial* knxSerial);
 
-bool enabled();
+bool KNX_enabled();
 
-void enabled(bool value);
+void KNX_enabled(bool value);
 
-bool progMode();
+bool KNX_progMode();
 
-void progMode(bool value);
+void KNX_progMode(bool value);
 
 /**
  * To be called by ISR handling on button press.
  */
-void toggleProgMode();
+void KNX_toggleProgMode();
 
-bool configured();
+bool KNX_configured();
 
 /**
  * returns HIGH if led is active on HIGH, LOW otherwise
  */
-GPIO_PinState ledPinActiveOn();
+GPIO_PinState KNX_ledPinActiveOn();
 
 /**
  * Sets if the programming led is active on HIGH or LOW. 
  * 
  * Set to HIGH for GPIO--RESISTOR--LED--GND or to LOW for GPIO--LED--RESISTOR--VDD
  */
-void ledPinActiveOn(GPIO_PinState value);
+void KNX_ledPinActiveOn(GPIO_PinState value);
 
-GPIO_infoTypeDef ledPin();
+GPIO_infoTypeDef KNX_ledPin();
 
-void ledPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
+void KNX_ledPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
 
-GPIO_infoTypeDef buttonPin();
+GPIO_infoTypeDef KNX_buttonPin();
 
-void buttonPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
+void KNX_buttonPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
 
-void readMemory();
+void KNX_readMemory();
 
-void writeMemory();
+void KNX_writeMemory();
 
-uint16_t individualAddress();
+uint16_t KNX_individualAddress();
 
 void KNX_loop();
 
-void manufacturerId(uint16_t value);
+void KNX_manufacturerId(uint16_t value);
 
-void bauNumber(uint32_t value);
+void KNX_bauNumber(uint32_t value);
 
-void orderNumber(const uint8_t* value);
+void KNX_orderNumber(const uint8_t* value);
 
-void hardwareType(const uint8_t* value);
+void KNX_hardwareType(const uint8_t* value);
 
-void version(uint16_t value);
+void KNX_version(uint16_t value);
 
-void start();
+void KNX_start();
 
 
-uint8_t* paramData(uint32_t addr);
+uint8_t* KNX_paramData(uint32_t addr);
 
 // paramBit(address, shift)
 // get state of a parameter as a boolean like "enable/disable", ...
@@ -107,9 +107,9 @@ uint8_t* paramData(uint32_t addr);
 //   {
 //      //do somthings ....
 //   }
-bool paramBit(uint32_t addr, uint8_t shift);
+bool KNX_paramBit(uint32_t addr, uint8_t shift);
 
-uint8_t paramByte(uint32_t addr);
+uint8_t KNX_paramByte(uint32_t addr);
 
 
 
@@ -118,31 +118,31 @@ uint8_t paramByte(uint32_t addr);
 // <ParameterType Id="M-00FA_A-0066-EA-0001_PT-delta" Name="delta">
 //   <TypeNumber SizeInBit="8" Type="signedInt" minInclusive="-10" maxInclusive="10"/>
 // </ParameterType>
-int8_t paramSignedByte(uint32_t addr);
+int8_t KNX_paramSignedByte(uint32_t addr);
 
-uint16_t paramWord(uint32_t addr);
+uint16_t KNX_paramWord(uint32_t addr);
 
-uint32_t paramInt(uint32_t addr);
+uint32_t KNX_paramInt(uint32_t addr);
 
-double paramFloat(uint32_t addr, ParameterFloatEncodings enc);
+double KNX_paramFloat(uint32_t addr, ParameterFloatEncodings enc);
 
 
 #if (MASK_VERSION == 0x07B0) || (MASK_VERSION == 0x27B0) || (MASK_VERSION == 0x57B0)
-    GroupObject& getGroupObject(uint16_t goNr);
+    GroupObject& KNX_getGroupObject(uint16_t goNr);
 #endif
 
-void restart(uint16_t individualAddress);
+void KNX_restart(uint16_t individualAddress);
 
-void beforeRestartCallback(BeforeRestartCallback func);
+void KNX_beforeRestartCallback(BeforeRestartCallback func);
 
-BeforeRestartCallback beforeRestartCallback();
+BeforeRestartCallback KNX_beforeRestartCallback();
 
 
-void progLedOn();
+void KNX_progLedOn();
 
-void progLedOff();
+void KNX_progLedOff();
 
-void buttonEvent();
+void KNX_buttonEvent();
 
 /*#ifdef ARDUINO_ARCH_STM32
     // predefined global instance for TP only

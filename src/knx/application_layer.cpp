@@ -555,7 +555,7 @@ void ApplicationLayer::systemNetworkParameterReadResponse(Priority priority, Hop
 void ApplicationLayer::domainAddressSerialNumberReadResponse(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t *rfDoA,
                                                              const uint8_t *knxSerialNumber)
 {
-    CemiFrame frame(13);
+    CemiFrame frame(13);//EDA Fix V1.4
     APDU &apdu = frame.apdu();
     apdu.type(DomainAddressSerialNumberResponse);
 
