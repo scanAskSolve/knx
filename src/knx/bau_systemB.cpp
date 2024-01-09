@@ -14,7 +14,7 @@ enum NmReadSerialNumberType
 static constexpr auto kFunctionPropertyResultBufferMaxSize = 64; //EDA Fix V1.4
 static constexpr auto kRestartProcessTime = 3;
 
-BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _memory(platform, _deviceObj), _appProgram(_memory), _platform(platform),
+/*BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _memory(platform, _deviceObj), _appProgram(_memory), _platform(platform),
                                                                               _addrTable(_memory),
                                                                               _assocTable(_memory), _groupObjTable(_memory),
 #ifdef USE_DATASECURE
@@ -45,7 +45,7 @@ BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _m
         _memory.addSaveRestore(&_secIfObj);
 #endif
     }
-}
+}*/
 
 BauSystemB::BauSystemB(ArduinoPlatform &platform)
     : _memory(platform, _deviceObj), _appProgram(_memory), _platform(platform),
