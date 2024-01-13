@@ -125,6 +125,10 @@ uint8_t* ArduinoPlatform::getNonVolatileMemoryStart()
 {
     if(_memoryType == Flash)
         return userFlashStart();
+#ifdef KNX_FLASH_CALLBACK
+    else if(_memoryType == Callback)
+        return _callbackFlashRead();
+#endif
     else
         return getEepromBuffer(KNX_FLASH_SIZE);
 }
@@ -161,6 +165,10 @@ size_t ArduinoPlatform::getNonVolatileMemorySize()
 {
     if(_memoryType == Flash)
         return userFlashSizeEraseBlocks() * flashEraseBlockSize() * flashPageSize();
+#ifdef KNX_FLASH_CALLBACK
+    else if(_memoryType == Callback)
+        return _callbackFlashSize();
+#endif
     else
         return KNX_FLASH_SIZE;
 }
@@ -204,6 +212,10 @@ uint32_t ArduinoPlatform::writeNonVolatileMemory(uint32_t relativeAddress, uint8
         }
         return relativeAddress;
     }
+#ifdef KNX_FLASH_CALLBACK
+    else if(_memoryType == Callback)
+        return _callbackFlashWrite(relativeAddress, buffer, size);
+#endif
     else
     {
         memcpy(getEepromBuffer(KNX_FLASH_SIZE)+relativeAddress, buffer, size);
@@ -292,6 +304,40 @@ void ArduinoPlatform::bufferEraseBlock(int32_t eraseBlockNumber)
     _bufferedEraseblockDirty = false;
 }
 
+#ifdef KNX_FLASH_CALLBACK
+void Platform::registerFlashCallbacks(
+    FlashCallbackSize callbackFlashSize,
+    FlashCallbackRead callbackFlashRead,
+    FlashCallbackWrite callbackFlashWrite,
+    FlashCallbackCommit callbackFlashCommit)
+    {
+        println("Set Callback");
+        _memoryType = Callback;
+        _callbackFlashSize = callbackFlashSize;
+        _callbackFlashRead = callbackFlashRead;
+        _callbackFlashWrite = callbackFlashWrite;
+        _callbackFlashCommit = callbackFlashCommit;
+        _callbackFlashSize();
+    }
+
+FlashCallbackSize Platform::callbackFlashSize()
+{
+   return _callbackFlashSize;
+}
+FlashCallbackRead Platform::callbackFlashRead()
+{
+   return _callbackFlashRead;
+}
+FlashCallbackWrite Platform::callbackFlashWrite()
+{
+   return _callbackFlashWrite;
+}
+FlashCallbackCommit Platform::callbackFlashCommit()
+{
+   return _callbackFlashCommit;
+}
+#endif
+
 void ArduinoPlatform::flashErase(uint16_t eraseBlockNum)
 {}
 
@@ -311,6 +357,10 @@ void ArduinoPlatform::commitNonVolatileMemory()
             _bufferedEraseblockNumber = -1;  // does that make sense?
         }
     }
+#ifdef KNX_FLASH_CALLBACK
+    else if(_memoryType == Callback)
+        return _callbackFlashCommit();
+#endif
     else
     {
         commitToEeprom();

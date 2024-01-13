@@ -54,25 +54,27 @@ void AssociationTableObject::prepareBinarySearch()
     // we iterate through all ASAP
     // the first n ASAP are sorted (strictly increasing number), these are assigning sending TSAP
     // the remaining ASAP have to be all repetitions, otherwise we set sortedEntryCount to 0, which forces linear search
-    for (uint16_t idx = 0; idx < entryCount(); idx++)
-    {
-        currentASAP = getASAP(idx);
-        if (sortedEntryCount)
+    if(_tableData != nullptr) {
+        for (uint16_t idx = 0; idx < entryCount(); idx++)
         {
-            // look if the remaining ASAP exist in the previously sorted list.
-            while (lookupIdx < sortedEntryCount)
+            currentASAP = getASAP(idx);
+            if (sortedEntryCount)
             {
-                lookupASAP = getASAP(lookupIdx);
-                if (currentASAP <= lookupASAP)
-                    break; // while
-                else
-                    lookupIdx++;
-            }
-            if (currentASAP < lookupASAP || lookupIdx >= sortedEntryCount)
-            {
-                // a new ASAP found, we force linear search
-                sortedEntryCount = 0;
-                break; // for
+                 // look if the remaining ASAP exist in the previously sorted list.
+                while (lookupIdx < sortedEntryCount)
+                {
+                    lookupASAP = getASAP(lookupIdx);
+                    if (currentASAP <= lookupASAP)
+                        break; // while
+                    else
+                        lookupIdx++;
+                }
+                if (currentASAP < lookupASAP || lookupIdx >= sortedEntryCount)
+                {
+                    // a new ASAP found, we force linear search
+                    sortedEntryCount = 0;
+                    break; // for
+                }
             }
         }
         else
@@ -83,13 +85,13 @@ void AssociationTableObject::prepareBinarySearch()
             else
             {
                 sortedEntryCount = idx; // last found index indicates end of sorted list
-                idx--;                  // current item has to be handled as remaining ASAP
+                idx--; // current item has to be handled as remaining ASAP
             }
         }
-    }
     // in case complete table is strictly increasing
-    if (lookupIdx == 0 && sortedEntryCount == 0)
-        sortedEntryCount = entryCount();
+        if (lookupIdx == 0 && sortedEntryCount == 0)
+            sortedEntryCount = entryCount();
+    } 
 #endif
 }
 

@@ -9,10 +9,22 @@
 /*#ifndef KNX_SERIAL
 #define KNX_SERIAL Serial2
 #endif*/
+#ifndef KNX_FLASH_CALLBACK
 
 #ifndef KNX_FLASH_SIZE
 #define KNX_FLASH_SIZE 1024
 #pragma warning "KNX_FLASH_SIZE not defined, using 1024"
+#endif
+#endif
+
+#ifdef KNX_FLASH_CALLBACK
+#ifndef KNX_FLASH_SIZE
+#define KNX_FLASH_SIZE 0
+#endif
+typedef uint32_t (*FlashCallbackSize)();
+typedef uint8_t* (*FlashCallbackRead)();
+typedef uint32_t (*FlashCallbackWrite)(uint32_t relativeAddress, uint8_t* buffer, size_t len);
+typedef void (*FlashCallbackCommit)();
 #endif
 
 #ifndef KNX_MV_MEMORY
@@ -20,7 +32,8 @@
 enum NvMemoryType
 {
     Eeprom,
-    Flash
+    Flash,
+    Callback
 };
 #endif
 class ArduinoPlatform
@@ -73,6 +86,19 @@ class ArduinoPlatform
 
     virtual void restart();
 
+    #ifdef KNX_FLASH_CALLBACK
+    void registerFlashCallbacks(
+        FlashCallbackSize callbackFlashSize,
+        FlashCallbackRead callbackFlashRead,
+        FlashCallbackWrite callbackFlashWrite,
+        FlashCallbackCommit callbackFlashCommit);
+
+    FlashCallbackSize callbackFlashSize();
+    FlashCallbackRead callbackFlashRead();
+    FlashCallbackWrite callbackFlashWrite();
+    FlashCallbackCommit callbackFlashCommit();
+#endif
+
 //#ifndef KNX_NO_PRINT
     static Stream* SerialDebug;
 
@@ -86,6 +112,14 @@ class ArduinoPlatform
     bool _bufferedEraseblockDirty = false;
     uint8_t *_eepromPtr = nullptr;
     uint16_t _eepromSize = 0;
+
+
+    #ifdef KNX_FLASH_CALLBACK
+    FlashCallbackSize _callbackFlashSize = nullptr;
+    FlashCallbackRead _callbackFlashRead = nullptr;
+    FlashCallbackWrite _callbackFlashWrite = nullptr;
+    FlashCallbackCommit _callbackFlashCommit = nullptr;
+#endif
 };
 
 #ifndef KNX_NO_PRINT
