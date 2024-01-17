@@ -1,20 +1,10 @@
 #pragma once
 #include "Arduino.h"
 
-
-#ifndef KNX_DEBUG_SERIAL
-#define KNX_DEBUG_SERIAL Serial
-#endif
-
-
 #ifndef KNX_NO_PRINT
     void Print_init(HardwareSerial* port);  
 
     //static Stream* SerialDebug;
-
-
-
-
 
     void print(const char[]);
     void print(char);
