@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "arduino_platform.h"
+#include "Print_Function.h"
 #include "device_object.h"
 #include "table_object.h"
 
