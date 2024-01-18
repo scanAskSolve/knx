@@ -3,7 +3,6 @@
 
 #include "tpuart_data_link_layer.h"
 #include "bits.h"
-//#include "platform.h"
 
 #include "device_object.h"
 #include "address_table_object.h"
@@ -118,9 +117,9 @@ enum
 void TpUartDataLinkLayer::enterRxWaitEOP()
 {
     // Flush input
-    while (_platform.uartAvailable())
+    while (uartAvailable())
     {
-        _platform.readUart();
+        readUart();
     }
     _lastByteRxTime = HAL_GetTick();
     _rxState = RX_WAIT_EOP;
@@ -178,16 +177,16 @@ void TpUartDataLinkLayer::loop()
             switch (_rxState)
             {
             case RX_WAIT_START:
-                if (_platform.uartAvailable())
+                if (uartAvailable())
                 {
-                    if (_platform.uartAvailable() > OVERRUN_COUNT)
+                    if (uartAvailable() > OVERRUN_COUNT)
                     {
                         print("input buffer overrun: ");
-                        println(_platform.uartAvailable());
+                        println(uartAvailable());
                         enterRxWaitEOP();
                         break;
                     }
-                    rxByte = _platform.readUart();
+                    rxByte = readUart();
 #ifdef DBG_TRACE
                     print(rxByte, HEX);
 #endif
@@ -279,7 +278,7 @@ void TpUartDataLinkLayer::loop()
                         print("got U_SYSTEM_STAT_IND: 0x");
                         while (true)
                         {
-                            int tmp = _platform.readUart();
+                            int tmp = readUart();
                             if (tmp < 0)
                                 continue;
 
@@ -303,10 +302,10 @@ void TpUartDataLinkLayer::loop()
                     println("EOPR @ RX_L_ADDR");
                     break;
                 }
-                if (!_platform.uartAvailable())
+                if (!uartAvailable())
                     break;
                 _lastByteRxTime = HAL_GetTick();
-                rxByte = _platform.readUart();
+                rxByte = readUart();
 #ifdef DBG_TRACE
                 print(rxByte, HEX);
 #endif
@@ -344,16 +343,16 @@ void TpUartDataLinkLayer::loop()
 
                         // Hint: We can send directly here, this doesn't disturb other transmissions
                         // We don't have to update _lastByteTxTime because after U_ACK_REQ the timing is not so tight
-                        _platform.writeUart(c);
+                        writeUart(c);
                     }
                     _rxState = RX_L_DATA;
                 }
                 break;
             case RX_L_DATA:
-                if (!_platform.uartAvailable())
+                if (!uartAvailable())
                     break;
                 _lastByteRxTime = HAL_GetTick();
-                rxByte = _platform.readUart();
+                rxByte = readUart();
 #ifdef DBG_TRACE
                 print(rxByte, HEX);
 #endif
@@ -418,9 +417,9 @@ void TpUartDataLinkLayer::loop()
 #endif
                     break;
                 }
-                if (_platform.uartAvailable())
+                if (uartAvailable())
                 {
-                    _platform.readUart();
+                    readUart();
                     _lastByteRxTime = HAL_GetTick();
                 }
                 break;
@@ -429,7 +428,7 @@ void TpUartDataLinkLayer::loop()
                 enterRxWaitEOP();
                 break;
             }
-        } while (_rxState == RX_L_ADDR && (stayInRx || _platform.uartAvailable()));
+        } while (_rxState == RX_L_ADDR && (stayInRx || uartAvailable()));
 
         // Check for spurios DATA_CONN message
         if (dataConnMsg && _txState != TX_WAIT_CONN)
@@ -493,7 +492,7 @@ void TpUartDataLinkLayer::loop()
             }
             break;
         }
-    } while (_platform.uartAvailable());
+    } while (uartAvailable());
 }
 
 bool TpUartDataLinkLayer::sendFrame(CemiFrame &frame)
@@ -513,9 +512,9 @@ bool TpUartDataLinkLayer::resetChip()
     if (_waitConfirmStartTime > 0)
         return false;
     uint8_t cmd = U_RESET_REQ;
-    _platform.writeUart(cmd);
+    writeUart(cmd);
 
-    int resp = _platform.readUart();
+    int resp = readUart();
     if (resp == U_RESET_IND)
         return true;
 
@@ -525,7 +524,7 @@ bool TpUartDataLinkLayer::resetChip()
 
 bool TpUartDataLinkLayer::resetChipTick()
 {
-    int resp = _platform.readUart();
+    int resp = readUart();
     if (resp == U_RESET_IND)
     {
         _waitConfirmStartTime = 0;
@@ -541,10 +540,10 @@ void TpUartDataLinkLayer::stopChip()
 {
 #ifdef NCN5130
     uint8_t cmd = U_STOP_MODE_REQ;
-    _platform.writeUart(cmd);
+    writeUart(cmd);
     while (true)
     {
-        int resp = _platform.readUart();
+        int resp = readUart();
         if (resp == U_STOP_MODE_IND)
             break;
     }
@@ -553,10 +552,8 @@ void TpUartDataLinkLayer::stopChip()
 
 TpUartDataLinkLayer::TpUartDataLinkLayer(DeviceObject &devObj,
                                          NetworkLayerEntity &netLayerEntity,
-                                         ArduinoPlatform &platform,
                                          ITpUartCallBacks &cb)
-    : _deviceObject(devObj), _networkLayerEntity(netLayerEntity), _platform(platform),
-      _cb(cb)
+    : _deviceObject(devObj), _networkLayerEntity(netLayerEntity), _cb(cb)
 {
 }
 
@@ -579,16 +576,16 @@ void TpUartDataLinkLayer::enabled(bool value)
 {
     if (value && !_enabled)
     {
-        _platform.setupUart();
+        setupUart();
 
         uint8_t cmd = U_RESET_REQ;
-        _platform.writeUart(cmd);
+        writeUart(cmd);
         _waitConfirmStartTime = HAL_GetTick();
         bool flag = false;
 
         while (true)
         {
-            int resp = _platform.readUart();
+            int resp = readUart();
             if (resp == U_RESET_IND)
             {
                 flag = true;
@@ -618,8 +615,8 @@ void TpUartDataLinkLayer::enabled(bool value)
     {
         _enabled = false;
         stopChip();
-        println("_platform.closeUart");
-        _platform.closeUart();
+        println("closeUart");
+        closeUart();
         return;
     }
 }
@@ -649,7 +646,7 @@ bool TpUartDataLinkLayer::sendSingleFrameByte()
         {
             _oldIdx = idx;
             cmd[0] = U_L_DATA_OFFSET_REQ | idx;
-            _platform.writeUart(cmd, 1);
+            writeUart(cmd, 1);
         }
 
         if (_TxByteCnt != _sendBufferLength - 1)
@@ -662,7 +659,7 @@ bool TpUartDataLinkLayer::sendSingleFrameByte()
         print(cmd[1], HEX);
 #endif
 
-        _platform.writeUart(cmd, 2);
+        writeUart(cmd, 2);
         _TxByteCnt++;
     }
 

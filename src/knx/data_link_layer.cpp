@@ -5,8 +5,8 @@
 #include "cemi_server.h"
 #include "cemi_frame.h"
 
-DataLinkLayer::DataLinkLayer(DeviceObject& devObj, NetworkLayerEntity& netLayerEntity, ArduinoPlatform& platform) :
-    _deviceObject(devObj), _networkLayerEntity(netLayerEntity), _platform(platform)
+DataLinkLayer::DataLinkLayer(DeviceObject& devObj, NetworkLayerEntity& netLayerEntity) :
+    _deviceObject(devObj), _networkLayerEntity(netLayerEntity)
 {
 }
 

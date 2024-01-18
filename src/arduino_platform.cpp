@@ -3,14 +3,20 @@
 #include "knx/bits.h"
 #include <EEPROM.h>
 
+NvMemoryType _memoryType = Eeprom;
+int32_t _bufferedEraseblockNumber = -1;
+uint8_t* _eraseblockBuffer = nullptr;
+bool _bufferedEraseblockDirty = false;
+uint8_t *_eepromPtr = nullptr;
+uint16_t _eepromSize = 0;
 
-ArduinoPlatform::ArduinoPlatform(HardwareSerial* knxSerial) : _knxSerial(knxSerial)
-{
+HardwareSerial *_knxUart;
+
+void KNX_UART_Init(HardwareSerial* knxSerial){
+    _knxUart = knxSerial;
 }
-/*ArduinoPlatform::ArduinoPlatform(UART_HandleTypeDef* knxSerial) : _knxSerial(knxSerial)
-{
-}*/
-void ArduinoPlatform::fatalError()
+
+void fatalError()
 {
     while (true)
     {
@@ -20,69 +26,69 @@ void ArduinoPlatform::fatalError()
     }
 }
 
-void ArduinoPlatform::knxUart( HardwareSerial* serial )
+void knxUart( HardwareSerial* serial )
 {
-    if (_knxSerial)
+    if (_knxUart)
         closeUart();
-    _knxSerial = serial;
+    _knxUart = serial;
     setupUart();
 }
 
-HardwareSerial* ArduinoPlatform::knxUart()
+HardwareSerial* knxUart()
 {
-    return _knxSerial;
+    return _knxUart;
 }
 
-void ArduinoPlatform::setupUart()
+void setupUart()
 {
-    _knxSerial->begin(19200, SERIAL_8E1);
-    while (!_knxSerial) 
+    _knxUart->begin(19200, SERIAL_8E1);
+    while (!_knxUart) 
         ;
 }
 
 
-void ArduinoPlatform::closeUart()
+void closeUart()
 {
-    _knxSerial->end();
+    _knxUart->end();
 }
 
 
-int ArduinoPlatform::uartAvailable()
+int uartAvailable()
 {
-    return _knxSerial->available();
+    return _knxUart->available();
 }
 
 
-size_t ArduinoPlatform::writeUart(const uint8_t data)
+size_t writeUart(const uint8_t data)
 {
     //printHex("<p", &data, 1);
-    return _knxSerial->write(data);
+    return _knxUart->write(data);
 }
 
 
-size_t ArduinoPlatform::writeUart(const uint8_t *buffer, size_t size)
+size_t writeUart(const uint8_t *buffer, size_t size)
 {
     //printHex("<p", buffer, size);
-    return _knxSerial->write(buffer, size);
+    return _knxUart->write(buffer, size);
 }
 
 
-int ArduinoPlatform::readUart()
+int readUart()
 {
-    int val = _knxSerial->read();
+    int val = _knxUart->read();
     //if(val > 0)
     //    printHex("p>", (uint8_t*)&val, 1);
     return val;
 }
 
 
-size_t ArduinoPlatform::readBytesUart(uint8_t *buffer, size_t length)
+size_t readBytesUart(uint8_t *buffer, size_t length)
 {
     size_t toRead = length;
     uint8_t* pos = buffer;
     while (toRead > 0)
     {
-        size_t val = _knxSerial->readBytes(pos, toRead);
+        size_t val = _knxUart->readBytes(pos, toRead);
         pos += val;
         toRead -= val;
     }
@@ -90,13 +96,13 @@ size_t ArduinoPlatform::readBytesUart(uint8_t *buffer, size_t length)
     return length;
 }
 
-uint32_t ArduinoPlatform::uniqueSerialNumber()
+uint32_t uniqueSerialNumber()
 {
     //return 0x01020304;
     return HAL_GetUIDw0() ^ HAL_GetUIDw1() ^ HAL_GetUIDw2();
 }
 
-uint8_t* ArduinoPlatform::getNonVolatileMemoryStart()
+uint8_t* getNonVolatileMemoryStart()
 {
     if(_memoryType == Flash)
         return userFlashStart();
@@ -108,12 +114,12 @@ uint8_t* ArduinoPlatform::getNonVolatileMemoryStart()
         return getEepromBuffer(KNX_FLASH_SIZE);
 }
 
-uint8_t *ArduinoPlatform::userFlashStart()
+uint8_t *userFlashStart()
 {
     return nullptr;
 }
 
-uint8_t * ArduinoPlatform::getEepromBuffer(uint32_t size)
+uint8_t * getEepromBuffer(uint32_t size)
 {
     //return nullptr;
 
@@ -136,7 +142,7 @@ uint8_t * ArduinoPlatform::getEepromBuffer(uint32_t size)
     return _eepromPtr;
 }
 
-size_t ArduinoPlatform::getNonVolatileMemorySize()
+size_t getNonVolatileMemorySize()
 {
     if(_memoryType == Flash)
         return userFlashSizeEraseBlocks() * flashEraseBlockSize() * flashPageSize();
@@ -148,23 +154,23 @@ size_t ArduinoPlatform::getNonVolatileMemorySize()
         return KNX_FLASH_SIZE;
 }
 
-size_t ArduinoPlatform::userFlashSizeEraseBlocks()
+size_t userFlashSizeEraseBlocks()
 {
     return 0;
 }
 
-size_t ArduinoPlatform::flashEraseBlockSize()
+size_t flashEraseBlockSize()
 {
     return 0;
 }
 
-size_t ArduinoPlatform::flashPageSize()
+size_t flashPageSize()
 {
     // align to 32bit as default for Eeprom Emulation plattforms
     return 4;
 }
 
-uint32_t ArduinoPlatform::writeNonVolatileMemory(uint32_t relativeAddress, uint8_t* buffer, size_t size)
+uint32_t writeNonVolatileMemory(uint32_t relativeAddress, uint8_t* buffer, size_t size)
 {
     if(_memoryType == Flash)
     {
@@ -200,7 +206,7 @@ uint32_t ArduinoPlatform::writeNonVolatileMemory(uint32_t relativeAddress, uint8
 
 // writes value repeat times into flash starting at relativeAddress
 // returns next free relativeAddress
-uint32_t ArduinoPlatform::writeNonVolatileMemory(uint32_t relativeAddress, uint8_t value, size_t repeat)
+uint32_t writeNonVolatileMemory(uint32_t relativeAddress, uint8_t value, size_t repeat)
 {
     if(_memoryType == Flash)
     {
@@ -229,7 +235,7 @@ uint32_t ArduinoPlatform::writeNonVolatileMemory(uint32_t relativeAddress, uint8
     }
 }
 
-void ArduinoPlatform::loadEraseblockContaining(uint32_t relativeAddress)
+void loadEraseblockContaining(uint32_t relativeAddress)
 {
     int32_t blockNum = getEraseBlockNumberOf(relativeAddress);
     if (blockNum < 0)
@@ -244,12 +250,12 @@ void ArduinoPlatform::loadEraseblockContaining(uint32_t relativeAddress)
     bufferEraseBlock(blockNum);
 }
 
-int32_t ArduinoPlatform::getEraseBlockNumberOf(uint32_t relativeAddress)
+int32_t getEraseBlockNumberOf(uint32_t relativeAddress)
 {
     return relativeAddress / (flashEraseBlockSize() * flashPageSize());
 }
 
-void ArduinoPlatform::writeBufferedEraseBlock()
+void writeBufferedEraseBlock()
 {
     if(_bufferedEraseblockNumber > -1 && _bufferedEraseblockDirty)
     {
@@ -264,7 +270,7 @@ void ArduinoPlatform::writeBufferedEraseBlock()
     }
 }
 
-void ArduinoPlatform::bufferEraseBlock(int32_t eraseBlockNumber)
+void bufferEraseBlock(int32_t eraseBlockNumber)
 {
     if(_bufferedEraseblockNumber == eraseBlockNumber)
         return;
@@ -280,7 +286,7 @@ void ArduinoPlatform::bufferEraseBlock(int32_t eraseBlockNumber)
 }
 
 #ifdef KNX_FLASH_CALLBACK
-void Platform::registerFlashCallbacks(
+void ArduinoPlatform::registerFlashCallbacks(
     FlashCallbackSize callbackFlashSize,
     FlashCallbackRead callbackFlashRead,
     FlashCallbackWrite callbackFlashWrite,
@@ -295,31 +301,31 @@ void Platform::registerFlashCallbacks(
         _callbackFlashSize();
     }
 
-FlashCallbackSize Platform::callbackFlashSize()
+FlashCallbackSize ArduinoPlatform::callbackFlashSize()
 {
    return _callbackFlashSize;
 }
-FlashCallbackRead Platform::callbackFlashRead()
+FlashCallbackRead ArduinoPlatform::callbackFlashRead()
 {
    return _callbackFlashRead;
 }
-FlashCallbackWrite Platform::callbackFlashWrite()
+FlashCallbackWrite ArduinoPlatform::callbackFlashWrite()
 {
    return _callbackFlashWrite;
 }
-FlashCallbackCommit Platform::callbackFlashCommit()
+FlashCallbackCommit ArduinoPlatform::callbackFlashCommit()
 {
    return _callbackFlashCommit;
 }
 #endif
 
-void ArduinoPlatform::flashErase(uint16_t eraseBlockNum)
+void flashErase(uint16_t eraseBlockNum)
 {}
 
-void ArduinoPlatform::flashWritePage(uint16_t pageNumber, uint8_t* data)
+void flashWritePage(uint16_t pageNumber, uint8_t* data)
 {}
 
-void ArduinoPlatform::commitNonVolatileMemory()
+void commitNonVolatileMemory()
 {
     if(_memoryType == Flash)
     {
@@ -342,7 +348,7 @@ void ArduinoPlatform::commitNonVolatileMemory()
     }
 }
 
-void ArduinoPlatform::commitToEeprom()
+void commitToEeprom()
 {
     if(_eepromPtr == nullptr || _eepromSize == 0)
         return;
@@ -357,7 +363,7 @@ void ArduinoPlatform::commitToEeprom()
 }
 
 
-void ArduinoPlatform::restart()
+void restart()
 {
     NVIC_SystemReset();
 }

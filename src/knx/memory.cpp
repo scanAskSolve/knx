@@ -4,8 +4,8 @@
 
 #include "bits.h"
 
-Memory::Memory(ArduinoPlatform& platform, DeviceObject& deviceObject)
-    : _platform(platform), _deviceObject(deviceObject)
+Memory::Memory(DeviceObject& deviceObject)
+    :  _deviceObject(deviceObject)
 {}
 
 Memory::~Memory()
@@ -15,8 +15,8 @@ void Memory::readMemory()
 {
     println("readMemory");
 
-    uint8_t* flashStart = _platform.getNonVolatileMemoryStart();
-    size_t flashSize = _platform.getNonVolatileMemorySize();
+    uint8_t* flashStart = getNonVolatileMemoryStart();
+    size_t flashSize = getNonVolatileMemorySize();
     if (flashStart == nullptr)
     {
         println("no user flash available;");
@@ -143,14 +143,14 @@ void Memory::writeMemory()
     bufferPos = pushByteArray(_deviceObject.hardwareType(), LEN_HARDWARE_TYPE, bufferPos);
     bufferPos = pushWord(_deviceObject.version(), bufferPos);
 
-    flashPos = _platform.writeNonVolatileMemory(flashPos, buffer, bufferPos - buffer);
+    flashPos = writeNonVolatileMemory(flashPos, buffer, bufferPos - buffer);
 
     print("save saveRestores ");
     println(_saveCount);
     for (int i = 0; i < _saveCount; i++)
     {
         bufferPos = _saveRestores[i]->save(buffer);
-        flashPos = _platform.writeNonVolatileMemory(flashPos, buffer, bufferPos - buffer);
+        flashPos = writeNonVolatileMemory(flashPos, buffer, bufferPos - buffer);
     }
 
     print("save tableobjs ");
@@ -166,22 +166,22 @@ void Memory::writeMemory()
             if (block == nullptr)
             {
                 println("_data of TableObject not in _usedList");
-                _platform.fatalError();
+                fatalError();
             }
             bufferPos = pushWord(block->size, bufferPos);
         }
         else
             bufferPos = pushWord(0, bufferPos);
 
-        flashPos = _platform.writeNonVolatileMemory(flashPos, buffer, bufferPos - buffer);
+        flashPos = writeNonVolatileMemory(flashPos, buffer, bufferPos - buffer);
     }
     
-    _platform.commitNonVolatileMemory();
+    commitNonVolatileMemory();
 }
 
 void Memory::saveMemory()
 {
-    _platform.commitNonVolatileMemory();
+    commitNonVolatileMemory();
 }
 
 void Memory::addSaveRestore(DeviceObject* obj)
@@ -228,7 +228,7 @@ uint8_t* Memory::allocMemory(size_t size)
     if (!blockToUse)
     {
         println("No available non volatile memory!");
-        _platform.fatalError();
+        fatalError();
     }
 
     if (blockToUse->size == size)
@@ -268,7 +268,7 @@ void Memory::freeMemory(uint8_t* ptr)
     if(!found)
     {
         println("freeMemory for not used pointer called");
-        _platform.fatalError();
+        fatalError();
     }
     removeFromUsedList(block);
     addToFreeList(block);
@@ -276,19 +276,19 @@ void Memory::freeMemory(uint8_t* ptr)
 
 void Memory::writeMemory(uint32_t relativeAddress, size_t size, uint8_t* data)
 {
-    _platform.writeNonVolatileMemory(relativeAddress, data, size);
+    writeNonVolatileMemory(relativeAddress, data, size);
 }
 
 
 uint8_t* Memory::toAbsolute(uint32_t relativeAddress)
 {
-    return _platform.getNonVolatileMemoryStart() + (ptrdiff_t)relativeAddress;
+    return getNonVolatileMemoryStart() + (ptrdiff_t)relativeAddress;
 }
 
 
 uint32_t Memory::toRelative(uint8_t* absoluteAddress)
 {
-    return absoluteAddress - _platform.getNonVolatileMemoryStart();
+    return absoluteAddress - getNonVolatileMemoryStart();
 }
 
 MemoryBlock* Memory::removeFromList(MemoryBlock* head, MemoryBlock* item)
@@ -303,7 +303,7 @@ MemoryBlock* Memory::removeFromList(MemoryBlock* head, MemoryBlock* item)
     if (!head || !item)
     {
         println("invalid parameters of Memory::removeFromList");
-        _platform.fatalError();
+        fatalError();
     }
 
     bool found = false;
@@ -322,7 +322,7 @@ MemoryBlock* Memory::removeFromList(MemoryBlock* head, MemoryBlock* item)
     if (!found)
     {
         println("tried to remove block from list not in it");
-        _platform.fatalError();
+        fatalError();
     }
     item->next = nullptr;
     return head;
@@ -410,7 +410,7 @@ void Memory::addToFreeList(MemoryBlock* block)
 
 uint16_t Memory::alignToPageSize(size_t size)
 {
-    size_t pageSize = 4; //_platform.flashPageSize(); // align to 32bit for now, as aligning to flash-page-size causes side effects in programming
+    size_t pageSize = 4; //flashPageSize(); // align to 32bit for now, as aligning to flash-page-size causes side effects in programming
     // pagesize should be a multiply of two
     return (size + pageSize - 1) & (-1*pageSize);
 }
@@ -443,13 +443,13 @@ void Memory::addNewUsedBlock(uint8_t* address, size_t size)
     if (smallerFreeBlock == nullptr)
     {
         println("addNewUsedBlock: no smallerBlock found");
-        _platform.fatalError();
+        fatalError();
     }
 
     if ((smallerFreeBlock->address + smallerFreeBlock->size) < (address + size))
     {
         println("addNewUsedBlock: found block can't contain new block");
-        _platform.fatalError();
+        fatalError();
     }
 
     if (smallerFreeBlock->address == address && smallerFreeBlock->size == size)

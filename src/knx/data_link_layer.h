@@ -14,8 +14,7 @@ class Platform;
 class DataLinkLayer
 {
   public:
-    DataLinkLayer(DeviceObject& devObj, NetworkLayerEntity& netLayerEntity,
-                  ArduinoPlatform& platform);
+    DataLinkLayer(DeviceObject& devObj, NetworkLayerEntity& netLayerEntity);
 
 #ifdef USE_CEMI_SERVER
     // from tunnel
@@ -40,7 +39,6 @@ class DataLinkLayer
     uint8_t* frameData(CemiFrame& frame);
     DeviceObject& _deviceObject;
     NetworkLayerEntity& _networkLayerEntity;
-    ArduinoPlatform& _platform;
 #ifdef USE_CEMI_SERVER
     CemiServer* _cemiServer;
 #endif    

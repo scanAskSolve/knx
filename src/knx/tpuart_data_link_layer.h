@@ -20,15 +20,13 @@ public:
   virtual bool isAckRequired(uint16_t address, bool isGrpAddr) = 0;
 };
 
-// class TpUartDataLinkLayer : public DataLinkLayer
+
 class TpUartDataLinkLayer
 {
-  // using DataLinkLayer::_deviceObject;
-  // using DataLinkLayer::_platform;
 
 public:
   TpUartDataLinkLayer(DeviceObject &devObj, NetworkLayerEntity &netLayerEntity,
-                      ArduinoPlatform &platform, ITpUartCallBacks &cb);
+                      ITpUartCallBacks &cb);
 
   void loop();
   void enabled(bool value);
@@ -37,7 +35,6 @@ public:
 
   DeviceObject &_deviceObject;
   NetworkLayerEntity &_networkLayerEntity;
-  ArduinoPlatform &_platform;
 
   void dataRequest(AckType ack, AddressType addrType, uint16_t destinationAddr, uint16_t sourceAddr, FrameFormat format,
                    Priority priority, NPDU &npdu);

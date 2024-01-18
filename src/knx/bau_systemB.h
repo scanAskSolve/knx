@@ -23,26 +23,19 @@
 typedef void (*BeforeRestartCallback)(void);
 typedef bool (*FunctionPropertyCallback)(uint8_t objectIndex, uint8_t propertyId, uint8_t length, uint8_t *data, uint8_t *resultData, uint8_t &resultLength);
 
-/*enum BauSystemType{
-  SYSTEMB,
-  DEVICEB
-};*/
 
-// class BauSystemB : protected BusAccessUnit
 class BauSystemB 
 {
 public:
 
   virtual bool isAckRequired(uint16_t address, bool isGrpAddr);
+  BauSystemB();
   
-  BauSystemB(ArduinoPlatform& platform);
-  //BauSystemB(ArduinoPlatform &platform,BauSystemType bauSystemB);
   virtual void loop();
   bool configured();
   virtual bool enabled();
   virtual void enabled(bool value);
 
-  ArduinoPlatform &platform();
   ApplicationProgramObject &parameters();
   DeviceObject &deviceObject();
 
@@ -131,7 +124,6 @@ public:
   Memory _memory;
   DeviceObject _deviceObj;
   ApplicationProgramObject _appProgram;
-  ArduinoPlatform &_platform;
   RestartState _restartState = Idle;
   SecurityControl _restartSecurity;
   uint32_t _restartDelay = 0;

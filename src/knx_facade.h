@@ -20,8 +20,8 @@ typedef struct
     GPIO_TypeDef *GPIOx; 
     uint16_t GPIO_Pin;
 } GPIO_infoTypeDef;
-
-void KNX_initKnxFacade(HardwareSerial* knxSerial);
+//void KNX_initKnxFacade(HardwareSerial* knxSerial);
+void KNX_initKnxFacade();
 
 bool KNX_enabled();
 

@@ -37,7 +37,7 @@ typedef VersionCheckResult (*VersionCheckCallback)(uint16_t manufacturerId, uint
 class Memory
 {
 public:
-    Memory(ArduinoPlatform& platform, DeviceObject& deviceObject);
+    Memory(DeviceObject& deviceObject);
     virtual ~Memory();
     void readMemory();
     void writeMemory();
@@ -70,7 +70,6 @@ public:
     void saveBufferdEraseBlock();
 
     VersionCheckCallback _versionCheckCallback = 0;
-    ArduinoPlatform& _platform;
     DeviceObject& _deviceObject;
     DeviceObject* _saveRestores[MAXSAVE] = {0};
     TableObject* _tableObjects[MAXTABLEOBJ] = {0};

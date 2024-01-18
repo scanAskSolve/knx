@@ -63,7 +63,10 @@ void setup() {
   //ArduinoPlatform(&Serial);
   //knx.Set_chip_platform(&Serial2);
   Print_init(&Serial);
-  KNX_initKnxFacade(&Serial2);
+  //KNX_initKnxFacade(&Serial2);
+  KNX_UART_Init(&Serial2);
+  KNX_initKnxFacade();
+
   MX_GPIO_Init();
  
     //pinMode(PB11, OUTPUT);

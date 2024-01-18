@@ -14,41 +14,10 @@ enum NmReadSerialNumberType
 static constexpr auto kFunctionPropertyResultBufferMaxSize = 0xFF; //EDA Fix V1.4
 static constexpr auto kRestartProcessTime = 3;
 
-/*BauSystemB::BauSystemB(ArduinoPlatform &platform, BauSystemType bauSystemB) : _memory(platform, _deviceObj), _appProgram(_memory), _platform(platform),
-                                                                              _addrTable(_memory),
-                                                                              _assocTable(_memory), _groupObjTable(_memory),
-#ifdef USE_DATASECURE
-                                                                              _appLayer(_deviceObj, _secIfObj, *this),
-#else
-                                                                              _appLayer(*this),
-#endif
-                                                                              _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device),
-                                                                              _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks &)*this)
 
-{
-    _memory.addSaveRestore(&_appProgram);
-    if (bauSystemB == BauSystemType::DEVICEB)
-    {
-        _appLayer.transportLayer(_transLayer);
-        _appLayer.associationTableObject(_assocTable);
-#ifdef USE_DATASECURE
-        _appLayer.groupAddressTable(_addrTable);
-#endif
-        _transLayer.networkLayer(_netLayer);
-        _transLayer.groupAddressTable(_addrTable);
 
-        _memory.addSaveRestore(&_deviceObj);
-        _memory.addSaveRestore(&_groupObjTable); // changed order for better memory management
-        _memory.addSaveRestore(&_addrTable);
-        _memory.addSaveRestore(&_assocTable);
-#ifdef USE_DATASECURE
-        _memory.addSaveRestore(&_secIfObj);
-#endif
-    }
-}*/
-
-BauSystemB::BauSystemB(ArduinoPlatform &platform)
-    : _memory(platform, _deviceObj), _appProgram(_memory), _platform(platform),
+BauSystemB::BauSystemB()
+    : _memory(_deviceObj), _appProgram(_memory),
       _addrTable(_memory),
       _assocTable(_memory), _groupObjTable(_memory),
 #ifdef USE_DATASECURE
@@ -57,7 +26,7 @@ BauSystemB::BauSystemB(ArduinoPlatform &platform)
       _appLayer(*this),
 #endif
       _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device),
-      _dlLayer(_deviceObj, _netLayer.getInterface(), _platform, (ITpUartCallBacks &)*this)
+      _dlLayer(_deviceObj, _netLayer.getInterface(),  (ITpUartCallBacks &)*this)
 
 #ifdef USE_CEMI_SERVER
       ,
@@ -121,10 +90,6 @@ void BauSystemB::writeMemory()
     _memory.writeMemory();
 }
 
-ArduinoPlatform &BauSystemB::platform()
-{
-    return _platform;
-}
 
 ApplicationProgramObject &BauSystemB::parameters()
 {
@@ -269,12 +234,12 @@ void BauSystemB::restartRequestIndication(Priority priority, HopCountType hopTyp
     {
         // Cannot happen as restartType is just one bit
         println("Unhandled restart type.");
-        _platform.fatalError();
+        fatalError();
     }
 
     // Flush the EEPROM before resetting
     _memory.writeMemory();
-    _platform.restart();
+    restart();
 }
 
 void BauSystemB::authorizeIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, uint32_t key)

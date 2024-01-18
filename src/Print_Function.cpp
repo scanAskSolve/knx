@@ -4,9 +4,14 @@
 #ifndef KNX_NO_PRINT
 
 Stream* SerialDebug;
+UART_HandleTypeDef *Port;
 
-void Print_init(HardwareSerial* port){
-    SerialDebug = port;
+void Print_init(HardwareSerial* Uart_port){
+    SerialDebug = Uart_port;
+}
+
+void STM_Print_init(UART_HandleTypeDef *hPort){
+    Port = hPort;
 }
 
 void printHex(const char* suffix, const uint8_t *data, size_t length, bool newline)
@@ -40,6 +45,15 @@ void printUint64(uint64_t value, int base = DEC)
      print(str);
 }
 
+
+ /*MX_USART1_UART_Init();
+  MX_USART2_UART_Init();
+
+  while(1){
+    HAL_UART_Transmit(&huart1,(uint8_t *)"TEST",sizeof("TEST"),1000);
+    HAL_Delay(1000);
+  }*/
+//---------------------------------------------
 void print(const char* s)
 {
     SerialDebug->print(s);
@@ -58,7 +72,8 @@ void print(unsigned char num, int base)
 {
     SerialDebug->print(num, base);
 }
-
+//---------------------------------------------
+//---------------------------------------------
 void print(int num)
 {
     SerialDebug->print(num);
@@ -78,7 +93,8 @@ void print(unsigned int num, int base)
 {
     SerialDebug->print(num, base);
 }
-
+//---------------------------------------------
+//---------------------------------------------
 void print(long num)
 {
     SerialDebug->print(num);
@@ -108,12 +124,14 @@ void print(unsigned long long num, int base)
 {
     printUint64(num, base);
 }
-
+//---------------------------------------------
+//---------------------------------------------
 void print(double num)
 {
     SerialDebug->print(num);
 }
-
+//---------------------------------------------
+//---------------------------------------------
 void println(const char* s)
 {
     SerialDebug->println(s);

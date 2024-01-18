@@ -1,4 +1,5 @@
 #include "knx_facade.h"
+#include "arduino_platform.h"
 #include "knx/bits.h"
 
 
@@ -26,14 +27,15 @@ bool _progLedState = false;
 
 BauSystemB *_bau;
 
-
-void KNX_initKnxFacade(HardwareSerial* knxSerial)
+//void KNX_initKnxFacade(HardwareSerial* knxSerial)
+void KNX_initKnxFacade()
 {
-    ArduinoPlatform* _platformPtr  =  new ArduinoPlatform(knxSerial);
-    _bau = new BauSystemB(*_platformPtr);
+    //ArduinoPlatform* _platformPtr  =  new ArduinoPlatform(knxSerial);
+    //_bau = new BauSystemB(*_platformPtr);
+    _bau = new BauSystemB();
     
     KNX_manufacturerId(0xfa);
-    KNX_bauNumber(_bau->platform().uniqueSerialNumber());
+    KNX_bauNumber(uniqueSerialNumber());
     _bau->addSaveRestore(new DeviceObject());
 }
 
