@@ -56,79 +56,197 @@ void printUint64(uint64_t value, int base = DEC)
 //---------------------------------------------
 void print(const char* s)
 {
-    SerialDebug->print(s);
+    uint8_t buffer[256]; // Adjust the size based on the maximum expected string length
+    strncpy((char*)buffer, s, sizeof(buffer));
+    HAL_UART_Transmit(Port,buffer ,strlen((char*)buffer),1000);
+    // HAL_Delay(1000);
+    // SerialDebug->print(s);
 }
 void print(char c)
 {
-    SerialDebug->print(c);
+    HAL_UART_Transmit(Port,(uint8_t *) c ,sizeof(c),1000);
+    // SerialDebug->print(c);
 }
 
 void print(unsigned char num)
 {
-    SerialDebug->print(num);
+    HAL_UART_Transmit(Port,(uint8_t *) &num ,sizeof(num),1000);
+    // SerialDebug->print(num);
 }
 
 void print(unsigned char num, int base)
 {
-    SerialDebug->print(num, base);
+    // SerialDebug->print(num, base);
+    char array[12]; // Adjust the size based on the maximum expected string length
+    array[0] = '\0'; // Ensure the string is initially empty
+
+    if (base == 16)
+    {
+        sprintf(array, "%x", num);
+    }
+    else
+    {
+        sprintf(array, "%d", num);
+    }
+
+    HAL_UART_Transmit(Port, (uint8_t*)array, sizeof(array),1000);
 }
 //---------------------------------------------
 //---------------------------------------------
 void print(int num)
 {
-    SerialDebug->print(num);
+    uint8_t buffer[4]; // Assuming a 32-bit integer, adjust size accordingly
+    for (int i = 0; i < sizeof(buffer); ++i) {
+        buffer[i] = (num >> (8 * i)) & 0xFF;
+    }
+
+    HAL_UART_Transmit(Port, buffer, sizeof(buffer),1000);
+    // SerialDebug->print(num);
 }
 
 void print(int num, int base)
 {
-    SerialDebug->print(num, base);
+    char array[12]; // Adjust the size based on the maximum expected string length
+    array[0] = '\0'; // Ensure the string is initially empty
+
+    if (base == 16)
+    {
+        sprintf(array, "%x", num);
+    }
+    else
+    {
+        sprintf(array, "%d", num);
+    }
+
+    HAL_UART_Transmit(Port, (uint8_t*)array, sizeof(array),1000);
+    // SerialDebug->print(num, base);
 }
 
 void print(unsigned int num)
 {
-    SerialDebug->print(num);
+    uint8_t buffer[4]; // Assuming a 32-bit uint32_t, adjust size accordingly
+    for (int i = 0; i < sizeof(buffer); ++i) {
+        buffer[i] = (num >> (8 * i)) & 0xFF;
+    }
+
+    HAL_UART_Transmit(Port, buffer, sizeof(buffer),1000);
+    // SerialDebug->print(num);
 }
 
 void print(unsigned int num, int base)
 {
-    SerialDebug->print(num, base);
+    char array[12]; // Adjust the size based on the maximum expected string length
+    array[0] = '\0'; // Ensure the string is initially empty
+
+    if (base == 16)
+    {
+        sprintf(array, "%x", num);
+    }
+    else
+    {
+        sprintf(array, "%d", num);
+    }
+
+    HAL_UART_Transmit(Port, (uint8_t*)array, sizeof(array),1000);
+    // SerialDebug->print(num, base);
 }
 //---------------------------------------------
 //---------------------------------------------
 void print(long num)
 {
-    SerialDebug->print(num);
+    uint8_t buffer[sizeof(long)]; // Adjust size accordingly
+    for (int i = 0; i < sizeof(buffer); ++i) {
+        buffer[i] = (num >> (8 * i)) & 0xFF;
+    }
+    HAL_UART_Transmit(Port, buffer, sizeof(buffer),1000);
+    // SerialDebug->print(num);
 }
 
 void print(long num, int base)
 {
-    SerialDebug->print(num, base);
+    char array[12]; // Adjust the size based on the maximum expected string length
+    array[0] = '\0'; // Ensure the string is initially empty
+
+    if (base == 16)
+    {
+        sprintf(array, "%lx", num);
+    }
+    else
+    {
+        sprintf(array, "%ld", num);
+    }
+
+    HAL_UART_Transmit(Port, (uint8_t*)array, sizeof(array), 1000);
+    // SerialDebug->print(num, base);
 }
 
 void print(unsigned long num)
 {
-    SerialDebug->print(num);
+    uint8_t buffer[sizeof(long)]; // Adjust size accordingly
+    for (int i = 0; i < sizeof(buffer); ++i) {
+        buffer[i] = (num >> (8 * i)) & 0xFF;
+    }
+    HAL_UART_Transmit(Port, buffer, sizeof(buffer),1000);
+    // SerialDebug->print(num);
 }
 
 void print(unsigned long num, int base)
 {
-    SerialDebug->print(num, base);
+    char array[12]; // Adjust the size based on the maximum expected string length
+    array[0] = '\0'; // Ensure the string is initially empty
+
+    if (base == 16)
+    {
+        sprintf(array, "%lx", num);
+    }
+    else
+    {
+        sprintf(array, "%ld", num);
+    }
+
+    HAL_UART_Transmit(Port, (uint8_t*)array, sizeof(array), 1000);
+    // SerialDebug->print(num, base);
 }
 
 void print(unsigned long long num)
 {
-    printUint64(num);
+    uint8_t buffer[sizeof(long long)]; // Adjust size accordingly
+    for (int i = 0; i < sizeof(buffer); ++i) {
+        buffer[i] = (num >> (8 * i)) & 0xFF;
+    }
+    HAL_UART_Transmit(Port, buffer, sizeof(buffer),1000);
+    // printUint64(num);
 }
 
 void print(unsigned long long num, int base)
 {
-    printUint64(num, base);
+    // printUint64(num, base);
+    char array[20]; // Adjust the size based on the maximum expected string length
+    array[0] = '\0'; // Ensure the string is initially empty
+
+    if (base == 16)
+    {
+        sprintf(array, "%llx", num);
+    }
+    else
+    {
+        sprintf(array, "%llu", num);
+    }
+
+    HAL_UART_Transmit(Port, (uint8_t*)array, sizeof(array), 1000);
+    // SerialDebug->print(num, base);
 }
 //---------------------------------------------
 //---------------------------------------------
 void print(double num)
 {
-    SerialDebug->print(num);
+    char array[20]; // Adjust the size based on the maximum expected string length
+    array[0] = '\0'; // Ensure the string is initially empty
+
+    sprintf(array, "%f", num);
+
+    HAL_UART_Transmit(Port, (uint8_t*)array, sizeof(array), 1000);
+    // SerialDebug->print(num);
 }
 //---------------------------------------------
 //---------------------------------------------
