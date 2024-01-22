@@ -7,9 +7,10 @@
     void STM_Print_init(UART_HandleTypeDef *hPort); 
 
     //static Stream* SerialDebug;
+    int Cal_Real_length(char data);
 //---------------------------------------------
-    void print(const char[]);
-    void print(char);
+    void print(const char* s);
+    void print(char c);
     void print(unsigned char, int = DEC);
 //---------------------------------------------
 //---------------------------------------------
@@ -26,8 +27,8 @@
     void print(double);
 //---------------------------------------------
 //---------------------------------------------
-    void println(const char[]);
-    void println(char);
+    void println(const char* s);
+    void println(char c);
     void println(unsigned char, int = DEC);
 
     void println(int, int = DEC);
@@ -38,9 +39,11 @@
     void println(long long, int = DEC);
     void println(unsigned long long, int = DEC);
 
-    void println(double);
+    //void println(double);
     void println(void);
 
     void printHex(const char* suffix, const uint8_t *data, size_t length, bool newline = true);
+
+    
     //void printUint64(uint64_t value, int base = DEC);
 #endif
