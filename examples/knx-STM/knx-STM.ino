@@ -40,8 +40,6 @@ void TEST_Function(){
       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
     else
       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
-    //Serial.print("LED_S: ");
-    //Serial.println(LED_S);
 
     print("LED_S: ");
     println(LED_S);
@@ -55,18 +53,9 @@ void TEST_Function(){
 
 void setup() {
   MX_USART1_UART_Init();
-  /*MX_USART1_UART_Init();
-  MX_USART2_UART_Init();
-
-  while(1){
-    HAL_UART_Transmit(&huart1,(uint8_t *)"TEST",sizeof("TEST"),1000);
-    HAL_Delay(1000);
-  }*/
   
-  //Serial.begin(115200);
-  //ArduinoPlatform(&Serial);
-  //knx.Set_chip_platform(&Serial2);
-  //Print_init(&Serial);
+  //MX_USART2_UART_Init();
+
   STM_Print_init(&huart1);
   //KNX_initKnxFacade(&Serial2);
   KNX_UART_Init(&Serial2);
@@ -74,48 +63,19 @@ void setup() {
 
   MX_GPIO_Init();
  
-    //pinMode(PB11, OUTPUT);
-    /*for(int i = 0; i < 5;i++){
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-        delay(1000);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-        delay(1000);
-    }*/
-
-  //randomSeed(HAL_GetTick());
-
-
   // read adress table, association table, groupobject table and parameters from eeprom
   KNX_readMemory();
 
   // print values of parameters if device is already configured
   if (KNX_configured()) {
     // register callback for reset GO
-
-
-      //Serial.println("configured START");
       println("configured START");
 
       //goCurrent.dataPointType(DPT_Value_Temp);
       //SWITCH.callback(switchCallback);
       //LED.dataPointType(DPT_Switch);
       SWITCH1.dataPointType(DPT_Switch);
-    /**/
-
-    
-    
-    /*Serial.print("knx.paramByte(0): ");
-    Serial.println(KNX_paramByte(0));
-    Serial.print("knx.paramByte(1): ");
-    Serial.println(KNX_paramByte(1));
-    Serial.print("knx.paramByte(2): ");
-    Serial.println(KNX_paramByte(2));
-    Serial.print("knx.paramByte(3): ");
-    Serial.println(KNX_paramByte(3));
-    Serial.print("knx.paramByte(4): ");
-    Serial.println(KNX_paramByte(4));*/
-
-
+  
     print("knx.paramByte(0): ");
     println(KNX_paramByte(0));
     print("knx.paramByte(1): ");
@@ -128,7 +88,6 @@ void setup() {
     println(KNX_paramByte(4));
 
   }
-  //Serial.println("configured PASS");
   println("configured PASS");
 
   // pin or GPIO the programming led is connected to. Default is LED_BUILTIN
@@ -141,7 +100,6 @@ void setup() {
   // start the framework.
   KNX_start();
   
-  //Serial.println("knx.start");
   println("knx.start");
 }
 
