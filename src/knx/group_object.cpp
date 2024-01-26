@@ -42,7 +42,8 @@ bool GroupObject::responseUpdateEnable()
     if (!_table)
         return false;
 
-    return bitRead(ntohs(_table->_tableData[_asap]), 15) > 0;
+    //return (_table->_tableData[_asap] && (0x0001 << 15)) ? 1 : 0;
+    return (ntohs(_table->_tableData[_asap]) && (0x0001 << 15)) ? 1 : 0;
 }
 
 bool GroupObject::transmitEnable()
@@ -50,7 +51,7 @@ bool GroupObject::transmitEnable()
     if (!_table)
         return false;
 
-    return bitRead(ntohs(_table->_tableData[_asap]), 14) > 0 ;
+    return (ntohs(_table->_tableData[_asap]) && (0x0001 << 14)) ? 1 : 0;
 }
 
 bool GroupObject::valueReadOnInit()
@@ -58,7 +59,7 @@ bool GroupObject::valueReadOnInit()
     if (!_table)
         return false;
 
-    return bitRead(ntohs(_table->_tableData[_asap]), 13) > 0;
+    return (ntohs(_table->_tableData[_asap]) && (0x0001 << 13)) ? 1 : 0;
 }
 
 bool GroupObject::writeEnable()
@@ -66,7 +67,7 @@ bool GroupObject::writeEnable()
     if (!_table)
         return false;
 
-    return bitRead(ntohs(_table->_tableData[_asap]), 12) > 0 ;
+    return (ntohs(_table->_tableData[_asap]) && (0x0001 << 12)) ? 1 : 0;
 }
 
 bool GroupObject::readEnable()
@@ -78,7 +79,7 @@ bool GroupObject::readEnable()
     if (_commFlag == Uninitialized)
         return false;
 
-    return bitRead(ntohs(_table->_tableData[_asap]), 11) > 0;
+    return (ntohs(_table->_tableData[_asap]) && (0x0001 << 11)) ? 1 : 0;
 }
 
 bool GroupObject::communicationEnable()
@@ -86,7 +87,7 @@ bool GroupObject::communicationEnable()
     if (!_table)
         return false;
 
-    return bitRead(ntohs(_table->_tableData[_asap]), 10) > 0;
+    return (ntohs(_table->_tableData[_asap]) && (0x0001 << 10)) ? 1 : 0;
 }
 
 
@@ -182,7 +183,7 @@ size_t GroupObject::valueSize()
 
 size_t GroupObject::sizeInTelegram()
 {
-    uint8_t code = lowByte(ntohs(_table->_tableData[_asap]));
+    uint8_t code = (_table->_tableData[_asap] & 0xFF00) >> 8;
     return asapValueSize(code);
 }
 
