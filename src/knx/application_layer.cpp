@@ -25,7 +25,7 @@ void ApplicationLayer::associationTableObject(AssociationTableObject &assocTable
     _assocTable = &assocTable;
 }
 
-#pragma region TL Callbacks
+//#pragma region TL Callbacks
 
 void ApplicationLayer::dataGroupIndication(HopCountType hopType, Priority priority, uint16_t tsap, APDU &apdu)
 {
@@ -359,7 +359,7 @@ void ApplicationLayer::dataConnectedConfirm(uint16_t tsap, const SecurityControl
 {
     // FIXME: implement dataConnectedConfirm DataSecurity
 }
-#pragma endregion
+//#pragma endregion
 void ApplicationLayer::groupValueReadRequest(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl)
 {
     if (_assocTable == nullptr)
