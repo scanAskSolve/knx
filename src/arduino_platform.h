@@ -5,7 +5,7 @@
 
 #ifndef KNX_FLASH_SIZE
 #define KNX_FLASH_SIZE 1024
-#pragma warning "KNX_FLASH_SIZE not defined, using 1024"
+//#pragma warning "KNX_FLASH_SIZE not defined, using 1024"
 #endif
 #endif
 /*

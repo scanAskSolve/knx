@@ -34,7 +34,7 @@ public:
   // Note: without data secure feature, the application layer is just used with SecurityControl.dataSecurity = None
   // hooks that can be implemented by derived class (e.g. SecureApplicationLayer)
 
-#pragma region Transport - Layer - Callbacks
+//#pragma region Transport - Layer - Callbacks
   /**
    * Somebody send us an APDU via multicast communication. See 3.2 of @cite knx:3/3/4.
    * See also ApplicationLayer::dataGroupConfirm and TransportLayer::dataGroupRequest.
@@ -81,9 +81,9 @@ public:
   void connectConfirm(uint16_t destination, uint16_t tsap, bool status);
   void disconnectIndication(uint16_t tsap);
   void disconnectConfirm(Priority priority, uint16_t tsap, bool status);
-#pragma endregion
+//#pragma endregion
 
-#pragma region from bau
+//#pragma region from bau
   void groupValueReadRequest(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl);
   void groupValueReadResponse(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t *data, uint8_t dataLength);
   void groupValueWriteRequest(AckType ack, uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t *data, uint8_t dataLength);
@@ -156,10 +156,10 @@ public:
                                              const uint8_t *knxSerialNumber);
   void IndividualAddressSerialNumberReadResponse(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t *rfDoA,
                                                  const uint8_t *knxSerialNumber);
-#pragma endregion
+//#pragma endregion
 
 protected:
-#pragma region hooks
+//#pragma region hooks
   void dataGroupIndication(HopCountType hopType, Priority priority, uint16_t tsap, APDU &apdu, const SecurityControl &secCtrl);
   void dataGroupConfirm(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap,
                         APDU &apdu, const SecurityControl &secCtrl, bool status);
@@ -171,7 +171,7 @@ protected:
   void dataIndividualConfirm(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU &apdu, const SecurityControl &secCtrl, bool status);
   void dataConnectedIndication(Priority priority, uint16_t tsap, APDU &apdu, const SecurityControl &secCtrl);
   void dataConnectedConfirm(uint16_t tsap, const SecurityControl &secCtrl);
-#pragma endregion
+//#pragma endregion
 
   // to transport layer
   virtual void dataGroupRequest(AckType ack, HopCountType hopType, Priority priority, uint16_t tsap, APDU &apdu, const SecurityControl &secCtrl);
