@@ -333,7 +333,7 @@ void TableObject::initializeProperties(size_t propertiesSize, Property** propert
     memcpy(allProperties, properties, propertiesSize);
     memcpy(allProperties + propertyCount, ownProperties, sizeof(ownProperties));
 
-    interfaceObjectInitializeProperties(sizeof(allProperties), allProperties);
+    interfaceObject_initializeProperties(sizeof(allProperties), allProperties);
 }
 
 
@@ -447,7 +447,7 @@ void TableObject::state(PropertyID id, uint8_t* data, uint8_t length, uint8_t* r
     prop->state(data, length, resultData, resultLength);
 }
 
-void TableObject::interfaceObjectInitializeProperties(size_t propertiesSize, Property** properties)
+void TableObject::interfaceObject_initializeProperties(size_t propertiesSize, Property** properties)
 {
     _propertyCount = propertiesSize / sizeof(Property*);
     _properties = new Property*[_propertyCount];

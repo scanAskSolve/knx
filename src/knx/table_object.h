@@ -103,7 +103,7 @@ class TableObject
     virtual const uint8_t *interfaceObjectRestore(const uint8_t *buffer);
     virtual uint16_t interfaceObjectSaveSize();
 
-    virtual void interfaceObjectInitializeProperties(size_t propertiesSize, Property **properties);
+    void interfaceObject_initializeProperties(size_t propertiesSize, Property **properties);
 
     Property **_properties = nullptr;
     uint8_t _propertyCount = 0;
