@@ -9,7 +9,8 @@ typedef void (*BeforeTablesUnloadCallback)();
 /**
  * This class provides common functionality for interface objects that are configured by ETS with MemorWrite.
  */
-class TableObject: public InterfaceObject
+// class TableObject: public InterfaceObject
+class TableObject
 {
     //friend class Memory;
 
@@ -28,9 +29,9 @@ class TableObject: public InterfaceObject
      * This method returns the ::LoadState of the interface object.
      */
     LoadState loadState();
-    uint8_t* save(uint8_t* buffer) override;
-    const uint8_t* restore(const uint8_t* buffer) override;
-    uint16_t saveSize() override;
+    uint8_t* save(uint8_t* buffer) ;
+    const uint8_t* restore(const uint8_t* buffer) ;
+    uint16_t saveSize() ;
 
     static void beforeTablesUnloadCallback(BeforeTablesUnloadCallback func);
     static BeforeTablesUnloadCallback beforeTablesUnloadCallback();
@@ -53,7 +54,7 @@ class TableObject: public InterfaceObject
      */
     void errorCode(ErrorCode errorCode);
 
-    void initializeProperties(size_t propertiesSize, Property** properties) override;
+    void initializeProperties(size_t propertiesSize, Property** properties) ;
 
     static BeforeTablesUnloadCallback _beforeTablesUnload;
 
@@ -85,4 +86,25 @@ class TableObject: public InterfaceObject
      * The size of the memory block cannot be used because it is changed during alignment to page size.
      */
     uint32_t _size = 0;
+
+  public:
+    void readProperty(PropertyID id, uint16_t start, uint8_t& count, uint8_t* data);
+    void writeProperty(PropertyID id, uint16_t start, uint8_t* data, uint8_t& count);
+    uint8_t propertySize(PropertyID id);
+    void command(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t &resultLength);
+    void state(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t &resultLength);
+    void readPropertyDescription(uint8_t& propertyId, uint8_t& propertyIndex, bool& writeEnable, uint8_t& type, uint16_t& numberOfElements, uint8_t& access);
+
+    void masterReset(EraseCode eraseCode, uint8_t channel);
+    Property *property(PropertyID id);
+    const Property *property(PropertyID id) const;
+
+    virtual uint8_t *interfaceObjectSave(uint8_t *buffer);
+    virtual const uint8_t *interfaceObjectRestore(const uint8_t *buffer);
+    virtual uint16_t interfaceObjectSaveSize();
+
+    virtual void interfaceObjectInitializeProperties(size_t propertiesSize, Property **properties);
+
+    Property **_properties = nullptr;
+    uint8_t _propertyCount = 0;
 };
