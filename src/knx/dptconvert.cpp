@@ -1769,7 +1769,8 @@ void float16ToPayload(uint8_t* payload, size_t payload_length, int index, double
     if (wasNegative)
         mantissa *= -1;
 
-    // println(mantissa);
+    // print(mantissa);
+    //print("\r\n");
     
     signed16ToPayload(payload, payload_length, index, mantissa, mask);
     unsigned8ToPayload(payload, payload_length, index, exponent << 3, 0x78 & (mask >> 8));

@@ -241,7 +241,7 @@ void loadEraseblockContaining(uint32_t relativeAddress)
     int32_t blockNum = getEraseBlockNumberOf(relativeAddress);
     if (blockNum < 0)
     {
-        println("loadEraseblockContaining could not get valid eraseblock number");
+        print("loadEraseblockContaining could not get valid eraseblock number\r\n");
         fatalError();
     }
 
@@ -293,7 +293,7 @@ void ArduinoPlatform::registerFlashCallbacks(
     FlashCallbackWrite callbackFlashWrite,
     FlashCallbackCommit callbackFlashCommit)
     {
-        println("Set Callback");
+        print("Set Callback\r\n");
         _memoryType = Callback;
         _callbackFlashSize = callbackFlashSize;
         _callbackFlashRead = callbackFlashRead;

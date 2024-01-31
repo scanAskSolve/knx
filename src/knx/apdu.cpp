@@ -50,5 +50,5 @@ void APDU::printPDU()
         if (i) print(" ");
         print(_data[i], HEX);
     }
-    println();
+    print("\r\n");
 }

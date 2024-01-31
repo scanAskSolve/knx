@@ -23,21 +23,6 @@
 //---------------------------------------------
     void print(double);
 //---------------------------------------------
-//---------------------------------------------
-    void println(const char* s);
-    void println(char c);
-    void println(unsigned char, int = DEC);
-
-    void println(int, int = DEC);
-    void println(unsigned int, int = DEC);
-    void println(long, int = DEC);
-
-    void println(unsigned long, int = DEC);
-    void println(long long, int = DEC);
-    void println(unsigned long long, int = DEC);
-
-    void println(void);
-
     void printHex(const char* suffix, const uint8_t *data, size_t length, bool newline = true);
 
 #endif

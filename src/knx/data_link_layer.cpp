@@ -136,7 +136,7 @@ bool DataLinkLayer::sendTelegram(NPDU & npdu, AckType ack, uint16_t destinationA
 
     if (!frame.valid())
     {
-        println("invalid frame");
+        print("invalid frame\r\n");
         return false;
     }
 

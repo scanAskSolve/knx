@@ -42,7 +42,8 @@ void TEST_Function(){
       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
 
     print("LED_S: ");
-    println(LED_S);
+    print(LED_S);
+    print("\r\n");
 
   }
 
@@ -69,7 +70,7 @@ void setup() {
   // print values of parameters if device is already configured
   if (KNX_configured()) {
     // register callback for reset GO
-      println("configured START");
+      print("configured START\\");
 
       //goCurrent.dataPointType(DPT_Value_Temp);
       //SWITCH.callback(switchCallback);
@@ -77,18 +78,23 @@ void setup() {
       SWITCH1.dataPointType(DPT_Switch);
   
     print("knx.paramByte(0): ");
-    println(KNX_paramByte(0));
+    print(KNX_paramByte(0));
+    print("\r\n");
     print("knx.paramByte(1): ");
-    println(KNX_paramByte(1));
+    print(KNX_paramByte(1));
+    print("\r\n");
     print("knx.paramByte(2): ");
-    println(KNX_paramByte(2));
+    print(KNX_paramByte(2));
+    print("\r\n");
     print("knx.paramByte(3): ");
-    println(KNX_paramByte(3));
+    print(KNX_paramByte(3));
+    print("\r\n");
     print("knx.paramByte(4): ");
-    println(KNX_paramByte(4));
+    print(KNX_paramByte(4));
+    print("\r\n");
 
   }
-  println("configured PASS");
+  print("configured PASS\r\n");
 
   // pin or GPIO the programming led is connected to. Default is LED_BUILTIN
    KNX_ledPin(GPIOC, GPIO_PIN_13);
@@ -100,7 +106,7 @@ void setup() {
   // start the framework.
   KNX_start();
   
-  println("knx.start");
+  print("knx.start\r\n");
 }
 
 void loop() {

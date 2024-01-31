@@ -110,49 +110,50 @@ uint8_t BauSystemB::checkmasterResetValidity(EraseCode eraseCode, uint8_t channe
     {
     case EraseCode::ConfirmedRestart:
     {
-        println("Confirmed restart requested.");
+        print("Confirmed restart requested.\r\n");
         return successCode;
     }
     case EraseCode::ResetAP:
     {
         // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-        println("ResetAP requested. Not implemented yet.");
+        print("ResetAP requested. Not implemented yet.\r\n");
         return successCode;
     }
     case EraseCode::ResetIA:
     {
         // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-        println("ResetIA requested. Not implemented yet.");
+        print("ResetIA requested. Not implemented yet.\r\n");
         return successCode;
     }
     case EraseCode::ResetLinks:
     {
         // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-        println("ResetLinks requested. Not implemented yet.");
+        print("ResetLinks requested. Not implemented yet.\r\n");
         return successCode;
     }
     case EraseCode::ResetParam:
     {
         // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-        println("ResetParam requested. Not implemented yet.");
+        print("ResetParam requested. Not implemented yet.\r\n");
         return successCode;
     }
     case EraseCode::FactoryReset:
     {
         // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-        println("Factory reset requested. type: with IA");
+        print("Factory reset requested. type: with IA\r\n");
         return successCode;
     }
     case EraseCode::FactoryResetWithoutIA:
     {
         // TODO: increase download counter except for confirmed restart (PID_DOWNLOAD_COUNTER)
-        println("Factory reset requested. type: without IA");
+        print("Factory reset requested. type: without IA\r\n");
         return successCode;
     }
     default:
     {
         print("Unhandled erase code: ");
-        println(eraseCode, HEX);
+        print(eraseCode, HEX);
+        print("\r\n");
         return invalidEraseCode;
     }
     }
@@ -218,7 +219,7 @@ void BauSystemB::restartRequestIndication(Priority priority, HopCountType hopTyp
 {
     if (restartType == RestartType::BasicRestart)
     {
-        println("Basic restart requested");
+        print("Basic restart requested\r\n");
         if (_beforeRestart != 0)
             _beforeRestart();
     }
@@ -233,7 +234,7 @@ void BauSystemB::restartRequestIndication(Priority priority, HopCountType hopTyp
     else
     {
         // Cannot happen as restartType is just one bit
-        println("Unhandled restart type.");
+        print("Unhandled restart type.\r\n");
         fatalError();
     }
 
@@ -1794,7 +1795,7 @@ void BauSystemB::groupValueReadIndication(uint16_t asap, Priority priority, HopC
 
     if (secCtrl.dataSecurity != requiredGoSecurity)
     {
-        println("GroupValueRead: access denied due to wrong security flags");
+        print("GroupValueRead: access denied due to wrong security flags\r\n");
         return;
     }
 #endif
@@ -1841,7 +1842,7 @@ void BauSystemB::groupValueWriteIndication(uint16_t asap, Priority priority, Hop
 
     if (secCtrl.dataSecurity != requiredGoSecurity)
     {
-        println("GroupValueWrite: access denied due to wrong security flags");
+        print("GroupValueWrite: access denied due to wrong security flags\r\n");
         return;
     }
 #endif
@@ -2203,7 +2204,7 @@ bool BauSystemB::isAckRequired(uint16_t address, bool isGrpAddr)
 
     if (address == 0)
     {
-        println("Invalid broadcast detected: destination address is 0, but address type is \"individual\"");
+        print("Invalid broadcast detected: destination address is 0, but address type is \"individual\"\r\n");
     }
 
     return false;

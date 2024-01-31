@@ -135,12 +135,12 @@ void KNX_loop()
         _progLedState = KNX_progMode();
         if (_progLedState)
         {
-            println("progmode on");
+            print("progmode on\r\n");
             KNX_progLedOn();
         }
         else
         {
-            println("progmode off");
+            print("progmode off\r\n");
             KNX_progLedOff();
         }
     }

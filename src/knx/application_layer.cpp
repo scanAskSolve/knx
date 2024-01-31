@@ -99,7 +99,8 @@ void ApplicationLayer::dataGroupConfirm(AckType ack, HopCountType hopType, Prior
         break;
     default:
         print("datagroup-confirm: unhandled APDU-Type: ");
-        println(apdu.type());
+        print(apdu.type());
+        print("\r\n");
     }
 }
 
@@ -150,7 +151,8 @@ void ApplicationLayer::dataBroadcastIndication(HopCountType hopType, Priority pr
     }
     default:
         print("Broadcast-indication: unhandled APDU-Type: ");
-        println(apdu.type());
+        print(apdu.type());
+        print("\r\n");
         break;
     }
 }
@@ -197,7 +199,8 @@ void ApplicationLayer::dataBroadcastConfirm(AckType ack, HopCountType hopType, P
     }
     default:
         print("Broadcast-confirm: unhandled APDU-Type: ");
-        println(apdu.type());
+        print(apdu.type());
+        print("\r\n");
         break;
     }
 }
@@ -243,7 +246,8 @@ void ApplicationLayer::dataSystemBroadcastIndication(HopCountType hopType, Prior
     }
     default:
         print("SystemBroadcast-indication: unhandled APDU-Type: ");
-        println(apdu.type());
+        print(apdu.type());
+        print("\r\n");
         break;
     }
 }
@@ -289,7 +293,8 @@ void ApplicationLayer::dataSystemBroadcastConfirm(HopCountType hopType, Priority
     }
     default:
         print("SystemBroadcast-confirm: unhandled APDU-Type: ");
-        println(apdu.type());
+        print(apdu.type());
+        print("\r\n");
         break;
     }
 }
@@ -1166,7 +1171,8 @@ void ApplicationLayer::individualIndication(HopCountType hopType, Priority prior
     }
     default:
         print("Individual-indication: unhandled APDU-Type: ");
-        println(apdu.type());
+        print(apdu.type());
+        print("\r\n");
     }
 }
 
@@ -1277,7 +1283,8 @@ void ApplicationLayer::individualConfirm(AckType ack, HopCountType hopType, Prio
         break;
     default:
         print("Individual-confirm: unhandled APDU-Type: ");
-        println(apdu.type());
+        print(apdu.type());
+        print("\r\n");
     }
 }
 

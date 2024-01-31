@@ -13,13 +13,13 @@ Memory::~Memory()
 
 void Memory::readMemory()
 {
-    println("readMemory");
+    print("readMemory\r\n");
 
     uint8_t* flashStart = getNonVolatileMemoryStart();
     size_t flashSize = getNonVolatileMemorySize();
     if (flashStart == nullptr)
     {
-        println("no user flash available;");
+        print("no user flash available;\r\n");
         return;
     }
 
@@ -63,54 +63,60 @@ void Memory::readMemory()
         } 
         else 
         {
-            println("manufacturerId or hardwareType are different");
+            print("manufacturerId or hardwareType are different\r\n");
             print("expexted manufacturerId: ");
             print(_deviceObject.manufacturerId(), HEX);
             print(", stored manufacturerId: ");
-            println(manufacturerId, HEX);
+            print(manufacturerId, HEX);
+            print("\r\n");
             print("expexted hardwareType: ");
             printHex("", _deviceObject.hardwareType(), LEN_HARDWARE_TYPE);
             print(", stored hardwareType: ");
             printHex("", hardwareType, LEN_HARDWARE_TYPE);
-            println("");
+            print("\r\n");
         }
     } 
     else 
     {
-        println("DataObject api changed, any data stored in flash is invalid.");
+        print("DataObject api changed, any data stored in flash is invalid.\r\n");
         print("expexted DataObject api version: ");
         print(_deviceObject.apiVersion, HEX);
         print(", stored api version: ");
-        println(apiVersion, HEX);
+        print(apiVersion, HEX);
+        print("\r\n");
     }
 
     if (versionCheck == FlashAllInvalid)
     {
-        println("ETS has to reprogram PA and application!");
+        print("ETS has to reprogram PA and application!\r\n");
         return;
     }
 
-    println("restoring data from flash...");
+    print("restoring data from flash...\r\n");
     print("saverestores ");
-    println(_saveCount);
+    print(_saveCount);
+    print("\r\n");
     for (int i = 0; i < _saveCount; i++)
     {
-        println(flashStart - buffer);
-        println(".");
+        print(flashStart - buffer);
+        print("\r\n");
+        print(".\r\n");
         buffer = _saveRestores[i]->restore(buffer);
     }
-    println("restored saveRestores");
+    print("restored saveRestores\r\n");
     if (versionCheck == FlashTablesInvalid) 
     {
-        println("TableObjects are referring to an older firmware version and are not loaded");
+        print("TableObjects are referring to an older firmware version and are not loaded\r\n");
         return;
     }
     print("tableObjs ");
-    println(_tableObjCount);
+    print(_tableObjCount);
+    print("\r\n");
     for (int i = 0; i < _tableObjCount; i++)
     {
-        println(flashStart - buffer);
-        println(".");
+        print(flashStart - buffer);
+        print("\r\n");
+        print(".\r\n");
         buffer = _tableObjects[i]->restore(buffer);
         uint16_t memorySize = 0;
         buffer = popWord(memorySize, buffer);
@@ -121,7 +127,7 @@ void Memory::readMemory()
         // this works because TableObject saves a relative addr and restores it itself
         addNewUsedBlock(_tableObjects[i]->_data, memorySize);
     }
-    println("restored Tableobjects");
+    print("restored Tableobjects\r\n");
 }
 
 void Memory::writeMemory()
@@ -146,7 +152,8 @@ void Memory::writeMemory()
     flashPos = writeNonVolatileMemory(flashPos, buffer, bufferPos - buffer);
 
     print("save saveRestores ");
-    println(_saveCount);
+    print(_saveCount);
+    print("\r\n");
     for (int i = 0; i < _saveCount; i++)
     {
         bufferPos = _saveRestores[i]->save(buffer);
@@ -154,7 +161,8 @@ void Memory::writeMemory()
     }
 
     print("save tableobjs ");
-    println(_tableObjCount);
+    print(_tableObjCount);
+    print("\r\n");
     for (int i = 0; i < _tableObjCount; i++)
     {
         bufferPos = _tableObjects[i]->save(buffer);
@@ -165,7 +173,7 @@ void Memory::writeMemory()
             MemoryBlock* block = findBlockInList(_usedList, _tableObjects[i]->_data);
             if (block == nullptr)
             {
-                println("_data of TableObject not in _usedList");
+                print("_data of TableObject not in _usedList\r\n");
                 fatalError();
             }
             bufferPos = pushWord(block->size, bufferPos);
@@ -227,7 +235,7 @@ uint8_t* Memory::allocMemory(size_t size)
     }
     if (!blockToUse)
     {
-        println("No available non volatile memory!");
+        print("No available non volatile memory!\r\n");
         fatalError();
     }
 
@@ -267,7 +275,7 @@ void Memory::freeMemory(uint8_t* ptr)
     }
     if(!found)
     {
-        println("freeMemory for not used pointer called");
+        print("freeMemory for not used pointer called\r\n");
         fatalError();
     }
     removeFromUsedList(block);
@@ -302,7 +310,7 @@ MemoryBlock* Memory::removeFromList(MemoryBlock* head, MemoryBlock* item)
 
     if (!head || !item)
     {
-        println("invalid parameters of Memory::removeFromList");
+        print("invalid parameters of Memory::removeFromList\r\n");
         fatalError();
     }
 
@@ -321,7 +329,7 @@ MemoryBlock* Memory::removeFromList(MemoryBlock* head, MemoryBlock* item)
 
     if (!found)
     {
-        println("tried to remove block from list not in it");
+        print("tried to remove block from list not in it\r\n");
         fatalError();
     }
     item->next = nullptr;
@@ -442,13 +450,13 @@ void Memory::addNewUsedBlock(uint8_t* address, size_t size)
 
     if (smallerFreeBlock == nullptr)
     {
-        println("addNewUsedBlock: no smallerBlock found");
+        print("addNewUsedBlock: no smallerBlock found\r\n");
         fatalError();
     }
 
     if ((smallerFreeBlock->address + smallerFreeBlock->size) < (address + size))
     {
-        println("addNewUsedBlock: found block can't contain new block");
+        print("addNewUsedBlock: found block can't contain new block\r\n");
         fatalError();
     }
 

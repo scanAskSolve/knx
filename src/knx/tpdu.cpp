@@ -123,5 +123,6 @@ void TPDU::printPDU()
         if (i) print.print(" ");
         print.print(_data[i], HEX, 2);
     }
-    print.println()*/;
+    print.print("\r\n")
+    */;
 }
