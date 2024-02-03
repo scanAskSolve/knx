@@ -2,7 +2,7 @@
 #include "Print_Function.h"
 #include "knx/bits.h"
 //#include <EEPROM.h>
-#include "stm32_eeprom.h"
+//#include "stm32_eeprom.h"
 
 
 NvMemoryType _memoryType = Eeprom;
@@ -130,7 +130,7 @@ uint8_t * getEepromBuffer(uint32_t size)
     // check if the buffer already exists
     if (_eepromPtr == nullptr) // we need to initialize the buffer first
     {
-        if (size > E2END + 1)
+        if (size > FLASH_PAGE_SIZE_END + 1)
         {
             fatalError();
         }
@@ -139,7 +139,7 @@ uint8_t * getEepromBuffer(uint32_t size)
         _eepromPtr = new uint8_t[size];
         eeprom_memery_read_to_buffer();
         for (uint16_t i = 0; i < size; ++i)
-            _eepromPtr[i] = eeprom_buffered_read_byte(i);
+            _eepromPtr[i] = eeprom_buffered_read_one_byte(i);
     }
     
     return _eepromPtr;
@@ -356,7 +356,7 @@ void commitToEeprom()
     if(_eepromPtr == nullptr || _eepromSize == 0)
         return;
     for (uint16_t i = 0; i < _eepromSize; ++i)
-        eeprom_buffered_write_byte(i, _eepromPtr[i]);
+        eeprom_buffered_write_one_byte(i, _eepromPtr[i]);
     // For some GD32 chips, the flash needs to be unlocked twice
     // and the first call will fail. If the first call is
     // successful, the second one (inside eeprom_buffer_Write_to_memery)

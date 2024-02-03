@@ -57,18 +57,18 @@ extern "C" {
  */
 #define FLASH_PAGE_SIZE     ((uint32_t)(16*1024)) /* 16kB page */
 #endif
-#define E2END (FLASH_PAGE_SIZE - 1)
+#define FLASH_PAGE_SIZE_END (FLASH_PAGE_SIZE - 1)
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-uint8_t eeprom_read_byte(const uint32_t pos);
-void eeprom_write_byte(uint32_t pos, uint8_t value);
+uint8_t eeprom_read_one_byte(const uint32_t pos);
+void eeprom_write_one_byte(uint32_t pos, uint8_t value);
 
 void eeprom_memery_read_to_buffer();
 void eeprom_buffer_Write_to_memery();
-uint8_t eeprom_buffered_read_byte(const uint32_t pos);
-void eeprom_buffered_write_byte(uint32_t pos, uint8_t value);
+uint8_t eeprom_buffered_read_one_byte(const uint32_t pos);
+void eeprom_buffered_write_one_byte(uint32_t pos, uint8_t value);
 
 #ifdef __cplusplus
 }

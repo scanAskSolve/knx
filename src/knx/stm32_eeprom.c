@@ -137,17 +137,17 @@ static inline uint32_t get_flash_end(void)
 #endif
 #endif /* FLASH_BASE_ADDRESS */
 
-static uint8_t eeprom_buffer[E2END + 1] = {0};
+static uint8_t eeprom_buffer[FLASH_PAGE_SIZE_END + 1] = {0};
 
 /**
   * @brief  Function reads a byte from emulated eeprom (flash)
   * @param  pos : address to read
   * @retval byte : data read from eeprom
   */
-uint8_t eeprom_read_byte(const uint32_t pos)
+uint8_t eeprom_read_one_byte(const uint32_t pos)
 {
   eeprom_memery_read_to_buffer();
-  return eeprom_buffered_read_byte(pos);
+  return eeprom_buffered_read_one_byte(pos);
 }
 
 /**
@@ -156,9 +156,9 @@ uint8_t eeprom_read_byte(const uint32_t pos)
   * @param  value : value to write
   * @retval none
   */
-void eeprom_write_byte(uint32_t pos, uint8_t value)
+void eeprom_write_one_byte(uint32_t pos, uint8_t value)
 {
-  eeprom_buffered_write_byte(pos, value);
+  eeprom_buffered_write_one_byte(pos, value);
   eeprom_buffer_Write_to_memery();
 }
 
@@ -167,7 +167,7 @@ void eeprom_write_byte(uint32_t pos, uint8_t value)
   * @param  pos : address to read
   * @retval byte : data read from eeprom
   */
-uint8_t eeprom_buffered_read_byte(const uint32_t pos)
+uint8_t eeprom_buffered_read_one_byte(const uint32_t pos)
 {
   return eeprom_buffer[pos];
 }
@@ -178,7 +178,7 @@ uint8_t eeprom_buffered_read_byte(const uint32_t pos)
   * @param  value : value to write
   * @retval none
   */
-void eeprom_buffered_write_byte(uint32_t pos, uint8_t value)
+void eeprom_buffered_write_one_byte(uint32_t pos, uint8_t value)
 {
   eeprom_buffer[pos] = value;
 }
@@ -190,7 +190,7 @@ void eeprom_buffered_write_byte(uint32_t pos, uint8_t value)
   */
 void eeprom_memery_read_to_buffer(void)
 {
-  memcpy(eeprom_buffer, (uint8_t *)(FLASH_BASE_ADDRESS), E2END + 1);
+  memcpy(eeprom_buffer, (uint8_t *)(FLASH_BASE_ADDRESS), FLASH_PAGE_SIZE_END + 1);
 }
 
 /**
@@ -203,7 +203,7 @@ void eeprom_buffer_Write_to_memery(void)
   FLASH_EraseInitTypeDef EraseInitStruct;
   uint32_t offset = 0;
   uint32_t address = FLASH_BASE_ADDRESS;
-  uint32_t address_end = FLASH_BASE_ADDRESS + E2END;
+  uint32_t address_end = FLASH_BASE_ADDRESS + FLASH_PAGE_SIZE_END;
 #if defined (STM32F0xx) || defined (STM32F1xx) || defined (STM32F3xx) || \
     defined (STM32G0xx) || defined (STM32L0xx) || defined (STM32L1xx) ||\
      defined(STM32L4xx) || defined (STM32WBxx)
