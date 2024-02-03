@@ -4,14 +4,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
-//#if defined(ARDUINO_ARCH_STM32)
 #define getbyte(x,n) (*(((uint8_t*)&(x))+n))
 #define htons(x)  ( (getbyte(x,0)<<8) | getbyte(x,1) ) 
 #define htonl(x) ( (getbyte(x,0)<<24) | (getbyte(x,1)<<16) | (getbyte(x,2)<<8) | getbyte(x,3) )
 #define ntohs(x) htons(x)
 #define ntohl(x) htonl(x)
-//#endif
 
 #ifndef MIN
 #define MIN(a, b) ((a < b) ? (a) : (b))
@@ -24,7 +21,6 @@
 #ifndef ABS
 #define ABS(x)    ((x > 0) ? (x) : (-x))
 #endif
-#include <Arduino.h>
 
 const uint8_t* popByte(uint8_t& b, const uint8_t* data);
 const uint8_t* popWord(uint16_t& w, const uint8_t* data);

@@ -1,7 +1,9 @@
 #include "arduino_platform.h"
 #include "Print_Function.h"
 #include "knx/bits.h"
-#include <EEPROM.h>
+//#include <EEPROM.h>
+#include "stm32_eeprom.h"
+
 
 NvMemoryType _memoryType = Eeprom;
 int32_t _bufferedEraseblockNumber = -1;
@@ -135,7 +137,7 @@ uint8_t * getEepromBuffer(uint32_t size)
 
         _eepromSize = size;
         _eepromPtr = new uint8_t[size];
-        eeprom_buffer_fill();
+        eeprom_memery_read_to_buffer();
         for (uint16_t i = 0; i < size; ++i)
             _eepromPtr[i] = eeprom_buffered_read_byte(i);
     }
@@ -357,10 +359,10 @@ void commitToEeprom()
         eeprom_buffered_write_byte(i, _eepromPtr[i]);
     // For some GD32 chips, the flash needs to be unlocked twice
     // and the first call will fail. If the first call is
-    // successful, the second one (inside eeprom_buffer_flush)
+    // successful, the second one (inside eeprom_buffer_Write_to_memery)
     // does nothing.
     HAL_FLASH_Unlock();
-    eeprom_buffer_flush();
+    eeprom_buffer_Write_to_memery();
 }
 
 
