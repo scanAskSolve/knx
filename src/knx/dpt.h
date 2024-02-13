@@ -364,7 +364,7 @@ class Dpt
 {
   public:
     Dpt();
-    Dpt(short mainGroup, short subGroup, short index = 0);
+    Dpt(short _mainGroup, short _subGroup, short _index = 0);
     unsigned short mainGroup;
     unsigned short subGroup;
     unsigned short index;
