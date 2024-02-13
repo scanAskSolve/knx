@@ -7,10 +7,8 @@
 Dpt::Dpt()
 {}
 
-Dpt::Dpt(short _mainGroup, short _subGroup, short _index /* = 0 */)
-    //: mainGroup(_mainGroup), subGroup(_subGroup), index(_index)
+Dpt::Dpt(short _mainGroup, short _subGroup, short _index)
 {
-
     mainGroup = _mainGroup;
     subGroup = _subGroup;
     index = _index;
