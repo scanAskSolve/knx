@@ -43,8 +43,8 @@ HardwareSerial* knxUart()
 
 void setupUart()
 {
-    //_knxUart->begin(19200, SERIAL_8E1);
-    _knxUart->begin(38400, SERIAL_8N1);
+    _knxUart->begin(19200, SERIAL_8E1);
+    //_knxUart->begin(38400, SERIAL_8N1);
     while (!_knxUart) 
         ;
 }
