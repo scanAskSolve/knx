@@ -1,7 +1,5 @@
-//#include <cstring>
+// #include <cstring>
 #include "string.h"
-
-
 
 #include "interface_object.h"
 #include "property.h"
@@ -12,7 +10,7 @@ InterfaceObject::~InterfaceObject()
         delete[] _properties;
 }
 
-void InterfaceObject::readPropertyDescription(uint8_t& propertyId, uint8_t& propertyIndex, bool& writeEnable, uint8_t& type, uint16_t& numberOfElements, uint8_t& access)
+void InterfaceObject::readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &writeEnable, uint8_t &type, uint16_t &numberOfElements, uint8_t &access)
 {
     uint8_t count = _propertyCount;
 
@@ -20,7 +18,7 @@ void InterfaceObject::readPropertyDescription(uint8_t& propertyId, uint8_t& prop
     if (_properties == nullptr || count == 0)
         return;
 
-    Property* prop = nullptr;
+    Property *prop = nullptr;
 
     // from KNX spec. 03.03.07 Application Layer (page 56) - 3.4.3.3  A_PropertyDescription_Read-service
     // Summary: either propertyId OR propertyIndex, but not both at the same time
@@ -28,7 +26,7 @@ void InterfaceObject::readPropertyDescription(uint8_t& propertyId, uint8_t& prop
     {
         for (uint8_t i = 0; i < count; i++)
         {
-            Property* p = _properties[i];
+            Property *p = _properties[i];
             if (p->Id() != propertyId)
                 continue;
 
@@ -63,9 +61,9 @@ void InterfaceObject::masterReset(EraseCode eraseCode, uint8_t channel)
     // However, for the time being we provide an empty default implementation
 }
 
-void InterfaceObject::readProperty(PropertyID id, uint16_t start, uint8_t& count, uint8_t* data)
+void InterfaceObject::readProperty(PropertyID id, uint16_t start, uint8_t &count, uint8_t *data)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         count = 0;
@@ -75,9 +73,9 @@ void InterfaceObject::readProperty(PropertyID id, uint16_t start, uint8_t& count
     count = prop->read(start, count, data);
 }
 
-void InterfaceObject::writeProperty(PropertyID id, uint16_t start, uint8_t* data, uint8_t& count)
+void InterfaceObject::writeProperty(PropertyID id, uint16_t start, uint8_t *data, uint8_t &count)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         count = 0;
@@ -89,7 +87,7 @@ void InterfaceObject::writeProperty(PropertyID id, uint16_t start, uint8_t* data
 
 uint8_t InterfaceObject::propertySize(PropertyID id)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         return 0;
@@ -98,39 +96,40 @@ uint8_t InterfaceObject::propertySize(PropertyID id)
     return prop->ElementSize();
 }
 
-void InterfaceObject::command(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+void InterfaceObject::command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         resultLength = 0;
-        return;;
+        return;
+        ;
     }
 
     prop->command(data, length, resultData, resultLength);
 }
 
-void InterfaceObject::state(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+void InterfaceObject::state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         resultLength = 0;
-        return;;
+        return;
+        ;
     }
 
     prop->state(data, length, resultData, resultLength);
 }
 
-void InterfaceObject::initializeProperties(size_t propertiesSize, Property** properties)
+void InterfaceObject::initializeProperties(size_t propertiesSize, Property **properties)
 {
-    _propertyCount = propertiesSize / sizeof(Property*);
-    _properties = new Property*[_propertyCount];
+    _propertyCount = propertiesSize / sizeof(Property *);
+    _properties = new Property *[_propertyCount];
     memcpy(_properties, properties, propertiesSize);
 }
 
-
-Property* InterfaceObject::property(PropertyID id)
+Property *InterfaceObject::property(PropertyID id)
 {
     for (int i = 0; i < _propertyCount; i++)
         if (_properties[i]->Id() == id)
@@ -139,26 +138,24 @@ Property* InterfaceObject::property(PropertyID id)
     return nullptr;
 }
 
-
-uint8_t* InterfaceObject::save(uint8_t* buffer)
+uint8_t *InterfaceObject::save(uint8_t *buffer)
 {
     for (int i = 0; i < _propertyCount; i++)
     {
-        Property* prop = _properties[i];
+        Property *prop = _properties[i];
         if (!prop->WriteEnable())
             continue;
-        
+
         buffer = prop->save(buffer);
     }
     return buffer;
 }
 
-
-const uint8_t* InterfaceObject::restore(const uint8_t* buffer)
+const uint8_t *InterfaceObject::restore(const uint8_t *buffer)
 {
     for (int i = 0; i < _propertyCount; i++)
     {
-        Property* prop = _properties[i];
+        Property *prop = _properties[i];
         if (!prop->WriteEnable())
             continue;
 
@@ -167,14 +164,13 @@ const uint8_t* InterfaceObject::restore(const uint8_t* buffer)
     return buffer;
 }
 
-
 uint16_t InterfaceObject::saveSize()
 {
     uint16_t size = 0;
 
     for (int i = 0; i < _propertyCount; i++)
     {
-        Property* prop = _properties[i];
+        Property *prop = _properties[i];
         if (!prop->WriteEnable())
             continue;
 
@@ -183,25 +179,11 @@ uint16_t InterfaceObject::saveSize()
     return size;
 }
 
-
-const Property* InterfaceObject::property(PropertyID id) const
+const Property *InterfaceObject::property(PropertyID id) const
 {
     for (int i = 0; i < _propertyCount; i++)
         if (_properties[i]->Id() == id)
             return _properties[i];
 
-    return nullptr; 
+    return nullptr;
 }
-
-
-// const uint8_t* InterfaceObject::propertyData(PropertyID id)
-// {
-//     Property* prop = property(id);
-//     return prop->data();
-// }
-
-// const uint8_t* InterfaceObject::propertyData(PropertyID id, uint16_t elementIndex)
-// {
-//     Property* prop = property(id);
-//     return prop->data(elementIndex);
-// }

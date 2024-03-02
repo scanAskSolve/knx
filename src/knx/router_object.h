@@ -9,21 +9,21 @@ class Memory;
 
 enum CouplerModel
 {
-    Model_1x,
-    Model_20
+  Model_1x,
+  Model_20
 };
 
 enum RouterObjectType
 {
-    Primary,
-    Secondary,
-    Single     // Not used, just a placeholder for better readability for coupler model 1.x
+  Primary,
+  Secondary,
+  Single // Not used, just a placeholder for better readability for coupler model 1.x
 };
 
 class RouterObject : public TableObject
 {
 public:
-  RouterObject(Memory& memory);
+  RouterObject(Memory &memory);
 
   void initialize1x(DptMedium mediumType, uint16_t maxApduSize);
   void initialize20(uint8_t objIndex, DptMedium mediumType, RouterObjectType rtType, uint16_t maxApduSize);
@@ -34,18 +34,18 @@ public:
   bool isRfSbcRoutingEnabled();
   bool isIpSbcRoutingEnabled();
 
-  void masterReset(EraseCode eraseCode, uint8_t channel) ;
+  void masterReset(EraseCode eraseCode, uint8_t channel);
 
-  const uint8_t* restore(const uint8_t* buffer) ;
+  const uint8_t *restore(const uint8_t *buffer);
 
 protected:
-  void beforeStateChange(LoadState& newState) override;
+  void beforeStateChange(LoadState &newState) override;
 
 private:
   // Function properties
-  void functionRouteTableControl(bool isCommand, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength);
-  void functionRfEnableSbc(bool isCommand, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength);
-  void functionIpEnableSbc(bool isCommand, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength);
+  void functionRouteTableControl(bool isCommand, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+  void functionRfEnableSbc(bool isCommand, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+  void functionIpEnableSbc(bool isCommand, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
 
   void commandClearSetRoutingTable(bool bitIsSet);
   bool statusClearSetRoutingTable(bool bitIsSet);
@@ -54,5 +54,10 @@ private:
 
   bool _rfSbcRoutingEnabled = false;
   bool _ipSbcRoutingEnabled = false;
-  uint16_t* _filterTableGroupAddresses = 0;
+  uint16_t *_filterTableGroupAddresses = 0;
+
+  // public:
+  //   Property *property(PropertyID id);
+  //   Property **_properties = nullptr;
+  //   uint8_t _propertyCount = 0;
 };
