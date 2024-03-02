@@ -1,5 +1,5 @@
 #pragma once
-#include "c:\Users\alex1\Documents\Arduino\libraries\knx-master\src\knx\stm32_eeprom.h"
+#include ".\knx\stm32_eeprom.h"
 #include "Arduino.h"
 
 #ifndef KNX_FLASH_CALLBACK
