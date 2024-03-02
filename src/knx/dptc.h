@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct
 {
     unsigned short mainGroup;
@@ -382,3 +386,7 @@ int Dptc_equals(Dptc dptc1, Dptc dptc2);
 #define DPT_CombinedPosition Dptc_create(240, 800, 0)
 #define DPT_StatusSAB Dptc_create(241, 800, 0)
 #define DPT_Colour_RGBW Dptc_create(251, 600, 0)
+
+#ifdef __cplusplus
+}
+#endif
