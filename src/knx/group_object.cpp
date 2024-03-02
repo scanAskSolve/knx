@@ -7,7 +7,7 @@
 #ifdef SMALL_GROUPOBJECT
 GroupObjectUpdatedHandler GroupObject::_updateHandlerStatic = 0;
 #endif
-GroupObjectTableObject* GroupObject::_table = 0;
+GroupObjectTableObject *GroupObject::_table = 0;
 
 GroupObject::GroupObject()
 {
@@ -19,7 +19,7 @@ GroupObject::GroupObject()
 #endif
 }
 
-GroupObject::GroupObject(const GroupObject& other)
+GroupObject::GroupObject(const GroupObject &other)
 {
     _data = new uint8_t[other._dataLength];
     _commFlag = other._commFlag;
@@ -42,7 +42,7 @@ bool GroupObject::responseUpdateEnable()
     if (!_table)
         return false;
 
-    //return (_table->_tableData[_asap] && (0x0001 << 15)) ? 1 : 0;
+    // return (_table->_tableData[_asap] && (0x0001 << 15)) ? 1 : 0;
     return ((ntohs(_table->_tableData[_asap]) & (0x0001 << 15)) > 0) ? 1 : 0;
 }
 
@@ -90,16 +90,15 @@ bool GroupObject::communicationEnable()
     return ((ntohs(_table->_tableData[_asap]) & (0x0001 << 10)) > 0) ? 1 : 0;
 }
 
-
 Priority GroupObject::priority()
 {
     if (!_table)
         return LowPriority;
 
-    return (Priority)((ntohs(_table->_tableData[_asap]) >> 6) & (3 << 2)) ;
+    return (Priority)((ntohs(_table->_tableData[_asap]) >> 6) & (3 << 2));
 }
 
-uint8_t* GroupObject::valueRef()
+uint8_t *GroupObject::valueRef()
 {
     return _data;
 }
@@ -129,32 +128,31 @@ size_t GroupObject::asapValueSize(uint8_t code)
         return code - 6;
     switch (code)
     {
-        case 11:
-            return 6;
-        case 12:
-            return 8;
-        case 13:
-            return 10;
-        case 14:
-            return 14;
-        case 15:
-            return 5;
-        case 16:
-            return 7;
-        case 17:
-            return 9;
-        case 18:
-            return 11;
-        case 19:
-            return 12;
-        case 20:
-            return 13;
-        case 255:
-            return 252;
+    case 11:
+        return 6;
+    case 12:
+        return 8;
+    case 13:
+        return 10;
+    case 14:
+        return 14;
+    case 15:
+        return 5;
+    case 16:
+        return 7;
+    case 17:
+        return 9;
+    case 18:
+        return 11;
+    case 19:
+        return 12;
+    case 20:
+        return 13;
+    case 255:
+        return 252;
     }
     return -1;
 }
-
 
 ComFlag GroupObject::commFlag()
 {
@@ -198,7 +196,7 @@ void GroupObject::classCallback(GroupObjectUpdatedHandler handler)
     _updateHandlerStatic = handler;
 }
 
-void GroupObject::processClassCallback(GroupObject& ko)
+void GroupObject::processClassCallback(GroupObject &ko)
 {
     if (_updateHandlerStatic != 0)
         _updateHandlerStatic(ko);
@@ -210,70 +208,63 @@ void GroupObject::callback(GroupObjectUpdatedHandler handler)
     _updateHandler = handler;
 }
 
-
 GroupObjectUpdatedHandler GroupObject::callback()
 {
     return _updateHandler;
 }
 #endif
 
-void GroupObject::value(const KNXValue& value, const Dpt& type)
+void GroupObject::value(const KNXValue &value, const Dptc &type)
 {
     valueNoSend(value, type);
     objectWritten();
 }
 
-
-KNXValue GroupObject::value(const Dpt& type)
+KNXValue GroupObject::value(const Dptc &type)
 {
     KNXValue value = "";
     KNX_Decode_Value(_data, _dataLength, type, value);
     return value;
 }
 
-bool GroupObject::tryValue(KNXValue& value, const Dpt& type)
+bool GroupObject::tryValue(KNXValue &value, const Dptc &type)
 {
     return KNX_Decode_Value(_data, _dataLength, type, value);
 }
 
 #ifndef SMALL_GROUPOBJECT
-void GroupObject::dataPointType(Dpt value)
+void GroupObject::dataPointType(Dptc value)
 {
     _datapointType = value;
 }
 
-
-Dpt GroupObject::dataPointType()
+Dptc GroupObject::dataPointType()
 {
     return _datapointType;
 }
 
-
-bool GroupObject::tryValue(KNXValue& value)
+bool GroupObject::tryValue(KNXValue &value)
 {
     return tryValue(value, _datapointType);
 }
 
-
-void GroupObject::value(const KNXValue& value)
+void GroupObject::value(const KNXValue &value)
 {
     this->value(value, _datapointType);
 }
-
 
 KNXValue GroupObject::value()
 {
     return value(_datapointType);
 }
 
-
-void GroupObject::valueNoSend(const KNXValue& value)
+void GroupObject::valueNoSend(const KNXValue &value)
 {
     valueNoSend(value, _datapointType);
 }
 #endif
 
-void GroupObject::valueNoSend(const KNXValue& value, const Dpt& type)
+void GroupObject::valueNoSend(const KNXValue &value, const Dptc &type)
 {
     if (_commFlag == Uninitialized)
         _commFlag = Ok;
