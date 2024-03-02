@@ -70,13 +70,13 @@ uint8_t* TableObject::save(uint8_t* buffer)
 const uint8_t* TableObject::restore(const uint8_t* buffer)
 {
     uint8_t state = 0;
-    buffer = popByte(state, buffer);
+    buffer = popByte(&state, buffer);
     _state = (LoadState)state;
 
-    buffer = popInt(_size, buffer);
+    buffer = popInt(&_size, buffer);
 
     uint32_t relativeAddress = 0;
-    buffer = popInt(relativeAddress, buffer);
+    buffer = popInt(&relativeAddress, buffer);
 
     if (relativeAddress != 0)
         _data = _memory.toAbsolute(relativeAddress);

@@ -297,7 +297,7 @@ void CemiFrame::hopCount(uint8_t value)
 uint16_t CemiFrame::sourceAddress() const
 {
     uint16_t addr;
-    popWord(addr, _ctrl1 + 2);
+    popWord(&addr, _ctrl1 + 2);
     return addr;
 }
 
@@ -309,7 +309,7 @@ void CemiFrame::sourceAddress(uint16_t value)
 uint16_t CemiFrame::destinationAddress() const
 {
     uint16_t addr;
-    popWord(addr, _ctrl1 + 4);
+    popWord(&addr, _ctrl1 + 4);
     return addr;
 }
 

@@ -150,7 +150,7 @@ void CemiServer::frameReceived(CemiFrame& frame)
             print("M_PropRead_req: ");
             
             uint16_t objectType;
-            popWord(objectType, &frame.data()[1]);
+            popWord(&objectType, &frame.data()[1]);
             uint8_t objectInstance = frame.data()[3];
             uint8_t propertyId = frame.data()[4];
             uint8_t numberOfElements = frame.data()[5] >> 4;
@@ -229,7 +229,7 @@ void CemiServer::frameReceived(CemiFrame& frame)
             print("M_PropWrite_req: "); 
 
             uint16_t objectType;
-            popWord(objectType, &frame.data()[1]);
+            popWord(&objectType, &frame.data()[1]);
             uint8_t objectInstance = frame.data()[3];
             uint8_t propertyId = frame.data()[4];
             uint8_t numberOfElements = frame.data()[5] >> 4;

@@ -1577,7 +1577,7 @@ void BauSystemB::systemNetworkParameterReadIndication(Priority priority, HopCoun
 {
     uint8_t operand;
 
-    popByte(operand, testInfo + 1); // First byte (+ 0) contains only 4 reserved bits (0)
+    popByte(&operand, testInfo + 1); // First byte (+ 0) contains only 4 reserved bits (0)
 
     // See KNX spec. 3.5.2 p.33 (Management Procedures: Procedures with A_SystemNetworkParameter_Read)
     switch ((NmReadSerialNumberType)operand)

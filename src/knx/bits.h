@@ -3,6 +3,10 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 #define getbyte(x,n) (*(((uint8_t*)&(x))+n))
 #define htons(x)  ( (getbyte(x,0)<<8) | getbyte(x,1) ) 
@@ -22,9 +26,9 @@
 #define ABS(x)    ((x > 0) ? (x) : (-x))
 #endif
 
-const uint8_t* popByte(uint8_t& b, const uint8_t* data);
-const uint8_t* popWord(uint16_t& w, const uint8_t* data);
-const uint8_t* popInt(uint32_t& i, const uint8_t* data);
+const uint8_t* popByte(uint8_t* b, const uint8_t* data);
+const uint8_t* popWord(uint16_t* w, const uint8_t* data);
+const uint8_t* popInt(uint32_t* i, const uint8_t* data);
 const uint8_t* popByteArray(uint8_t* dst, uint32_t size, const uint8_t* data);
 uint8_t* pushByte(uint8_t b, uint8_t* data);
 uint8_t* pushWord(uint16_t w, uint8_t* data);
@@ -45,4 +49,8 @@ enum ParameterFloatEncodings
     Float_Enc_IEEE754Single = 1, // 4 Byte. C++ float
     Float_Enc_IEEE754Double = 2, // 8 Byte. C++ double
 };
+#ifdef __cplusplus
+}
+#endif
+
 
