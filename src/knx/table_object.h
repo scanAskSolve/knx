@@ -1,8 +1,61 @@
 #pragma once
 
-#include "interface_object.h"
+#include "stddef.h"
 #include "property.h"
+#include "knx_types.h"
 class Memory;
+
+/** Enum for the type of an interface object. See Section 2.2 of knx:3/7/3 */
+enum ObjectType
+{
+  /** Device object. */
+  OT_DEVICE = 0,
+
+  /** Address table object. */
+  OT_ADDR_TABLE = 1,
+
+  /** Association table object. */
+  OT_ASSOC_TABLE = 2,
+
+  /** Application program object. */
+  OT_APPLICATION_PROG = 3,
+
+  /** Interface program object. */
+  OT_INTERFACE_PROG = 4,
+
+  /** KNX - Object Associationtable. */
+  OT_OJB_ASSOC_TABLE = 5,
+
+  /** Router Object */
+  OT_ROUTER = 6,
+
+  /** LTE Address Routing Table Object */
+  OT_LTE_ADDR_ROUTING_TABLE = 7,
+
+  /** cEMI Server Object */
+  OT_CEMI_SERVER = 8,
+
+  /** Group Object Table Object */
+  OT_GRP_OBJ_TABLE = 9,
+
+  /** Polling Master */
+  OT_POLLING_MASTER = 10,
+
+  /** KNXnet/IP Parameter Object */
+  OT_IP_PARAMETER = 11,
+
+  /** Reserved. Shall not be used. */
+  OT_RESERVED = 12,
+
+  /** File Server Object */
+  OT_FILE_SERVER = 13,
+
+  /** Security Interface Object */
+  OT_SECURITY = 17,
+
+  /** RF Medium Object */
+  OT_RF_MEDIUM = 19
+};
 
 typedef void (*BeforeTablesUnloadCallback)();
 

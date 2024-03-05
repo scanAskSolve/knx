@@ -1,6 +1,10 @@
 #pragma once
+#include "string.h"
 
-#include "interface_object.h"
+#include "bits.h"
+#include "property.h"
+#include "config.h"
+#include "table_object.h"
 
 #define LEN_HARDWARE_TYPE 6
 

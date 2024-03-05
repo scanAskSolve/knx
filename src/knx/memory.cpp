@@ -22,7 +22,12 @@ void Memory::readMemory()
         print("no user flash available;\r\n");
         return;
     }
-
+    //print("flashStart:");
+    //print(flashStart);
+    //print("\r\n");
+    print("_metadataSize:");
+    print(_metadataSize);
+    print("\r\n");
     printHex("RESTORED ", flashStart, _metadataSize);
 
     uint16_t metadataBlockSize = alignToPageSize(_metadataSize);
