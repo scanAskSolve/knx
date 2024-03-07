@@ -265,7 +265,7 @@ void TableObject::errorCode(ErrorCode errorCode)
 
 uint16_t TableObject::saveSize()
 {
-    return 5 + intergaceSaveSize() + sizeof(_size);
+    return 5 + interfaceSaveSize() + sizeof(_size);
 }
 
 void TableObject::initializeProperties(size_t propertiesSize, Property **properties)

@@ -1,13 +1,11 @@
 #include "config.h"
 
-// #include <cstring>
 #include "string.h"
 
 #include "router_object.h"
 #include "bits.h"
 #include "memory.h"
 #include "property.h"
-// #include "function_property.h"
 
 // Filter Table Realization Type 3
 // The Filter Table Realisation Type 3 shall be organised as a memory mapped bit-field of
@@ -344,8 +342,8 @@ void RouterObject::functionRouteTableControl(bool isCommand, uint8_t *data, uint
         {
             uint16_t startAddress;
             uint16_t endAddress;
-            popWord(startAddress, &data[2]);
-            popWord(endAddress, &data[4]);
+            popWord(&startAddress, &data[2]);
+            popWord(&endAddress, &data[4]);
             commandClearSetGroupAddress(startAddress, endAddress, false);
             resultData[0] = ReturnCodes::Success;
             resultData[1] = srvId;
@@ -358,8 +356,8 @@ void RouterObject::functionRouteTableControl(bool isCommand, uint8_t *data, uint
         {
             uint16_t startAddress;
             uint16_t endAddress;
-            popWord(startAddress, &data[2]);
-            popWord(endAddress, &data[4]);
+            popWord(&startAddress, &data[2]);
+            popWord(&endAddress, &data[4]);
             commandClearSetGroupAddress(startAddress, endAddress, true);
             resultData[0] = ReturnCodes::Success;
             resultData[1] = srvId;
@@ -388,8 +386,8 @@ void RouterObject::functionRouteTableControl(bool isCommand, uint8_t *data, uint
         {
             uint16_t startAddress;
             uint16_t endAddress;
-            popWord(startAddress, &data[2]);
-            popWord(endAddress, &data[4]);
+            popWord(&startAddress, &data[2]);
+            popWord(&endAddress, &data[4]);
             resultData[0] = statusClearSetGroupAddress(startAddress, endAddress, false) ? ReturnCodes::Success : ReturnCodes::GenericError;
             resultData[1] = srvId;
             pushWord(startAddress, &resultData[2]);
@@ -401,8 +399,8 @@ void RouterObject::functionRouteTableControl(bool isCommand, uint8_t *data, uint
         {
             uint16_t startAddress;
             uint16_t endAddress;
-            popWord(startAddress, &data[2]);
-            popWord(endAddress, &data[4]);
+            popWord(&startAddress, &data[2]);
+            popWord(&endAddress, &data[4]);
             resultData[0] = statusClearSetGroupAddress(startAddress, endAddress, true) ? ReturnCodes::Success : ReturnCodes::GenericError;
             resultData[1] = srvId;
             pushWord(startAddress, &resultData[2]);

@@ -35,7 +35,8 @@
         "valarray": "cpp",
         "chrono": "cpp",
         "forward_list": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "bits.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
