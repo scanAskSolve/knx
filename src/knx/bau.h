@@ -1,7 +1,7 @@
 #pragma once
 #include "stdint.h"
 #include "knx_types.h"
-#include "interface_object.h"
+#include "table_object.h"
 
 typedef void (*BeforeRestartCallback)(void);
 typedef bool (*FunctionPropertyCallback)(uint8_t objectIndex, uint8_t propertyId, uint8_t length, uint8_t *data, uint8_t *resultData, uint8_t &resultLength);

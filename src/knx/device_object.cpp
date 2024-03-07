@@ -1,10 +1,6 @@
 // #include <cstring>
-#include "string.h"
 
 #include "device_object.h"
-#include "bits.h"
-#include "property.h"
-#include "config.h"
 
 #define LEN_KNX_SERIAL 6
 
