@@ -82,9 +82,9 @@ public:
    * This method returns the ::LoadState of the interface object.
    */
   LoadState loadState();
-  uint8_t *save(uint8_t *buffer);
-  const uint8_t *restore(const uint8_t *buffer);
-  uint16_t saveSize();
+  virtual uint8_t *save(uint8_t *buffer);
+  virtual const uint8_t *restore(const uint8_t *buffer);
+  virtual uint16_t saveSize();
 
   static void beforeTablesUnloadCallback(BeforeTablesUnloadCallback func);
   static BeforeTablesUnloadCallback beforeTablesUnloadCallback();
@@ -141,7 +141,7 @@ public:
   uint32_t _size = 0;
 
 public:
-  uint16_t intergaceSaveSize();
+  uint16_t interfaceSaveSize();
   void interfaceInitializeProperties(size_t propertiesSize, Property **properties);
   Property *property(PropertyID id);
   Property **_properties = nullptr;

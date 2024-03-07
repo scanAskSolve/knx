@@ -3,7 +3,6 @@
 #include "table_object.h"
 #include "bits.h"
 #include "memory.h"
-#include "property.h"
 
 BeforeTablesUnloadCallback TableObject::_beforeTablesUnload = 0;
 uint8_t TableObject::_tableUnloadCount = 0;
@@ -346,7 +345,7 @@ void TableObject::interfaceInitializeProperties(size_t propertiesSize, Property 
     _properties = new Property *[_propertyCount];
     memcpy(_properties, properties, propertiesSize);
 }
-uint16_t TableObject::intergaceSaveSize()
+uint16_t TableObject::interfaceSaveSize()
 {
     uint16_t size = 0;
 
