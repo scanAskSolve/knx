@@ -21,18 +21,18 @@ enum ComFlag
 class GroupObject;
 
 #ifndef HAS_FUNCTIONAL
-# if defined(ARDUINO_ARCH_STM32)
-#  define HAS_FUNCTIONAL    1
-# else
-#  define HAS_FUNCTIONAL   0
-# endif
+#if defined(ARDUINO_ARCH_STM32)
+#define HAS_FUNCTIONAL 1
+#else
+#define HAS_FUNCTIONAL 0
+#endif
 #endif
 
 #if HAS_FUNCTIONAL
 #include <functional>
-typedef std::function<void(GroupObject&)> GroupObjectUpdatedHandler;
+typedef std::function<void(GroupObject &)> GroupObjectUpdatedHandler;
 #else
-typedef void (*GroupObjectUpdatedHandler)(GroupObject& go);
+typedef void (*GroupObjectUpdatedHandler)(GroupObject &go);
 #endif
 
 /**
@@ -40,9 +40,9 @@ typedef void (*GroupObjectUpdatedHandler)(GroupObject& go);
  */
 class GroupObject
 {
-    //friend class GroupObjectTableObject;
+    // friend class GroupObjectTableObject;
 
-  public:
+public:
     /**
      * The constructor.
      */
@@ -50,7 +50,7 @@ class GroupObject
     /**
      * The copy constructor.
      */
-    GroupObject(const GroupObject& other);
+    GroupObject(const GroupObject &other);
     /**
      * The destructor.
      */
@@ -97,38 +97,38 @@ class GroupObject
     void commFlag(ComFlag value);
 
     /**
-    * Request the read of a communication object. Calling this function triggers the
-    * sending of a read-group-value telegram, to read the value of the communication
-    * object from the bus.
-    *
-    * When the answer is received, the communication object's value will be updated.
-    *
-    * This sets the state of the group objecte to ::ReadRequest
-    */
+     * Request the read of a communication object. Calling this function triggers the
+     * sending of a read-group-value telegram, to read the value of the communication
+     * object from the bus.
+     *
+     * When the answer is received, the communication object's value will be updated.
+     *
+     * This sets the state of the group objecte to ::ReadRequest
+     */
     void requestObjectRead();
     /**
-    * Mark a communication object as written. Calling this
-    * function triggers the sending of a write-group-value telegram.
-    *
-    * This sets the state of the group object to ::WriteRequest
-    */
+     * Mark a communication object as written. Calling this
+     * function triggers the sending of a write-group-value telegram.
+     *
+     * This sets the state of the group object to ::WriteRequest
+     */
     void objectWritten();
 
     /**
-     * returns the size of the group object in Byte. For Group objects with size smaller than 1 byte (for example Dpt 1) this method
+     * returns the size of the group object in Byte. For Group objects with size smaller than 1 byte (for example Dptc 1) this method
      * will return 1.
      */
     size_t valueSize();
     /**
-     * returns the size of the group object in Byte as it is in a telegram. For Group objects with size smaller than 1 byte (for example Dpt 1) this method
+     * returns the size of the group object in Byte as it is in a telegram. For Group objects with size smaller than 1 byte (for example Dptc 1) this method
      * will return 0.
      */
     size_t sizeInTelegram();
     /**
-     * returns the pointer to the value of the group object. This can be used if a datapoint type is not supported or if you want do 
+     * returns the pointer to the value of the group object. This can be used if a datapoint type is not supported or if you want do
      * your own conversion.
      */
-    uint8_t* valueRef();
+    uint8_t *valueRef();
     /**
      * returns the Application Service Access Point of the group object. In reality this is just the number of the group object.
      * (in german "KO-Nr")
@@ -149,33 +149,33 @@ class GroupObject
      * return the current value of the group object.
      * @param type the datapoint type used for the conversion. If this doesn't fit to the group object the returned value is invalid.
      */
-    KNXValue value(const Dpt& type);
+    KNXValue value(const Dptc &type);
     /**
      * set the current value of the group object and changes the state of the group object to ::WriteRequest.
      * @param value the value the group object is set to
      * @param type the datapoint type used for the conversion.
-     * 
+     *
      * The parameters must fit the group object. Otherwise it will stay unchanged.
      */
-    void value(const KNXValue& value, const Dpt& type);
+    void value(const KNXValue &value, const Dptc &type);
     /**
      * set the current value of the group object.
      * @param value the value the group object is set to
      * @param type the datapoint type used for the conversion.
-     * 
+     *
      * The parameters must fit the group object. Otherwise it will stay unchanged.
      */
-    void valueNoSend(const KNXValue& value, const Dpt& type);
+    void valueNoSend(const KNXValue &value, const Dptc &type);
     /**
      * set the current value of the group object.
      * @param value the value the group object is set to
      * @param type the datapoint type used for the conversion.
-     * 
+     *
      * The parameters must fit the group object. Otherwise it will stay unchanged.
-     * 
+     *
      * @returns true if the value of the group object was changed successfully.
      */
-    bool tryValue(KNXValue& value, const Dpt& type);
+    bool tryValue(KNXValue &value, const Dptc &type);
 
 #ifndef SMALL_GROUPOBJECT
     /**
@@ -186,49 +186,49 @@ class GroupObject
     /**
      * set the current value of the group object and changes the state of the group object to ::WriteRequest.
      * @param value the value the group object is set to
-     * 
+     *
      * The parameters must fit the group object and dhe datapoint type must be set with dataPointType(). Otherwise it will stay unchanged.
      */
-    void value(const KNXValue& value);
+    void value(const KNXValue &value);
     /**
      * set the current value of the group object.
      * @param value the value the group object is set to
-     * 
+     *
      * The parameters must fit the group object and dhe datapoint type must be set with dataPointType(). Otherwise it will stay unchanged.
      */
-    void valueNoSend(const KNXValue& value);
+    void valueNoSend(const KNXValue &value);
     /**
      * set the current value of the group object.
      * @param value the value the group object is set to
-     * 
+     *
      * The parameters must fit the group object and dhe datapoint type must be set with dataPointType(). Otherwise it will stay unchanged.
-     * 
+     *
      * @returns true if the value of the group object was changed successfully.
      */
-    bool tryValue(KNXValue& value);
+    bool tryValue(KNXValue &value);
 
     /**
      * returns the currently configured datapoint type.
      */
-    Dpt dataPointType();
+    Dptc dataPointType();
     /**
      * sets the datapoint type of the group object.
      */
-    void dataPointType(Dpt value);
+    void dataPointType(Dptc value);
 #else
     /**
-     * Alternative callback processing: register one global callback for all group object. 
+     * Alternative callback processing: register one global callback for all group object.
      * The registered callback will be called if any group object was changed from the bus.
      * The callback method has to dispatch to the correct handler for this group object.
      */
     static GroupObjectUpdatedHandler classCallback();
     static void classCallback(GroupObjectUpdatedHandler handler);
-    static void processClassCallback(GroupObject& ko);
+    static void processClassCallback(GroupObject &ko);
 #endif
 
-  //private:
-    // class members
-    static GroupObjectTableObject* _table;
+    // private:
+    //  class members
+    static GroupObjectTableObject *_table;
 #ifdef SMALL_GROUPOBJECT
     static GroupObjectUpdatedHandler _updateHandlerStatic;
 #endif
@@ -237,10 +237,10 @@ class GroupObject
     size_t goSize();
     uint16_t _asap = 0;
     ComFlag _commFlag = Uninitialized;
-    uint8_t* _data = 0;
+    uint8_t *_data = 0;
     uint8_t _dataLength = 0;
 #ifndef SMALL_GROUPOBJECT
     GroupObjectUpdatedHandler _updateHandler;
-    Dpt _datapointType;
+    Dptc _datapointType;
 #endif
 };
