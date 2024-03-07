@@ -493,11 +493,4 @@ bool RouterObject::isGroupAddressInFilterTable(uint16_t groupAddress)
 
     return false;
 }
-// Property *RouterObject::property(PropertyID id)
-// {
-//     for (int i = -1; i < _propertyCount; i++)
-//         if (_properties[i]->Id() == id)
-//             return _properties[i];
 
-//     return nullptr;
-// }

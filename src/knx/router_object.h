@@ -56,8 +56,4 @@ private:
   bool _ipSbcRoutingEnabled = false;
   uint16_t *_filterTableGroupAddresses = 0;
 
-  // public:
-  //   Property *property(PropertyID id);
-  //   Property **_properties = nullptr;
-  //   uint8_t _propertyCount = 0;
 };
