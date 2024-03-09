@@ -11,10 +11,8 @@ enum NmReadSerialNumberType
     NM_Read_SerialNumber_By_ManufacturerSpecific = 0xFE,
 };
 
-static constexpr auto kFunctionPropertyResultBufferMaxSize = 0xFF; //EDA Fix V1.4
+static constexpr auto kFunctionPropertyResultBufferMaxSize = 0xFF; // EDA Fix V1.4
 static constexpr auto kRestartProcessTime = 3;
-
-
 
 BauSystemB::BauSystemB()
     : _memory(_deviceObj), _appProgram(_memory),
@@ -26,7 +24,7 @@ BauSystemB::BauSystemB()
       _appLayer(*this),
 #endif
       _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device),
-      _dlLayer(_deviceObj, _netLayer.getInterface(),  (ITpUartCallBacks &)*this)
+      _dlLayer(_deviceObj, _netLayer.getInterface(), (ITpUartCallBacks &)*this)
 
 #ifdef USE_CEMI_SERVER
       ,
@@ -89,7 +87,6 @@ void BauSystemB::writeMemory()
 {
     _memory.writeMemory();
 }
-
 
 ApplicationProgramObject &BauSystemB::parameters()
 {
@@ -315,7 +312,7 @@ void BauSystemB::propertyValueWriteIndication(Priority priority, HopCountType ho
                                               uint8_t propertyId, uint8_t numberOfElements, uint16_t startIndex, uint8_t *data, uint8_t length)
 {
     // InterfaceObject *obj = getInterfaceObject(objectIndex);
-switch (objectIndex)
+    switch (objectIndex)
     {
     case 0:
         _deviceObj.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
@@ -404,7 +401,7 @@ void BauSystemB::propertyValueReadIndication(Priority priority, HopCountType hop
     uint8_t size = 0;
     uint8_t elementCount = numberOfElements;
     // InterfaceObject *obj = getInterfaceObject(objectIndex);
-switch (objectIndex)
+    switch (objectIndex)
     {
         uint8_t elementSize;
     case 0:
@@ -486,10 +483,10 @@ switch (objectIndex)
         break;
 #endif
     default:
-        elementCount=0;
+        elementCount = 0;
     }
-uint8_t data[size];
- switch (objectIndex)
+    uint8_t data[size];
+    switch (objectIndex)
     {
     case 0:
         _deviceObj.readProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
@@ -524,7 +521,7 @@ uint8_t data[size];
         _secIfObj.writeProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
         break;
 #endif
-    }   
+    }
     if (elementCount == 0)
         size = 0;
 
@@ -651,7 +648,7 @@ void BauSystemB::functionPropertyCommandIndication(Priority priority, HopCountTy
     bool handled = false;
 
     // InterfaceObject *obj = getInterfaceObject(objectIndex);
-switch (objectIndex)
+    switch (objectIndex)
     {
     case 0:
         if (_deviceObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
@@ -782,7 +779,7 @@ switch (objectIndex)
                 handled = true;
     }
 
-        // only return a value it was handled by a property or function
+    // only return a value it was handled by a property or function
     if (handled)
         applicationLayer().functionPropertyStateResponse(AckRequested, priority, hopType, asap, secCtrl, objectIndex, propertyId, resultData, resultLength);
 }
@@ -796,7 +793,7 @@ void BauSystemB::functionPropertyStateIndication(Priority priority, HopCountType
     bool handled = true;
 
     // InterfaceObject *obj = getInterfaceObject(objectIndex);
-switch (objectIndex)
+    switch (objectIndex)
     {
     case 0:
         if (_deviceObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
@@ -877,10 +874,10 @@ switch (objectIndex)
             if (_functionPropertyState != 0)
                 if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
                     handled = true;
-        } 
+        }
         break;
     case 7:
-       if (_cemiServerObject.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
+        if (_cemiServerObject.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
         {
             _cemiServerObject.state((PropertyID)propertyId, data, length, resultData, resultLength);
             handled = true;
@@ -925,7 +922,6 @@ switch (objectIndex)
         if (_functionPropertyState != 0)
             if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
                 handled = true;
-
     }
 
     // only return a value it was handled by a property or function
@@ -940,11 +936,11 @@ void BauSystemB::functionPropertyExtCommandIndication(Priority priority, HopCoun
     uint8_t resultLength = 1; // we always have to include the return code at least
 
     // InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
-switch (objectType)
+    switch (objectType)
     {
         PropertyDataType propType;
     case OT_DEVICE:
-         propType = _deviceObj.property((PropertyID)propertyId)->Type();
+        propType = _deviceObj.property((PropertyID)propertyId)->Type();
 
         if (propType == PDT_FUNCTION)
         {
@@ -1187,7 +1183,7 @@ switch (objectType)
 #endif
 #ifdef USE_CEMI_SERVER
     case OT_CEMI_SERVER:
-         propType = _cemiServerObject.property((PropertyID)propertyId)->Type();
+        propType = _cemiServerObject.property((PropertyID)propertyId)->Type();
 
         if (propType == PDT_FUNCTION)
         {
@@ -1241,10 +1237,10 @@ void BauSystemB::functionPropertyExtStateIndication(Priority priority, HopCountT
     uint8_t resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
     PropertyDataType propType;
     // InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
-switch (objectType)
+    switch (objectType)
     {
     case OT_DEVICE:
-         propType = _deviceObj.property((PropertyID)propertyId)->Type();
+        propType = _deviceObj.property((PropertyID)propertyId)->Type();
 
         if (propType == PDT_FUNCTION)
         {
@@ -1273,10 +1269,10 @@ switch (objectType)
         {
             resultData[0] = ReturnCodes::DataTypeConflict;
         }
-       break;
+        break;
 
     case OT_ADDR_TABLE:
-propType = _addrTable.property((PropertyID)propertyId)->Type();
+        propType = _addrTable.property((PropertyID)propertyId)->Type();
 
         if (propType == PDT_FUNCTION)
         {
@@ -1305,10 +1301,10 @@ propType = _addrTable.property((PropertyID)propertyId)->Type();
         {
             resultData[0] = ReturnCodes::DataTypeConflict;
         }
-       break;
+        break;
 
     case OT_ASSOC_TABLE:
-propType = _assocTable.property((PropertyID)propertyId)->Type();
+        propType = _assocTable.property((PropertyID)propertyId)->Type();
 
         if (propType == PDT_FUNCTION)
         {
@@ -1337,9 +1333,9 @@ propType = _assocTable.property((PropertyID)propertyId)->Type();
         {
             resultData[0] = ReturnCodes::DataTypeConflict;
         }
-       break;
+        break;
     case OT_GRP_OBJ_TABLE:
-propType = _groupObjTable.property((PropertyID)propertyId)->Type();
+        propType = _groupObjTable.property((PropertyID)propertyId)->Type();
 
         if (propType == PDT_FUNCTION)
         {
@@ -1368,10 +1364,10 @@ propType = _groupObjTable.property((PropertyID)propertyId)->Type();
         {
             resultData[0] = ReturnCodes::DataTypeConflict;
         }
-       break;
+        break;
 
     case OT_APPLICATION_PROG:
-propType = _appProgram.property((PropertyID)propertyId)->Type();
+        propType = _appProgram.property((PropertyID)propertyId)->Type();
 
         if (propType == PDT_FUNCTION)
         {
@@ -1400,11 +1396,11 @@ propType = _appProgram.property((PropertyID)propertyId)->Type();
         {
             resultData[0] = ReturnCodes::DataTypeConflict;
         }
-       break;
+        break;
 
 #ifdef USE_DATASECURE
     case OT_SECURITY:
-propType = _secIfObj.property((PropertyID)propertyId)->Type();
+        propType = _secIfObj.property((PropertyID)propertyId)->Type();
 
         if (propType == PDT_FUNCTION)
         {
@@ -1412,7 +1408,7 @@ propType = _secIfObj.property((PropertyID)propertyId)->Type();
             uint8_t reservedByte = data[0];
             if (reservedByte != 0x00)
             {
-                resul/tData[0] = ReturnCodes::DataVoid;
+                resul / tData[0] = ReturnCodes::DataVoid;
             }
             else
             {
@@ -1433,13 +1429,13 @@ propType = _secIfObj.property((PropertyID)propertyId)->Type();
         {
             resultData[0] = ReturnCodes::DataTypeConflict;
         }
-       break;
+        break;
 
     else
 #endif
 #ifdef USE_CEMI_SERVER
         case OT_CEMI_SERVER:
-propType = _cemiServerObject.property((PropertyID)propertyId)->Type();
+        propType = _cemiServerObject.property((PropertyID)propertyId)->Type();
 
         if (propType == PDT_FUNCTION)
         {
@@ -1468,13 +1464,13 @@ propType = _cemiServerObject.property((PropertyID)propertyId)->Type();
         {
             resultData[0] = ReturnCodes::DataTypeConflict;
         }
-       break;
+        break;
 
 #endif
     default:
         resultData[0] = ReturnCodes::GenericError;
     }
-    
+
     applicationLayer().functionPropertyExtStateResponse(AckRequested, priority, hopType, asap, secCtrl, objectType, objectInstance, propertyId, resultData, resultLength);
 }
 
@@ -1616,9 +1612,9 @@ void BauSystemB::propertyValueRead(ObjectType objectType, uint8_t objectInstance
     uint8_t elementCount = numberOfElements;
 
     // InterfaceObject *obj = getInterfaceObject(objectType, objectInstance);
-switch (objectType)
+    switch (objectType)
     {
-uint8_t elementSize;
+        uint8_t elementSize;
     case OT_DEVICE:
         elementSize = _deviceObj.propertySize((PropertyID)propertyId);
         if (startIndex > 0)

@@ -14,13 +14,12 @@
 #define KNX_LED_ACTIVE_ON GPIO_PIN_RESET
 #define KNX_BUTTON -1
 
-
 typedef struct
 {
-    GPIO_TypeDef *GPIOx; 
+    GPIO_TypeDef *GPIOx;
     uint16_t GPIO_Pin;
 } GPIO_infoTypeDef;
-//void KNX_initKnxFacade(HardwareSerial* knxSerial);
+// void KNX_initKnxFacade(HardwareSerial* knxSerial);
 void KNX_initKnxFacade();
 
 bool KNX_enabled();
@@ -44,8 +43,8 @@ bool KNX_configured();
 GPIO_PinState KNX_ledPinActiveOn();
 
 /**
- * Sets if the programming led is active on HIGH or LOW. 
- * 
+ * Sets if the programming led is active on HIGH or LOW.
+ *
  * Set to HIGH for GPIO--RESISTOR--LED--GND or to LOW for GPIO--LED--RESISTOR--VDD
  */
 void KNX_ledPinActiveOn(GPIO_PinState value);
@@ -70,16 +69,15 @@ void KNX_manufacturerId(uint16_t value);
 
 void KNX_bauNumber(uint32_t value);
 
-void KNX_orderNumber(const uint8_t* value);
+void KNX_orderNumber(const uint8_t *value);
 
-void KNX_hardwareType(const uint8_t* value);
+void KNX_hardwareType(const uint8_t *value);
 
 void KNX_version(uint16_t value);
 
 void KNX_start();
 
-
-uint8_t* KNX_paramData(uint32_t addr);
+uint8_t *KNX_paramData(uint32_t addr);
 
 // paramBit(address, shift)
 // get state of a parameter as a boolean like "enable/disable", ...
@@ -111,8 +109,6 @@ bool KNX_paramBit(uint32_t addr, uint8_t shift);
 
 uint8_t KNX_paramByte(uint32_t addr);
 
-
-
 // Same usage than paramByte(addresse) for signed parameters
 // Declaration in XML file
 // <ParameterType Id="M-00FA_A-0066-EA-0001_PT-delta" Name="delta">
@@ -126,9 +122,8 @@ uint32_t KNX_paramInt(uint32_t addr);
 
 double KNX_paramFloat(uint32_t addr, ParameterFloatEncodings enc);
 
-
 #if (MASK_VERSION == 0x07B0) || (MASK_VERSION == 0x27B0) || (MASK_VERSION == 0x57B0)
-    GroupObject& KNX_getGroupObject(uint16_t goNr);
+GroupObject &KNX_getGroupObject(uint16_t goNr);
 #endif
 
 void KNX_restart(uint16_t individualAddress);
@@ -136,7 +131,6 @@ void KNX_restart(uint16_t individualAddress);
 void KNX_beforeRestartCallback(BeforeRestartCallback func);
 
 BeforeRestartCallback KNX_beforeRestartCallback();
-
 
 void KNX_progLedOn();
 

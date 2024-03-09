@@ -2,11 +2,11 @@
 
 #include "config.h"
 // #include "bau.h"
-//#include "security_interface_object.h"
+// #include "security_interface_object.h"
 #include "association_table_object.h"
 #include "application_program_object.h"
 #include "application_layer.h"
-//#include "secure_application_layer.h"
+// #include "secure_application_layer.h"
 #include "transport_layer.h"
 #include "network_layer.h"
 #include "data_link_layer.h"
@@ -19,18 +19,15 @@
 #include "device_object.h"
 #include "address_table_object.h"
 
-
 typedef void (*BeforeRestartCallback)(void);
 typedef bool (*FunctionPropertyCallback)(uint8_t objectIndex, uint8_t propertyId, uint8_t length, uint8_t *data, uint8_t *resultData, uint8_t &resultLength);
 
-
-class BauSystemB 
+class BauSystemB
 {
 public:
-
   virtual bool isAckRequired(uint16_t address, bool isGrpAddr);
   BauSystemB();
-  
+
   virtual void loop();
   bool configured();
   virtual bool enabled();
@@ -240,7 +237,7 @@ public:
   virtual void domainAddressSerialNumberReadLocalConfirm(Priority priority, HopCountType hopType, const SecurityControl &secCtrl, const uint8_t *knxSerialNumber, bool status);
 
 public:
-  GroupObjectTableObject& groupObjectTable();
+  GroupObjectTableObject &groupObjectTable();
 
   void sendNextGroupTelegram();
   void updateGroupObject(GroupObject &go, uint8_t *data, uint8_t length);
@@ -256,5 +253,4 @@ public:
 
   bool _configured = true;
   TpUartDataLinkLayer _dlLayer;
-
 };

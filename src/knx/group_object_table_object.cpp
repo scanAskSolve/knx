@@ -148,7 +148,7 @@ void GroupObjectTableObject::writeProperty(PropertyID id, uint16_t start, uint8_
 
     count = prop->write(start, count, data);
 }
-void GroupObjectTableObject::readPropertyDescription(uint8_t& propertyId, uint8_t& propertyIndex, bool& writeEnable, uint8_t& type, uint16_t& numberOfElements, uint8_t& access)
+void GroupObjectTableObject::readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &writeEnable, uint8_t &type, uint16_t &numberOfElements, uint8_t &access)
 {
     uint8_t count = _propertyCount;
 
@@ -156,7 +156,7 @@ void GroupObjectTableObject::readPropertyDescription(uint8_t& propertyId, uint8_
     if (_properties == nullptr || count == 0)
         return;
 
-    Property* prop = nullptr;
+    Property *prop = nullptr;
 
     // from KNX spec. 03.03.07 Application Layer (page 56) - 3.4.3.3  A_PropertyDescription_Read-service
     // Summary: either propertyId OR propertyIndex, but not both at the same time
@@ -164,7 +164,7 @@ void GroupObjectTableObject::readPropertyDescription(uint8_t& propertyId, uint8_
     {
         for (uint8_t i = 0; i < count; i++)
         {
-            Property* p = _properties[i];
+            Property *p = _properties[i];
             if (p->Id() != propertyId)
                 continue;
 
@@ -194,7 +194,7 @@ void GroupObjectTableObject::readPropertyDescription(uint8_t& propertyId, uint8_
 }
 uint8_t GroupObjectTableObject::propertySize(PropertyID id)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         return 0;
@@ -202,30 +202,32 @@ uint8_t GroupObjectTableObject::propertySize(PropertyID id)
 
     return prop->ElementSize();
 }
-void GroupObjectTableObject::command(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+void GroupObjectTableObject::command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         resultLength = 0;
-        return;;
+        return;
+        ;
     }
 
     prop->command(data, length, resultData, resultLength);
 }
 
-void GroupObjectTableObject::state(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+void GroupObjectTableObject::state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         resultLength = 0;
-        return;;
+        return;
+        ;
     }
 
     prop->state(data, length, resultData, resultLength);
 }
-Property* GroupObjectTableObject::property(PropertyID id)
+Property *GroupObjectTableObject::property(PropertyID id)
 {
     for (int i = 0; i < _propertyCount; i++)
         if (_properties[i]->Id() == id)

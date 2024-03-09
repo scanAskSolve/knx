@@ -54,13 +54,14 @@ void AssociationTableObject::prepareBinarySearch()
     // we iterate through all ASAP
     // the first n ASAP are sorted (strictly increasing number), these are assigning sending TSAP
     // the remaining ASAP have to be all repetitions, otherwise we set sortedEntryCount to 0, which forces linear search
-    if(_tableData != nullptr) {
+    if (_tableData != nullptr)
+    {
         for (uint16_t idx = 0; idx < entryCount(); idx++)
         {
             currentASAP = getASAP(idx);
             if (sortedEntryCount)
             {
-                 // look if the remaining ASAP exist in the previously sorted list.
+                // look if the remaining ASAP exist in the previously sorted list.
                 while (lookupIdx < sortedEntryCount)
                 {
                     lookupASAP = getASAP(lookupIdx);
@@ -85,13 +86,13 @@ void AssociationTableObject::prepareBinarySearch()
             else
             {
                 sortedEntryCount = idx; // last found index indicates end of sorted list
-                idx--; // current item has to be handled as remaining ASAP
+                idx--;                  // current item has to be handled as remaining ASAP
             }
         }
-    // in case complete table is strictly increasing
+        // in case complete table is strictly increasing
         if (lookupIdx == 0 && sortedEntryCount == 0)
             sortedEntryCount = entryCount();
-    } 
+    }
 #endif
 }
 
@@ -184,7 +185,7 @@ void AssociationTableObject::writeProperty(PropertyID id, uint16_t start, uint8_
     count = prop->write(start, count, data);
 }
 
-void AssociationTableObject::readPropertyDescription(uint8_t& propertyId, uint8_t& propertyIndex, bool& writeEnable, uint8_t& type, uint16_t& numberOfElements, uint8_t& access)
+void AssociationTableObject::readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &writeEnable, uint8_t &type, uint16_t &numberOfElements, uint8_t &access)
 {
     uint8_t count = _propertyCount;
 
@@ -192,7 +193,7 @@ void AssociationTableObject::readPropertyDescription(uint8_t& propertyId, uint8_
     if (_properties == nullptr || count == 0)
         return;
 
-    Property* prop = nullptr;
+    Property *prop = nullptr;
 
     // from KNX spec. 03.03.07 Application Layer (page 56) - 3.4.3.3  A_PropertyDescription_Read-service
     // Summary: either propertyId OR propertyIndex, but not both at the same time
@@ -200,7 +201,7 @@ void AssociationTableObject::readPropertyDescription(uint8_t& propertyId, uint8_
     {
         for (uint8_t i = 0; i < count; i++)
         {
-            Property* p = _properties[i];
+            Property *p = _properties[i];
             if (p->Id() != propertyId)
                 continue;
 
@@ -230,7 +231,7 @@ void AssociationTableObject::readPropertyDescription(uint8_t& propertyId, uint8_
 }
 uint8_t AssociationTableObject::propertySize(PropertyID id)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         return 0;
@@ -238,30 +239,32 @@ uint8_t AssociationTableObject::propertySize(PropertyID id)
 
     return prop->ElementSize();
 }
-void AssociationTableObject::command(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+void AssociationTableObject::command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         resultLength = 0;
-        return;;
+        return;
+        ;
     }
 
     prop->command(data, length, resultData, resultLength);
 }
 
-void AssociationTableObject::state(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+void AssociationTableObject::state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         resultLength = 0;
-        return;;
+        return;
+        ;
     }
 
     prop->state(data, length, resultData, resultLength);
 }
-Property* AssociationTableObject::property(PropertyID id)
+Property *AssociationTableObject::property(PropertyID id)
 {
     for (int i = 0; i < _propertyCount; i++)
         if (_properties[i]->Id() == id)

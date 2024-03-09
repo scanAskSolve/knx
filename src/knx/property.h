@@ -11,59 +11,58 @@
 // #include "router_object.h"
 #include <stdint.h>
 
-
 /** The data type of a property. */
 enum PropertyDataType
 {
-    PDT_CONTROL            = 0x00, //!< length: 1 read, 10 write
-    PDT_CHAR               = 0x01, //!< length: 1
-    PDT_UNSIGNED_CHAR      = 0x02, //!< length: 1
-    PDT_INT                = 0x03, //!< length: 2
-    PDT_UNSIGNED_INT       = 0x04, //!< length: 2
-    PDT_KNX_FLOAT          = 0x05, //!< length: 2
-    PDT_DATE               = 0x06, //!< length: 3
-    PDT_TIME               = 0x07, //!< length: 3
-    PDT_LONG               = 0x08, //!< length: 4
-    PDT_UNSIGNED_LONG      = 0x09, //!< length: 4
-    PDT_FLOAT              = 0x0a, //!< length: 4
-    PDT_DOUBLE             = 0x0b, //!< length: 8
-    PDT_CHAR_BLOCK         = 0x0c, //!< length: 10
+    PDT_CONTROL = 0x00,            //!< length: 1 read, 10 write
+    PDT_CHAR = 0x01,               //!< length: 1
+    PDT_UNSIGNED_CHAR = 0x02,      //!< length: 1
+    PDT_INT = 0x03,                //!< length: 2
+    PDT_UNSIGNED_INT = 0x04,       //!< length: 2
+    PDT_KNX_FLOAT = 0x05,          //!< length: 2
+    PDT_DATE = 0x06,               //!< length: 3
+    PDT_TIME = 0x07,               //!< length: 3
+    PDT_LONG = 0x08,               //!< length: 4
+    PDT_UNSIGNED_LONG = 0x09,      //!< length: 4
+    PDT_FLOAT = 0x0a,              //!< length: 4
+    PDT_DOUBLE = 0x0b,             //!< length: 8
+    PDT_CHAR_BLOCK = 0x0c,         //!< length: 10
     PDT_POLL_GROUP_SETTING = 0x0d, //!< length: 3
-    PDT_SHORT_CHAR_BLOCK   = 0x0e, //!< length: 5
-    PDT_DATE_TIME          = 0x0f, //!< length: 8
-    PDT_VARIABLE_LENGTH    = 0x10, 
-    PDT_GENERIC_01         = 0x11, //!< length: 1
-    PDT_GENERIC_02         = 0x12, //!< length: 2
-    PDT_GENERIC_03         = 0x13, //!< length: 3
-    PDT_GENERIC_04         = 0x14, //!< length: 4
-    PDT_GENERIC_05         = 0x15, //!< length: 5
-    PDT_GENERIC_06         = 0x16, //!< length: 6
-    PDT_GENERIC_07         = 0x17, //!< length: 7
-    PDT_GENERIC_08         = 0x18, //!< length: 8
-    PDT_GENERIC_09         = 0x19, //!< length: 9
-    PDT_GENERIC_10         = 0x1a, //!< length: 10
-    PDT_GENERIC_11         = 0x1b, //!< length: 11
-    PDT_GENERIC_12         = 0x1c, //!< length: 12
-    PDT_GENERIC_13         = 0x1d, //!< length: 13
-    PDT_GENERIC_14         = 0x1e, //!< length: 14
-    PDT_GENERIC_15         = 0x1f, //!< length: 15
-    PDT_GENERIC_16         = 0x20, //!< length: 16
-    PDT_GENERIC_17         = 0x21, //!< length: 17
-    PDT_GENERIC_18         = 0x22, //!< length: 18
-    PDT_GENERIC_19         = 0x23, //!< length: 19
-    PDT_GENERIC_20         = 0x24, //!< length: 20
-    PDT_UTF8               = 0x2f,  //!< length: 3
-    PDT_VERSION            = 0x30,  //!< length: 3
-    PDT_ALARM_INFO         = 0x31,  //!< length: 3
-    PDT_BINARY_INFORMATION = 0x32,  //!< length: 3
-    PDT_BITSET8            = 0x33,  //!< length: 3
-    PDT_BITSET16           = 0x34,  //!< length: 3
-    PDT_ENUM8              = 0x35,  //!< length: 3
-    PDT_SCALING            = 0x36,  //!< length: 3
-    PDT_NE_VL              = 0x3c,  //!< length: 3
-    PDT_NE_FL              = 0x3d,  //!< length: 3
-    PDT_FUNCTION           = 0x3e,  //!< length: 3
-    PDT_ESCAPE             = 0x3f,  //!< length: 3
+    PDT_SHORT_CHAR_BLOCK = 0x0e,   //!< length: 5
+    PDT_DATE_TIME = 0x0f,          //!< length: 8
+    PDT_VARIABLE_LENGTH = 0x10,
+    PDT_GENERIC_01 = 0x11,         //!< length: 1
+    PDT_GENERIC_02 = 0x12,         //!< length: 2
+    PDT_GENERIC_03 = 0x13,         //!< length: 3
+    PDT_GENERIC_04 = 0x14,         //!< length: 4
+    PDT_GENERIC_05 = 0x15,         //!< length: 5
+    PDT_GENERIC_06 = 0x16,         //!< length: 6
+    PDT_GENERIC_07 = 0x17,         //!< length: 7
+    PDT_GENERIC_08 = 0x18,         //!< length: 8
+    PDT_GENERIC_09 = 0x19,         //!< length: 9
+    PDT_GENERIC_10 = 0x1a,         //!< length: 10
+    PDT_GENERIC_11 = 0x1b,         //!< length: 11
+    PDT_GENERIC_12 = 0x1c,         //!< length: 12
+    PDT_GENERIC_13 = 0x1d,         //!< length: 13
+    PDT_GENERIC_14 = 0x1e,         //!< length: 14
+    PDT_GENERIC_15 = 0x1f,         //!< length: 15
+    PDT_GENERIC_16 = 0x20,         //!< length: 16
+    PDT_GENERIC_17 = 0x21,         //!< length: 17
+    PDT_GENERIC_18 = 0x22,         //!< length: 18
+    PDT_GENERIC_19 = 0x23,         //!< length: 19
+    PDT_GENERIC_20 = 0x24,         //!< length: 20
+    PDT_UTF8 = 0x2f,               //!< length: 3
+    PDT_VERSION = 0x30,            //!< length: 3
+    PDT_ALARM_INFO = 0x31,         //!< length: 3
+    PDT_BINARY_INFORMATION = 0x32, //!< length: 3
+    PDT_BITSET8 = 0x33,            //!< length: 3
+    PDT_BITSET16 = 0x34,           //!< length: 3
+    PDT_ENUM8 = 0x35,              //!< length: 3
+    PDT_SCALING = 0x36,            //!< length: 3
+    PDT_NE_VL = 0x3c,              //!< length: 3
+    PDT_NE_FL = 0x3d,              //!< length: 3
+    PDT_FUNCTION = 0x3e,           //!< length: 3
+    PDT_ESCAPE = 0x3f,             //!< length: 3
 };
 
 enum PropertyID
@@ -88,7 +87,7 @@ enum PropertyID
     PID_ERROR_CODE = 28,
     PID_OBJECT_INDEX = 29,
     PID_DOWNLOAD_COUNTER = 30,
-    
+
     /** Properties in the Device Object */
     PID_ROUTING_COUNT = 51,
     PID_PROG_MODE = 54,
@@ -184,12 +183,12 @@ enum PropertyID
     PID_ROUTETABLE_CONTROL = 56,
     PID_COUPLER_SERVICES_CONTROL = 57,
     PID_MAX_APDU_LENGTH_ROUTER = 58,
-    PID_L2_COUPLER_TYPE = 59,                   // Only interesting for mask 0x0912 (TP1/TP1 coupler)
-    PID_HOP_COUNT = 61,                         // Only interesting in primary if other medium(secondary) is open medium without hopcount
+    PID_L2_COUPLER_TYPE = 59, // Only interesting for mask 0x0912 (TP1/TP1 coupler)
+    PID_HOP_COUNT = 61,       // Only interesting in primary if other medium(secondary) is open medium without hopcount
     PID_MEDIUM = 63,
     PID_FILTER_TABLE_USE = 67,
-    PID_RF_ENABLE_SBC = 112,                    // Exists only if medium for this router object is RF (PDT_FUNCTION)
-    PID_IP_ENABLE_SBC = 120,                    // Exists only if medium for this router object is IP (PDT_FUNCTION)
+    PID_RF_ENABLE_SBC = 112, // Exists only if medium for this router object is RF (PDT_FUNCTION)
+    PID_IP_ENABLE_SBC = 120, // Exists only if medium for this router object is IP (PDT_FUNCTION)
 };
 
 enum LoadState
@@ -211,7 +210,7 @@ enum LoadEvents
     LE_UNLOAD = 4
 };
 
-// 20.011 DPT_ErrorClass_System 
+// 20.011 DPT_ErrorClass_System
 enum ErrorCode
 {
     E_NO_FAULT = 0,
@@ -256,7 +255,7 @@ struct PropertyDescription
     uint16_t MaxElements;
     uint8_t Access;
 };
-//class Property : public SaveRestore
+// class Property : public SaveRestore
 
 class ApplicationProgramObject;
 class DeviceObject;
@@ -265,100 +264,99 @@ class TableObject;
 class RouterObject;
 class Property
 {
-  public:
+public:
     Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access);
-	Property(PropertyID id, bool writeEnable, PropertyDataType type,uint16_t maxElements, uint8_t access, uint16_t value);
-	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint32_t value);
-	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint8_t value);
-	Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, const uint8_t* value);
-    Property(RouterObject* io, PropertyID id, 
-                     void (*commandCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&),
-                     void (*stateCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&));
-    
-    Property(ApplicationProgramObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
-                     uint8_t access, uint8_t (*readCallbackApplication)(ApplicationProgramObject*, uint16_t, uint8_t, uint8_t*),
-                     uint8_t (*writeCallbackApplication)(ApplicationProgramObject*, uint16_t, uint8_t, const uint8_t*));        
-    Property(ApplicationProgramObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
-                     uint8_t access, uint8_t (*readCallbackApplication)(ApplicationProgramObject*, uint16_t, uint8_t, uint8_t*));
-    Property(DeviceObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
-                     uint8_t access, uint8_t (*readCallbackDevice)(DeviceObject*, uint16_t, uint8_t, uint8_t*),
-                     uint8_t (*writeCallbackDevice)(DeviceObject*, uint16_t, uint8_t, const uint8_t*));
-    Property(DeviceObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
-                     uint8_t access, uint8_t (*readCallbackDevice)(DeviceObject*, uint16_t, uint8_t, uint8_t*));
-    Property(TableObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
-                     uint8_t access, uint8_t (*readCallbackTable)(TableObject*, uint16_t, uint8_t, uint8_t*),
-                     uint8_t (*writeCallbackTable)(TableObject*, uint16_t, uint8_t, const uint8_t*));
-    Property(TableObject* io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
-                     uint8_t access, uint8_t (*readCallbackTable)(TableObject*, uint16_t, uint8_t, uint8_t*));
+    Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint16_t value);
+    Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint32_t value);
+    Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint8_t value);
+    Property(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, const uint8_t *value);
+    Property(RouterObject *io, PropertyID id,
+             void (*commandCallback)(RouterObject *, uint8_t *, uint8_t, uint8_t *, uint8_t &),
+             void (*stateCallback)(RouterObject *, uint8_t *, uint8_t, uint8_t *, uint8_t &));
 
-     ~Property();
+    Property(ApplicationProgramObject *io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+             uint8_t access, uint8_t (*readCallbackApplication)(ApplicationProgramObject *, uint16_t, uint8_t, uint8_t *),
+             uint8_t (*writeCallbackApplication)(ApplicationProgramObject *, uint16_t, uint8_t, const uint8_t *));
+    Property(ApplicationProgramObject *io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+             uint8_t access, uint8_t (*readCallbackApplication)(ApplicationProgramObject *, uint16_t, uint8_t, uint8_t *));
+    Property(DeviceObject *io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+             uint8_t access, uint8_t (*readCallbackDevice)(DeviceObject *, uint16_t, uint8_t, uint8_t *),
+             uint8_t (*writeCallbackDevice)(DeviceObject *, uint16_t, uint8_t, const uint8_t *));
+    Property(DeviceObject *io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+             uint8_t access, uint8_t (*readCallbackDevice)(DeviceObject *, uint16_t, uint8_t, uint8_t *));
+    Property(TableObject *io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+             uint8_t access, uint8_t (*readCallbackTable)(TableObject *, uint16_t, uint8_t, uint8_t *),
+             uint8_t (*writeCallbackTable)(TableObject *, uint16_t, uint8_t, const uint8_t *));
+    Property(TableObject *io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+             uint8_t access, uint8_t (*readCallbackTable)(TableObject *, uint16_t, uint8_t, uint8_t *));
+
+    ~Property();
     PropertyID Id() const;
     bool WriteEnable() const;
     PropertyDataType Type() const;
     uint16_t MaxElements() const;
     uint8_t Access() const;
     uint8_t ElementSize() const;
-    //virtual uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const = 0;
-    //virtual uint8_t write(uint16_t start, uint8_t count, const uint8_t* data) = 0;
-    virtual void command(uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength);
-    virtual void state(uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength);
-    uint8_t read(uint8_t& value) const; 
-    uint8_t read(uint16_t& value) const; 
-    uint8_t read(uint32_t& value) const; 
-    uint8_t read(uint8_t* value) const; 
+    // virtual uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const = 0;
+    // virtual uint8_t write(uint16_t start, uint8_t count, const uint8_t* data) = 0;
+    virtual void command(uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+    virtual void state(uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+    uint8_t read(uint8_t &value) const;
+    uint8_t read(uint16_t &value) const;
+    uint8_t read(uint32_t &value) const;
+    uint8_t read(uint8_t *value) const;
     uint8_t write(uint8_t value);
     uint8_t write(uint16_t value);
     uint8_t write(uint16_t position, uint16_t value);
     uint8_t write(uint32_t value);
-    uint8_t write(const uint8_t* value);
+    uint8_t write(const uint8_t *value);
 
-	//virtual uint8_t* save(uint8_t* buffer);
-	//virtual const uint8_t* restore(const uint8_t* buffer);
-	//virtual uint16_t saveSize();
+    // virtual uint8_t* save(uint8_t* buffer);
+    // virtual const uint8_t* restore(const uint8_t* buffer);
+    // virtual uint16_t saveSize();
 
-
-
-	//-----------------------------------------------------------------------
-	/*static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access);
+    //-----------------------------------------------------------------------
+    /*static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access);
     static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint8_t value);
     static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint16_t value);
     static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint32_t value);
     static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, const uint8_t* value);*/
-    //void ~DataProperty();
-	uint8_t read(uint16_t start, uint8_t count, uint8_t* data) const;
-    uint8_t write(uint16_t start, uint8_t count, const uint8_t* data);
-    virtual uint8_t* save(uint8_t* buffer);
-    virtual const uint8_t* restore(const uint8_t* buffer);
+    // void ~DataProperty();
+    uint8_t read(uint16_t start, uint8_t count, uint8_t *data) const;
+    uint8_t write(uint16_t start, uint8_t count, const uint8_t *data);
+    virtual uint8_t *save(uint8_t *buffer);
+    virtual const uint8_t *restore(const uint8_t *buffer);
     virtual uint16_t saveSize();
-	const uint8_t* data();
-    const uint8_t* data(uint16_t elementIndex);
-	//-----------------------------------------------------------------------
-  //protected:
+    const uint8_t *data();
+    const uint8_t *data(uint16_t elementIndex);
+    //-----------------------------------------------------------------------
+    // protected:
     PropertyID _id;
     bool _writeEnable;
     PropertyDataType _type;
     uint16_t _maxElements;
     uint8_t _access;
-	//-----------------------------------------------------------------------
-  //private:
-	uint16_t _currentElements = 0;
-	uint8_t* _data = nullptr;
+    //-----------------------------------------------------------------------
+    // private:
+    uint16_t _currentElements = 0;
+    uint8_t *_data = nullptr;
+
 private:
-    RouterObject* _interfaceObject = nullptr;
-    void (*_commandCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&) = nullptr;
-    void (*_stateCallback)(RouterObject*, uint8_t*, uint8_t, uint8_t*, uint8_t&) = nullptr;
-	//-----------------------------------------------------------------------
-    ApplicationProgramObject* _interfaceObjectApplication = nullptr;
-    uint8_t (*_readCallbackApplication)(ApplicationProgramObject*, uint16_t, uint8_t, uint8_t*) = nullptr;
-    uint8_t (*_writeCallbackApplication)(ApplicationProgramObject*, uint16_t, uint8_t, const uint8_t*) = nullptr;
+    RouterObject *_interfaceObject = nullptr;
+    void (*_commandCallback)(RouterObject *, uint8_t *, uint8_t, uint8_t *, uint8_t &) = nullptr;
+    void (*_stateCallback)(RouterObject *, uint8_t *, uint8_t, uint8_t *, uint8_t &) = nullptr;
+    //-----------------------------------------------------------------------
+    ApplicationProgramObject *_interfaceObjectApplication = nullptr;
+    uint8_t (*_readCallbackApplication)(ApplicationProgramObject *, uint16_t, uint8_t, uint8_t *) = nullptr;
+    uint8_t (*_writeCallbackApplication)(ApplicationProgramObject *, uint16_t, uint8_t, const uint8_t *) = nullptr;
 
-    DeviceObject* _interfaceObjectDevice = nullptr;
-    uint8_t (*_readCallbackDevice)(DeviceObject*, uint16_t, uint8_t, uint8_t*) = nullptr;
-    uint8_t (*_writeCallbackDevice)(DeviceObject*, uint16_t, uint8_t, const uint8_t*) = nullptr;
+    DeviceObject *_interfaceObjectDevice = nullptr;
+    uint8_t (*_readCallbackDevice)(DeviceObject *, uint16_t, uint8_t, uint8_t *) = nullptr;
+    uint8_t (*_writeCallbackDevice)(DeviceObject *, uint16_t, uint8_t, const uint8_t *) = nullptr;
 
-    TableObject* _interfaceObjectTable = nullptr;
-    uint8_t (*_readCallbackTable)(TableObject*, uint16_t, uint8_t, uint8_t*) = nullptr;
-    uint8_t (*_writeCallbackTable)(TableObject*, uint16_t, uint8_t, const uint8_t*) = nullptr;
+    TableObject *_interfaceObjectTable = nullptr;
+    uint8_t (*_readCallbackTable)(TableObject *, uint16_t, uint8_t, uint8_t *) = nullptr;
+    uint8_t (*_writeCallbackTable)(TableObject *, uint16_t, uint8_t, const uint8_t *) = nullptr;
 
     bool _callback = false;
 };

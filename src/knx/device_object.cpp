@@ -95,10 +95,10 @@ uint8_t *DeviceObject::save(uint8_t *buffer)
     buffer = pushWord(_ownAddress, buffer);
     for (int i = 0; i < _propertyCount; i++)
     {
-        Property* prop = _properties[i];
+        Property *prop = _properties[i];
         if (!prop->WriteEnable())
             continue;
-        
+
         buffer = prop->save(buffer);
     }
     return buffer;
@@ -109,7 +109,7 @@ const uint8_t *DeviceObject::restore(const uint8_t *buffer)
     buffer = popWord(&_ownAddress, buffer);
     for (int i = 0; i < _propertyCount; i++)
     {
-        Property* prop = _properties[i];
+        Property *prop = _properties[i];
         if (!prop->WriteEnable())
             continue;
 
@@ -124,7 +124,7 @@ uint16_t DeviceObject::saveSize()
 
     for (int i = 0; i < _propertyCount; i++)
     {
-        Property* prop = _properties[i];
+        Property *prop = _properties[i];
         if (!prop->WriteEnable())
             continue;
 
@@ -350,7 +350,7 @@ void DeviceObject::writeProperty(PropertyID id, uint16_t start, uint8_t *data, u
 
     count = prop->write(start, count, data);
 }
-void DeviceObject::readPropertyDescription(uint8_t& propertyId, uint8_t& propertyIndex, bool& writeEnable, uint8_t& type, uint16_t& numberOfElements, uint8_t& access)
+void DeviceObject::readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &writeEnable, uint8_t &type, uint16_t &numberOfElements, uint8_t &access)
 {
     uint8_t count = _propertyCount;
 
@@ -358,7 +358,7 @@ void DeviceObject::readPropertyDescription(uint8_t& propertyId, uint8_t& propert
     if (_properties == nullptr || count == 0)
         return;
 
-    Property* prop = nullptr;
+    Property *prop = nullptr;
 
     // from KNX spec. 03.03.07 Application Layer (page 56) - 3.4.3.3  A_PropertyDescription_Read-service
     // Summary: either propertyId OR propertyIndex, but not both at the same time
@@ -366,7 +366,7 @@ void DeviceObject::readPropertyDescription(uint8_t& propertyId, uint8_t& propert
     {
         for (uint8_t i = 0; i < count; i++)
         {
-            Property* p = _properties[i];
+            Property *p = _properties[i];
             if (p->Id() != propertyId)
                 continue;
 
@@ -396,7 +396,7 @@ void DeviceObject::readPropertyDescription(uint8_t& propertyId, uint8_t& propert
 }
 uint8_t DeviceObject::propertySize(PropertyID id)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         return 0;
@@ -404,30 +404,32 @@ uint8_t DeviceObject::propertySize(PropertyID id)
 
     return prop->ElementSize();
 }
-void DeviceObject::command(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+void DeviceObject::command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         resultLength = 0;
-        return;;
+        return;
+        ;
     }
 
     prop->command(data, length, resultData, resultLength);
 }
 
-void DeviceObject::state(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+void DeviceObject::state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         resultLength = 0;
-        return;;
+        return;
+        ;
     }
 
     prop->state(data, length, resultData, resultLength);
 }
-Property* DeviceObject::property(PropertyID id)
+Property *DeviceObject::property(PropertyID id)
 {
     for (int i = 0; i < _propertyCount; i++)
         if (_properties[i]->Id() == id)
@@ -440,9 +442,9 @@ void DeviceObject::masterReset(EraseCode eraseCode, uint8_t channel)
     // every interface object shall implement this
     // However, for the time being we provide an empty default implementation
 }
-void DeviceObject::initializeProperties(size_t propertiesSize, Property** properties)
+void DeviceObject::initializeProperties(size_t propertiesSize, Property **properties)
 {
-    _propertyCount = propertiesSize / sizeof(Property*);
-    _properties = new Property*[_propertyCount];
+    _propertyCount = propertiesSize / sizeof(Property *);
+    _properties = new Property *[_propertyCount];
     memcpy(_properties, properties, propertiesSize);
 }

@@ -2,11 +2,9 @@
 #include "cemi_frame.h"
 #include <string.h>
 
-
-NPDU::NPDU(uint8_t* data, CemiFrame& frame): _data(data), _frame(frame)
+NPDU::NPDU(uint8_t *data, CemiFrame &frame) : _data(data), _frame(frame)
 {
 }
-
 
 uint8_t NPDU::octetCount() const
 {
@@ -33,12 +31,12 @@ void NPDU::hopCount(uint8_t value)
     _frame.hopCount(value);
 }
 
-CemiFrame& NPDU::frame()
+CemiFrame &NPDU::frame()
 {
     return _frame;
 }
 
-TPDU& NPDU::tpdu()
+TPDU &NPDU::tpdu()
 {
     return _frame.tpdu();
 }

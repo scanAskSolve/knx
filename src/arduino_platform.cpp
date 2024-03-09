@@ -1,20 +1,20 @@
 #include "arduino_platform.h"
 #include "Print_Function.h"
 #include "knx/bits.h"
-//#include <EEPROM.h>
-//#include "stm32_eeprom.h"
-
+// #include <EEPROM.h>
+// #include "stm32_eeprom.h"
 
 NvMemoryType _memoryType = Eeprom;
 int32_t _bufferedEraseblockNumber = -1;
-uint8_t* _eraseblockBuffer = nullptr;
+uint8_t *_eraseblockBuffer = nullptr;
 bool _bufferedEraseblockDirty = false;
 uint8_t *_eepromPtr = nullptr;
 uint16_t _eepromSize = 0;
 
 HardwareSerial *_knxUart;
 
-void KNX_UART_Init(HardwareSerial* knxSerial){
+void KNX_UART_Init(HardwareSerial *knxSerial)
+{
     _knxUart = knxSerial;
 }
 
@@ -22,13 +22,13 @@ void fatalError()
 {
     while (true)
     {
-        //EDA Not fix 
+        // EDA Not fix
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
         HAL_Delay(200);
     }
 }
 
-void knxUart( HardwareSerial* serial )
+void knxUart(HardwareSerial *serial)
 {
     if (_knxUart)
         closeUart();
@@ -36,7 +36,7 @@ void knxUart( HardwareSerial* serial )
     setupUart();
 }
 
-HardwareSerial* knxUart()
+HardwareSerial *knxUart()
 {
     return _knxUart;
 }
@@ -45,72 +45,66 @@ void setupUart()
 {
     _knxUart->begin(19200, SERIAL_8E1);
     //_knxUart->begin(38400, SERIAL_8N1);
-    while (!_knxUart) 
+    while (!_knxUart)
         ;
 }
-
 
 void closeUart()
 {
     _knxUart->end();
 }
 
-
 int uartAvailable()
 {
     return _knxUart->available();
 }
 
-
 size_t writeUart(const uint8_t data)
 {
-    //printHex("<p", &data, 1);
+    // printHex("<p", &data, 1);
     return _knxUart->write(data);
 }
 
-
 size_t writeUart(const uint8_t *buffer, size_t size)
 {
-    //printHex("<p", buffer, size);
+    // printHex("<p", buffer, size);
     return _knxUart->write(buffer, size);
 }
-
 
 int readUart()
 {
     int val = _knxUart->read();
-    //if(val > 0)
-    //    printHex("p>", (uint8_t*)&val, 1);
+    // if(val > 0)
+    //     printHex("p>", (uint8_t*)&val, 1);
     return val;
 }
-
 
 size_t readBytesUart(uint8_t *buffer, size_t length)
 {
     size_t toRead = length;
-    uint8_t* pos = buffer;
+    uint8_t *pos = buffer;
     while (toRead > 0)
     {
         size_t val = _knxUart->readBytes(pos, toRead);
         pos += val;
         toRead -= val;
     }
-    //printHex("p>", buffer, length);
+    // printHex("p>", buffer, length);
     return length;
 }
 
 uint32_t uniqueSerialNumber()
 {
-    //return 0x01020304;
+    // return 0x01020304;
     return HAL_GetUIDw0() ^ HAL_GetUIDw1() ^ HAL_GetUIDw2();
 }
 
-uint8_t* getNonVolatileMemoryStart()
+uint8_t *getNonVolatileMemoryStart()
 {
-    if(_memoryType == Flash)
+    if (_memoryType == Flash)
         return userFlashStart();
 #ifdef KNX_FLASH_CALLBACK
-    else if(_memoryType == Callback)
+    else if (_memoryType == Callback)
         return _callbackFlashRead();
 #endif
     else
@@ -122,10 +116,9 @@ uint8_t *userFlashStart()
     return nullptr;
 }
 
-uint8_t * getEepromBuffer(uint32_t size)
+uint8_t *getEepromBuffer(uint32_t size)
 {
-    //return nullptr;
-
+    // return nullptr;
 
     // check if the buffer already exists
     if (_eepromPtr == nullptr) // we need to initialize the buffer first
@@ -141,16 +134,16 @@ uint8_t * getEepromBuffer(uint32_t size)
         for (uint16_t i = 0; i < size; ++i)
             _eepromPtr[i] = eeprom_buffered_read_one_byte(i);
     }
-    
+
     return _eepromPtr;
 }
 
 size_t getNonVolatileMemorySize()
 {
-    if(_memoryType == Flash)
+    if (_memoryType == Flash)
         return userFlashSizeEraseBlocks() * flashEraseBlockSize() * flashPageSize();
 #ifdef KNX_FLASH_CALLBACK
-    else if(_memoryType == Callback)
+    else if (_memoryType == Callback)
         return _callbackFlashSize();
 #endif
     else
@@ -173,19 +166,19 @@ size_t flashPageSize()
     return 4;
 }
 
-uint32_t writeNonVolatileMemory(uint32_t relativeAddress, uint8_t* buffer, size_t size)
+uint32_t writeNonVolatileMemory(uint32_t relativeAddress, uint8_t *buffer, size_t size)
 {
-    if(_memoryType == Flash)
+    if (_memoryType == Flash)
     {
         while (size > 0)
         {
             loadEraseblockContaining(relativeAddress);
             uint32_t start = _bufferedEraseblockNumber * (flashEraseBlockSize() * flashPageSize());
-            uint32_t end = start +  (flashEraseBlockSize() * flashPageSize());
+            uint32_t end = start + (flashEraseBlockSize() * flashPageSize());
 
             uint32_t offset = relativeAddress - start;
             uint32_t length = end - relativeAddress;
-            if(length > size)
+            if (length > size)
                 length = size;
             memcpy(_eraseblockBuffer + offset, buffer, length);
             _bufferedEraseblockDirty = true;
@@ -197,13 +190,13 @@ uint32_t writeNonVolatileMemory(uint32_t relativeAddress, uint8_t* buffer, size_
         return relativeAddress;
     }
 #ifdef KNX_FLASH_CALLBACK
-    else if(_memoryType == Callback)
+    else if (_memoryType == Callback)
         return _callbackFlashWrite(relativeAddress, buffer, size);
 #endif
     else
     {
-        memcpy(getEepromBuffer(KNX_FLASH_SIZE)+relativeAddress, buffer, size);
-        return relativeAddress+size;
+        memcpy(getEepromBuffer(KNX_FLASH_SIZE) + relativeAddress, buffer, size);
+        return relativeAddress + size;
     }
 }
 
@@ -211,17 +204,17 @@ uint32_t writeNonVolatileMemory(uint32_t relativeAddress, uint8_t* buffer, size_
 // returns next free relativeAddress
 uint32_t writeNonVolatileMemory(uint32_t relativeAddress, uint8_t value, size_t repeat)
 {
-    if(_memoryType == Flash)
+    if (_memoryType == Flash)
     {
         while (repeat > 0)
         {
             loadEraseblockContaining(relativeAddress);
             uint32_t start = _bufferedEraseblockNumber * (flashEraseBlockSize() * flashPageSize());
-            uint32_t end = start +  (flashEraseBlockSize() * flashPageSize());
+            uint32_t end = start + (flashEraseBlockSize() * flashPageSize());
 
             uint32_t offset = relativeAddress - start;
             uint32_t length = end - relativeAddress;
-            if(length > repeat)
+            if (length > repeat)
                 length = repeat;
             memset(_eraseblockBuffer + offset, value, length);
             _bufferedEraseblockDirty = true;
@@ -233,8 +226,8 @@ uint32_t writeNonVolatileMemory(uint32_t relativeAddress, uint8_t value, size_t 
     }
     else
     {
-        memset(getEepromBuffer(KNX_FLASH_SIZE)+relativeAddress, value, repeat);
-        return relativeAddress+repeat;
+        memset(getEepromBuffer(KNX_FLASH_SIZE) + relativeAddress, value, repeat);
+        return relativeAddress + repeat;
     }
 }
 
@@ -260,11 +253,11 @@ int32_t getEraseBlockNumberOf(uint32_t relativeAddress)
 
 void writeBufferedEraseBlock()
 {
-    if(_bufferedEraseblockNumber > -1 && _bufferedEraseblockDirty)
+    if (_bufferedEraseblockNumber > -1 && _bufferedEraseblockDirty)
     {
         flashErase(_bufferedEraseblockNumber);
-        for(uint32_t i = 0; i < flashEraseBlockSize(); i++)
-        {   
+        for (uint32_t i = 0; i < flashEraseBlockSize(); i++)
+        {
             int32_t pageNumber = _bufferedEraseblockNumber * flashEraseBlockSize() + i;
             uint8_t *data = _eraseblockBuffer + flashPageSize() * i;
             flashWritePage(pageNumber, data);
@@ -275,12 +268,12 @@ void writeBufferedEraseBlock()
 
 void bufferEraseBlock(int32_t eraseBlockNumber)
 {
-    if(_bufferedEraseblockNumber == eraseBlockNumber)
+    if (_bufferedEraseblockNumber == eraseBlockNumber)
         return;
-    
-    if(_eraseblockBuffer == nullptr)
+
+    if (_eraseblockBuffer == nullptr)
     {
-        _eraseblockBuffer = (uint8_t*)malloc(flashEraseBlockSize() * flashPageSize());
+        _eraseblockBuffer = (uint8_t *)malloc(flashEraseBlockSize() * flashPageSize());
     }
     memcpy(_eraseblockBuffer, userFlashStart() + eraseBlockNumber * flashEraseBlockSize() * flashPageSize(), flashEraseBlockSize() * flashPageSize());
 
@@ -294,55 +287,57 @@ void ArduinoPlatform::registerFlashCallbacks(
     FlashCallbackRead callbackFlashRead,
     FlashCallbackWrite callbackFlashWrite,
     FlashCallbackCommit callbackFlashCommit)
-    {
-        print("Set Callback\r\n");
-        _memoryType = Callback;
-        _callbackFlashSize = callbackFlashSize;
-        _callbackFlashRead = callbackFlashRead;
-        _callbackFlashWrite = callbackFlashWrite;
-        _callbackFlashCommit = callbackFlashCommit;
-        _callbackFlashSize();
-    }
+{
+    print("Set Callback\r\n");
+    _memoryType = Callback;
+    _callbackFlashSize = callbackFlashSize;
+    _callbackFlashRead = callbackFlashRead;
+    _callbackFlashWrite = callbackFlashWrite;
+    _callbackFlashCommit = callbackFlashCommit;
+    _callbackFlashSize();
+}
 
 FlashCallbackSize ArduinoPlatform::callbackFlashSize()
 {
-   return _callbackFlashSize;
+    return _callbackFlashSize;
 }
 FlashCallbackRead ArduinoPlatform::callbackFlashRead()
 {
-   return _callbackFlashRead;
+    return _callbackFlashRead;
 }
 FlashCallbackWrite ArduinoPlatform::callbackFlashWrite()
 {
-   return _callbackFlashWrite;
+    return _callbackFlashWrite;
 }
 FlashCallbackCommit ArduinoPlatform::callbackFlashCommit()
 {
-   return _callbackFlashCommit;
+    return _callbackFlashCommit;
 }
 #endif
 
 void flashErase(uint16_t eraseBlockNum)
-{}
+{
+}
 
-void flashWritePage(uint16_t pageNumber, uint8_t* data)
-{}
+void flashWritePage(uint16_t pageNumber, uint8_t *data)
+{
+}
 
 void commitNonVolatileMemory()
 {
-    if(_memoryType == Flash)
+    if (_memoryType == Flash)
     {
-        if(_bufferedEraseblockNumber > -1 && _bufferedEraseblockDirty)
+        if (_bufferedEraseblockNumber > -1 && _bufferedEraseblockDirty)
         {
             writeBufferedEraseBlock();
-            
+
             free(_eraseblockBuffer);
             _eraseblockBuffer = nullptr;
-            _bufferedEraseblockNumber = -1;  // does that make sense?
+            _bufferedEraseblockNumber = -1; // does that make sense?
         }
     }
 #ifdef KNX_FLASH_CALLBACK
-    else if(_memoryType == Callback)
+    else if (_memoryType == Callback)
         return _callbackFlashCommit();
 #endif
     else
@@ -353,7 +348,7 @@ void commitNonVolatileMemory()
 
 void commitToEeprom()
 {
-    if(_eepromPtr == nullptr || _eepromSize == 0)
+    if (_eepromPtr == nullptr || _eepromSize == 0)
         return;
     for (uint16_t i = 0; i < _eepromSize; ++i)
         eeprom_buffered_write_one_byte(i, _eepromPtr[i]);
@@ -365,9 +360,7 @@ void commitToEeprom()
     eeprom_buffer_Write_to_memery();
 }
 
-
 void restart()
 {
     NVIC_SystemReset();
 }
-

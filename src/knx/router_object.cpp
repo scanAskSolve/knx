@@ -491,4 +491,3 @@ bool RouterObject::isGroupAddressInFilterTable(uint16_t groupAddress)
 
     return false;
 }
-

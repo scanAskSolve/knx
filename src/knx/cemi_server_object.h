@@ -5,8 +5,8 @@
 
 #include "knx_types.h"
 
-//#include "interface_object.h"
-//class CemiServerObject: public InterfaceObject
+// #include "interface_object.h"
+// class CemiServerObject: public InterfaceObject
 class CemiServerObject
 {
 public:

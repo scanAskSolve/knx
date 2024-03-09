@@ -2,13 +2,12 @@
 #include "arduino_platform.h"
 #include "knx/bits.h"
 
-
 /*#ifndef PROG_BTN_PRESS_MIN_MILLIS
-	#define PROG_BTN_PRESS_MIN_MILLIS 50
+    #define PROG_BTN_PRESS_MIN_MILLIS 50
 #endif
 
 #ifndef PROG_BTN_PRESS_MAX_MILLIS
-	#define PROG_BTN_PRESS_MAX_MILLIS 500
+    #define PROG_BTN_PRESS_MAX_MILLIS 500
 #endif*/
 
 /*#if MASK_VERSION == 0x07B0
@@ -27,13 +26,13 @@ bool _progLedState = false;
 
 BauSystemB *_bau;
 
-//void KNX_initKnxFacade(HardwareSerial* knxSerial)
+// void KNX_initKnxFacade(HardwareSerial* knxSerial)
 void KNX_initKnxFacade()
 {
-    //ArduinoPlatform* _platformPtr  =  new ArduinoPlatform(knxSerial);
+    // ArduinoPlatform* _platformPtr  =  new ArduinoPlatform(knxSerial);
     //_bau = new BauSystemB(*_platformPtr);
     _bau = new BauSystemB();
-    
+
     KNX_manufacturerId(0xfa);
     KNX_bauNumber(uniqueSerialNumber());
     _bau->addSaveRestore(new DeviceObject());
@@ -81,8 +80,8 @@ GPIO_PinState KNX_ledPinActiveOn()
 }
 
 /**
- * Sets if the programming led is active on HIGH or LOW. 
- * 
+ * Sets if the programming led is active on HIGH or LOW.
+ *
  * Set to HIGH for GPIO--RESISTOR--LED--GND or to LOW for GPIO--LED--RESISTOR--VDD
  */
 void KNX_ledPinActiveOn(GPIO_PinState value)
@@ -99,7 +98,6 @@ void KNX_ledPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
     _ledPin.GPIO_Pin = GPIO_Pin;
     _ledPin.GPIOx = GPIOx;
-
 }
 
 GPIO_infoTypeDef KNX_buttonPin()
@@ -162,12 +160,12 @@ void KNX_bauNumber(uint32_t value)
     _bau->deviceObject().bauNumber(value);
 }
 
-void KNX_orderNumber(const uint8_t* value)
+void KNX_orderNumber(const uint8_t *value)
 {
     _bau->deviceObject().orderNumber(value);
 }
 
-void KNX_hardwareType(const uint8_t* value)
+void KNX_hardwareType(const uint8_t *value)
 {
     _bau->deviceObject().hardwareType(value);
 }
@@ -179,13 +177,12 @@ void KNX_version(uint16_t value)
 
 void KNX_start()
 {
-    //EDA Use HAL_GPIO_EXTI_Callback!!!!!
+    // EDA Use HAL_GPIO_EXTI_Callback!!!!!
     attachInterrupt(digitalPinToInterrupt(PA0), KNX_buttonEvent, CHANGE);
     KNX_enabled(true);
 }
 
-
-uint8_t* KNX_paramData(uint32_t addr)
+uint8_t *KNX_paramData(uint32_t addr)
 {
     if (!_bau->configured())
         return nullptr;
@@ -224,7 +221,7 @@ bool KNX_paramBit(uint32_t addr, uint8_t shift)
     if (!_bau->configured())
         return 0;
 
-    return (bool) ((_bau->parameters().getByte(addr) >> (7-shift)) & 0x01); 
+    return (bool)((_bau->parameters().getByte(addr) >> (7 - shift)) & 0x01);
 }
 
 uint8_t KNX_paramByte(uint32_t addr)
@@ -245,7 +242,7 @@ int8_t KNX_paramSignedByte(uint32_t addr)
     if (!_bau->configured())
         return 0;
 
-    return (int8_t) _bau->parameters().getByte(addr);
+    return (int8_t)_bau->parameters().getByte(addr);
 }
 
 uint16_t KNX_paramWord(uint32_t addr)
@@ -273,7 +270,7 @@ double KNX_paramFloat(uint32_t addr, ParameterFloatEncodings enc)
 }
 
 #if (MASK_VERSION == 0x07B0) || (MASK_VERSION == 0x27B0) || (MASK_VERSION == 0x57B0)
-GroupObject& KNX_getGroupObject(uint16_t goNr)
+GroupObject &KNX_getGroupObject(uint16_t goNr)
 {
     return _bau->groupObjectTable().get(goNr);
 }
@@ -302,29 +299,30 @@ void KNX_progLedOn()
 
 void KNX_progLedOff()
 {
-    if(_ledPinActiveOn == GPIO_PIN_SET){
+    if (_ledPinActiveOn == GPIO_PIN_SET)
+    {
         HAL_GPIO_WritePin(_ledPin.GPIOx, _ledPin.GPIO_Pin, GPIO_PIN_RESET);
     }
-    else{
+    else
+    {
         HAL_GPIO_WritePin(_ledPin.GPIOx, _ledPin.GPIO_Pin, GPIO_PIN_SET);
     }
 }
 
 void KNX_buttonEvent()
 {
-    static uint32_t lastEvent=0;
-    static uint32_t lastPressed=0;
+    static uint32_t lastEvent = 0;
+    static uint32_t lastPressed = 0;
 
     uint32_t diff = HAL_GetTick() - lastEvent;
-    if (diff >= PROG_BTN_PRESS_MIN_MILLIS && diff <= PROG_BTN_PRESS_MAX_MILLIS){
+    if (diff >= PROG_BTN_PRESS_MIN_MILLIS && diff <= PROG_BTN_PRESS_MAX_MILLIS)
+    {
         if (HAL_GetTick() - lastPressed > 200)
-        {  
+        {
             KNX_toggleProgMode();
-            
+
             lastPressed = HAL_GetTick();
         }
     }
     lastEvent = HAL_GetTick();
 }
-
-  

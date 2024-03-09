@@ -7,13 +7,13 @@ class AssociationTableObject : public TableObject
 public:
   AssociationTableObject(Memory &memory);
 
-  const uint8_t *restore(const uint8_t *buffer) ;
+  const uint8_t *restore(const uint8_t *buffer);
 
   int32_t translateAsap(uint16_t asap);
   int32_t nextAsap(uint16_t tsap, uint16_t &startIdx);
 
 protected:
-  void beforeStateChange(LoadState &newState) ;
+  void beforeStateChange(LoadState &newState);
 
 private:
   uint16_t entryCount();
@@ -26,10 +26,10 @@ private:
 public:
   void readProperty(PropertyID id, uint16_t start, uint8_t &count, uint8_t *data);
   void writeProperty(PropertyID id, uint16_t start, uint8_t *data, uint8_t &count);
-void readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &writeEnable, uint8_t &type, uint16_t &numberOfElements, uint8_t &access);
- uint8_t propertySize(PropertyID id);
- void command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+  void readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &writeEnable, uint8_t &type, uint16_t &numberOfElements, uint8_t &access);
+  uint8_t propertySize(PropertyID id);
+  void command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
   void state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
   Property *property(PropertyID id);
- void masterReset(EraseCode eraseCode, uint8_t channel);
+  void masterReset(EraseCode eraseCode, uint8_t channel);
 };

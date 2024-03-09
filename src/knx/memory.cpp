@@ -4,25 +4,27 @@
 
 #include "bits.h"
 
-Memory::Memory(DeviceObject& deviceObject)
-    :  _deviceObject(deviceObject)
-{}
+Memory::Memory(DeviceObject &deviceObject)
+    : _deviceObject(deviceObject)
+{
+}
 
 Memory::~Memory()
-{}
+{
+}
 
 void Memory::readMemory()
 {
     print("readMemory\r\n");
 
-    uint8_t* flashStart = getNonVolatileMemoryStart();
+    uint8_t *flashStart = getNonVolatileMemoryStart();
     size_t flashSize = getNonVolatileMemorySize();
     if (flashStart == nullptr)
     {
         print("no user flash available;\r\n");
         return;
     }
-    
+
     printHex("RESTORED ", flashStart, _metadataSize);
 
     uint16_t metadataBlockSize = alignToPageSize(_metadataSize);
@@ -30,7 +32,7 @@ void Memory::readMemory()
     _freeList = new MemoryBlock(flashStart + metadataBlockSize, flashSize - metadataBlockSize);
 
     uint16_t apiVersion = 0;
-    const uint8_t* buffer = popWord(&apiVersion, flashStart);
+    const uint8_t *buffer = popWord(&apiVersion, flashStart);
 
     uint16_t manufacturerId = 0;
     buffer = popWord(&manufacturerId, buffer);
@@ -44,24 +46,26 @@ void Memory::readMemory()
     VersionCheckResult versionCheck = FlashAllInvalid;
 
     // first check correct format of deviceObject-API
-    if (_deviceObject.apiVersion == apiVersion) 
+    if (_deviceObject.apiVersion == apiVersion)
     {
-        if (_versionCheckCallback != 0) {
+        if (_versionCheckCallback != 0)
+        {
             versionCheck = _versionCheckCallback(manufacturerId, hardwareType, version);
             // callback should provide infomation about version check failure reasons
         }
         else if (_deviceObject.manufacturerId() == manufacturerId &&
-                 memcmp(_deviceObject.hardwareType(), hardwareType, LEN_HARDWARE_TYPE) == 0) 
+                 memcmp(_deviceObject.hardwareType(), hardwareType, LEN_HARDWARE_TYPE) == 0)
         {
-            if (_deviceObject.version() == version) {
+            if (_deviceObject.version() == version)
+            {
                 versionCheck = FlashValid;
-            } 
+            }
             else
             {
                 versionCheck = FlashTablesInvalid;
             }
-        } 
-        else 
+        }
+        else
         {
             print("manufacturerId or hardwareType are different\r\n");
             print("expexted manufacturerId: ");
@@ -75,8 +79,8 @@ void Memory::readMemory()
             printHex("", hardwareType, LEN_HARDWARE_TYPE);
             print("\r\n");
         }
-    } 
-    else 
+    }
+    else
     {
         print("DataObject api changed, any data stored in flash is invalid.\r\n");
         print("expexted DataObject api version: ");
@@ -104,7 +108,7 @@ void Memory::readMemory()
         buffer = _saveRestores[i]->restore(buffer);
     }
     print("restored saveRestores\r\n");
-    if (versionCheck == FlashTablesInvalid) 
+    if (versionCheck == FlashTablesInvalid)
     {
         print("TableObjects are referring to an older firmware version and are not loaded\r\n");
         return;
@@ -139,10 +143,10 @@ void Memory::writeMemory()
 
     for (int i = 0; i < _tableObjCount; i++)
         writeBufferSize = MAX(writeBufferSize, _tableObjects[i]->saveSize() + 2 /*for memory pos*/);
-    
+
     uint8_t buffer[writeBufferSize];
     uint32_t flashPos = 0;
-    uint8_t* bufferPos = buffer;
+    uint8_t *bufferPos = buffer;
 
     bufferPos = pushWord(_deviceObject.apiVersion, bufferPos);
     bufferPos = pushWord(_deviceObject.manufacturerId(), bufferPos);
@@ -167,10 +171,10 @@ void Memory::writeMemory()
     {
         bufferPos = _tableObjects[i]->save(buffer);
 
-        //save to size of the memoryblock for tableobject too, so that we can rebuild the usedList and freeList
+        // save to size of the memoryblock for tableobject too, so that we can rebuild the usedList and freeList
         if (_tableObjects[i]->_data != nullptr)
         {
-            MemoryBlock* block = findBlockInList(_usedList, _tableObjects[i]->_data);
+            MemoryBlock *block = findBlockInList(_usedList, _tableObjects[i]->_data);
             if (block == nullptr)
             {
                 print("_data of TableObject not in _usedList\r\n");
@@ -183,7 +187,7 @@ void Memory::writeMemory()
 
         flashPos = writeNonVolatileMemory(flashPos, buffer, bufferPos - buffer);
     }
-    
+
     commitNonVolatileMemory();
 }
 
@@ -192,7 +196,7 @@ void Memory::saveMemory()
     commitNonVolatileMemory();
 }
 
-void Memory::addSaveRestore(DeviceObject* obj)
+void Memory::addSaveRestore(DeviceObject *obj)
 {
     if (_saveCount >= MAXSAVE - 1)
         return;
@@ -202,7 +206,7 @@ void Memory::addSaveRestore(DeviceObject* obj)
     _metadataSize += obj->saveSize();
 }
 
-void Memory::addSaveRestore(TableObject* obj)
+void Memory::addSaveRestore(TableObject *obj)
 {
     if (_tableObjCount >= MAXTABLEOBJ)
         return;
@@ -213,14 +217,14 @@ void Memory::addSaveRestore(TableObject* obj)
     _metadataSize += 2; // for size
 }
 
-uint8_t* Memory::allocMemory(size_t size)
+uint8_t *Memory::allocMemory(size_t size)
 {
     // always allocate aligned to pagesize
     size = alignToPageSize(size);
 
-    MemoryBlock* freeBlock = _freeList;
-    MemoryBlock* blockToUse = nullptr;
-    
+    MemoryBlock *freeBlock = _freeList;
+    MemoryBlock *blockToUse = nullptr;
+
     // find the smallest possible block that is big enough
     while (freeBlock)
     {
@@ -249,7 +253,7 @@ uint8_t* Memory::allocMemory(size_t size)
     else
     {
         // split block
-        MemoryBlock* newBlock = new MemoryBlock(blockToUse->address, size);
+        MemoryBlock *newBlock = new MemoryBlock(blockToUse->address, size);
         addToUsedList(newBlock);
 
         blockToUse->address += size;
@@ -259,11 +263,10 @@ uint8_t* Memory::allocMemory(size_t size)
     }
 }
 
-
-void Memory::freeMemory(uint8_t* ptr)
+void Memory::freeMemory(uint8_t *ptr)
 {
-    MemoryBlock* block = _usedList;
-    MemoryBlock* found = nullptr;
+    MemoryBlock *block = _usedList;
+    MemoryBlock *found = nullptr;
     while (block)
     {
         if (block->address == ptr)
@@ -273,7 +276,7 @@ void Memory::freeMemory(uint8_t* ptr)
         }
         block = block->next;
     }
-    if(!found)
+    if (!found)
     {
         print("freeMemory for not used pointer called\r\n");
         fatalError();
@@ -282,28 +285,26 @@ void Memory::freeMemory(uint8_t* ptr)
     addToFreeList(block);
 }
 
-void Memory::writeMemory(uint32_t relativeAddress, size_t size, uint8_t* data)
+void Memory::writeMemory(uint32_t relativeAddress, size_t size, uint8_t *data)
 {
     writeNonVolatileMemory(relativeAddress, data, size);
 }
 
-
-uint8_t* Memory::toAbsolute(uint32_t relativeAddress)
+uint8_t *Memory::toAbsolute(uint32_t relativeAddress)
 {
     return getNonVolatileMemoryStart() + (ptrdiff_t)relativeAddress;
 }
 
-
-uint32_t Memory::toRelative(uint8_t* absoluteAddress)
+uint32_t Memory::toRelative(uint8_t *absoluteAddress)
 {
     return absoluteAddress - getNonVolatileMemoryStart();
 }
 
-MemoryBlock* Memory::removeFromList(MemoryBlock* head, MemoryBlock* item)
+MemoryBlock *Memory::removeFromList(MemoryBlock *head, MemoryBlock *item)
 {
     if (head == item)
     {
-        MemoryBlock* newHead = head->next;
+        MemoryBlock *newHead = head->next;
         head->next = nullptr;
         return newHead;
     }
@@ -315,7 +316,7 @@ MemoryBlock* Memory::removeFromList(MemoryBlock* head, MemoryBlock* item)
     }
 
     bool found = false;
-    MemoryBlock* block = head;
+    MemoryBlock *block = head;
     while (block)
     {
         if (block->next == item)
@@ -336,26 +337,23 @@ MemoryBlock* Memory::removeFromList(MemoryBlock* head, MemoryBlock* item)
     return head;
 }
 
-void Memory::removeFromFreeList(MemoryBlock* block)
+void Memory::removeFromFreeList(MemoryBlock *block)
 {
     _freeList = removeFromList(_freeList, block);
 }
 
-
-void Memory::removeFromUsedList(MemoryBlock* block)
+void Memory::removeFromUsedList(MemoryBlock *block)
 {
     _usedList = removeFromList(_usedList, block);
 }
 
-
-void Memory::addToUsedList(MemoryBlock* block)
+void Memory::addToUsedList(MemoryBlock *block)
 {
     block->next = _usedList;
     _usedList = block;
 }
 
-
-void Memory::addToFreeList(MemoryBlock* block)
+void Memory::addToFreeList(MemoryBlock *block)
 {
     if (_freeList == nullptr)
     {
@@ -364,26 +362,26 @@ void Memory::addToFreeList(MemoryBlock* block)
     }
 
     // first insert free block in list
-    MemoryBlock* current = _freeList;
+    MemoryBlock *current = _freeList;
     while (current)
     {
         if (current->address <= block->address && (current->next == nullptr || block->address < current->next->address))
         {
-            //add after current
+            // add after current
             block->next = current->next;
             current->next = block;
             break;
         }
         else if (current->address > block->address)
         {
-            //add before current
+            // add before current
             block->next = current;
 
             if (current == _freeList)
                 _freeList = block;
 
             // swap current and block for merge
-            MemoryBlock* tmp = current;
+            MemoryBlock *tmp = current;
             current = block;
             block = tmp;
 
@@ -403,7 +401,7 @@ void Memory::addToFreeList(MemoryBlock* block)
         block = current;
     }
 
-    // if block is the last one, we are done 
+    // if block is the last one, we are done
     if (block->next == nullptr)
         return;
 
@@ -418,12 +416,12 @@ void Memory::addToFreeList(MemoryBlock* block)
 
 uint16_t Memory::alignToPageSize(size_t size)
 {
-    size_t pageSize = 4; //flashPageSize(); // align to 32bit for now, as aligning to flash-page-size causes side effects in programming
+    size_t pageSize = 4; // flashPageSize(); // align to 32bit for now, as aligning to flash-page-size causes side effects in programming
     // pagesize should be a multiply of two
-    return (size + pageSize - 1) & (-1*pageSize);
+    return (size + pageSize - 1) & (-1 * pageSize);
 }
 
-MemoryBlock* Memory::findBlockInList(MemoryBlock* head, uint8_t* address)
+MemoryBlock *Memory::findBlockInList(MemoryBlock *head, uint8_t *address)
 {
     while (head != nullptr)
     {
@@ -435,16 +433,16 @@ MemoryBlock* Memory::findBlockInList(MemoryBlock* head, uint8_t* address)
     return nullptr;
 }
 
-void Memory::addNewUsedBlock(uint8_t* address, size_t size)
+void Memory::addNewUsedBlock(uint8_t *address, size_t size)
 {
-    MemoryBlock* smallerFreeBlock = _freeList;
+    MemoryBlock *smallerFreeBlock = _freeList;
     // find block in freeList where the new used block is contained in
     while (smallerFreeBlock)
     {
         if (smallerFreeBlock->next == nullptr ||
             (smallerFreeBlock->next != nullptr && smallerFreeBlock->next->address > address))
             break;
-        
+
         smallerFreeBlock = smallerFreeBlock->next;
     }
 
@@ -477,13 +475,13 @@ void Memory::addNewUsedBlock(uint8_t* address, size_t size)
     else
     {
         // we take a middle or end part of the block
-        uint8_t* oldEndAddr = smallerFreeBlock->address + smallerFreeBlock->size;
+        uint8_t *oldEndAddr = smallerFreeBlock->address + smallerFreeBlock->size;
         smallerFreeBlock->size = (address - smallerFreeBlock->address);
 
         if (address + size < oldEndAddr)
         {
             // we take the middle part of the block, so we need a new free block for the end part
-            MemoryBlock* newFreeBlock = new MemoryBlock();
+            MemoryBlock *newFreeBlock = new MemoryBlock();
             newFreeBlock->next = smallerFreeBlock->next;
             newFreeBlock->address = address + size;
             newFreeBlock->size = oldEndAddr - newFreeBlock->address;
@@ -491,7 +489,7 @@ void Memory::addNewUsedBlock(uint8_t* address, size_t size)
         }
     }
 
-    MemoryBlock* newUsedBlock = new MemoryBlock(address, size);
+    MemoryBlock *newUsedBlock = new MemoryBlock(address, size);
     addToUsedList(newUsedBlock);
 }
 

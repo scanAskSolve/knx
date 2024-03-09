@@ -18,7 +18,7 @@ public:
    * @param memory This parameter is only passed to the constructor of TableObject and is not used by this class.
    */
   AddressTableObject(Memory &memory);
-  const uint8_t *restore(const uint8_t *buffer) ;
+  const uint8_t *restore(const uint8_t *buffer);
 
   /**
    * returns the number of group addresses of the object.
@@ -58,10 +58,10 @@ private:
 public:
   void readProperty(PropertyID id, uint16_t start, uint8_t &count, uint8_t *data);
   void writeProperty(PropertyID id, uint16_t start, uint8_t *data, uint8_t &count);
-  void readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &writeEnable, uint8_t &type, uint16_t &numberOfElements, uint8_t &access); 
+  void readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &writeEnable, uint8_t &type, uint16_t &numberOfElements, uint8_t &access);
   uint8_t propertySize(PropertyID id);
   void command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
   void state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
   Property *property(PropertyID id);
- void masterReset(EraseCode eraseCode, uint8_t channel);
+  void masterReset(EraseCode eraseCode, uint8_t channel);
 };

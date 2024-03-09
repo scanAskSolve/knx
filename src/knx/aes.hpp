@@ -5,7 +5,8 @@
 #error Do not include the hpp header in a c project!
 #endif //__cplusplus
 
-extern "C" {
+extern "C"
+{
 #include "aes.h"
 }
 

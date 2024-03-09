@@ -55,5 +55,4 @@ private:
   bool _rfSbcRoutingEnabled = false;
   bool _ipSbcRoutingEnabled = false;
   uint16_t *_filterTableGroupAddresses = 0;
-
 };

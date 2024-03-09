@@ -62,7 +62,7 @@ uint16_t AddressTableObject::getTsap(uint16_t addr)
     return 0;
 }
 
-//#pragma region SaveRestore
+// #pragma region SaveRestore
 
 const uint8_t *AddressTableObject::restore(const uint8_t *buffer)
 {
@@ -111,7 +111,7 @@ void AddressTableObject::writeProperty(PropertyID id, uint16_t start, uint8_t *d
 
     count = prop->write(start, count, data);
 }
-void AddressTableObject::readPropertyDescription(uint8_t& propertyId, uint8_t& propertyIndex, bool& writeEnable, uint8_t& type, uint16_t& numberOfElements, uint8_t& access)
+void AddressTableObject::readPropertyDescription(uint8_t &propertyId, uint8_t &propertyIndex, bool &writeEnable, uint8_t &type, uint16_t &numberOfElements, uint8_t &access)
 {
     uint8_t count = _propertyCount;
 
@@ -119,7 +119,7 @@ void AddressTableObject::readPropertyDescription(uint8_t& propertyId, uint8_t& p
     if (_properties == nullptr || count == 0)
         return;
 
-    Property* prop = nullptr;
+    Property *prop = nullptr;
 
     // from KNX spec. 03.03.07 Application Layer (page 56) - 3.4.3.3  A_PropertyDescription_Read-service
     // Summary: either propertyId OR propertyIndex, but not both at the same time
@@ -127,7 +127,7 @@ void AddressTableObject::readPropertyDescription(uint8_t& propertyId, uint8_t& p
     {
         for (uint8_t i = 0; i < count; i++)
         {
-            Property* p = _properties[i];
+            Property *p = _properties[i];
             if (p->Id() != propertyId)
                 continue;
 
@@ -157,7 +157,7 @@ void AddressTableObject::readPropertyDescription(uint8_t& propertyId, uint8_t& p
 }
 uint8_t AddressTableObject::propertySize(PropertyID id)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         return 0;
@@ -165,30 +165,32 @@ uint8_t AddressTableObject::propertySize(PropertyID id)
 
     return prop->ElementSize();
 }
-void AddressTableObject::command(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+void AddressTableObject::command(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         resultLength = 0;
-        return;;
+        return;
+        ;
     }
 
     prop->command(data, length, resultData, resultLength);
 }
 
-void AddressTableObject::state(PropertyID id, uint8_t* data, uint8_t length, uint8_t* resultData, uint8_t& resultLength)
+void AddressTableObject::state(PropertyID id, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength)
 {
-    Property* prop = property(id);
+    Property *prop = property(id);
     if (prop == nullptr)
     {
         resultLength = 0;
-        return;;
+        return;
+        ;
     }
 
     prop->state(data, length, resultData, resultLength);
 }
-Property* AddressTableObject::property(PropertyID id)
+Property *AddressTableObject::property(PropertyID id)
 {
     for (int i = 0; i < _propertyCount; i++)
         if (_properties[i]->Id() == id)

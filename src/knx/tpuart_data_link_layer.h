@@ -20,7 +20,6 @@ public:
   virtual bool isAckRequired(uint16_t address, bool isGrpAddr) = 0;
 };
 
-
 class TpUartDataLinkLayer
 {
 

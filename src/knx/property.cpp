@@ -358,7 +358,7 @@ uint16_t Property::saveSize()
 
 //-----------------------------------------------------------------------
 
-uint8_t Property::read(uint16_t start, uint8_t count, uint8_t* data) const
+uint8_t Property::read(uint16_t start, uint8_t count, uint8_t *data) const
 {
     if (_callback)
     {
@@ -398,7 +398,7 @@ uint8_t Property::read(uint16_t start, uint8_t count, uint8_t* data) const
     }
 }
 
-uint8_t Property::write(uint16_t start, uint8_t count, const uint8_t* data)
+uint8_t Property::write(uint16_t start, uint8_t count, const uint8_t *data)
 {
     if (_callback)
     {

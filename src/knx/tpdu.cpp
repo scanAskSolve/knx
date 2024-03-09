@@ -1,7 +1,7 @@
 #include "tpdu.h"
 #include "cemi_frame.h"
 
-TPDU::TPDU(uint8_t* data, CemiFrame& frame): _data(data), _frame(frame)
+TPDU::TPDU(uint8_t *data, CemiFrame &frame) : _data(data), _frame(frame)
 {
 }
 
@@ -103,26 +103,27 @@ void TPDU::sequenceNumber(uint8_t value)
     _data[0] |= ((value & 0xF) << 2);
 }
 
-APDU& TPDU::apdu()
+APDU &TPDU::apdu()
 {
     return _frame.apdu();
 }
 
-CemiFrame& TPDU::frame()
+CemiFrame &TPDU::frame()
 {
     return _frame;
 }
 
 void TPDU::printPDU()
 {
-/*    print.print("TPDU: ");
-    print.print(type(), HEX, 2);
-    print.print("    ");
-    for (uint8_t i = 0; i < apdu().length() + 1; ++i)
-    {
-        if (i) print.print(" ");
-        print.print(_data[i], HEX, 2);
-    }
-    print.print("\r\n")
-    */;
+    /*    print.print("TPDU: ");
+        print.print(type(), HEX, 2);
+        print.print("    ");
+        for (uint8_t i = 0; i < apdu().length() + 1; ++i)
+        {
+            if (i) print.print(" ");
+            print.print(_data[i], HEX, 2);
+        }
+        print.print("\r\n")
+        */
+    ;
 }
