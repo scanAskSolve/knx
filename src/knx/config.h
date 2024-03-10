@@ -39,17 +39,6 @@
 #define USE_RF
 #endif
 
-// cEMI options
-// #define USE_USB
-// #define USE_CEMI_SERVER
-#ifdef USE_USB
-#define USE_CEMI_SERVER
-#endif
-
-// KNX Data Secure Options
-// Define via a compiler -D flag if required
-// #define USE_DATASECURE
-
 // option to have GroupObjects (KO in German) use 8 bytes mangement information RAM instead of 19 bytes
 // see knx-demo-small-go for example
 // this option might be also set via compiler flag -DSMALL_GROUPOBJECT if required
@@ -60,11 +49,7 @@
 // #define KNX_NO_STRTOx_CONVERSION
 // Do not print messages
 // #define KNX_NO_PRINT
-// Do not use SPI (Arduino variants)
-#define KNX_NO_SPI
-// Do not use the default UART (Arduino variants), it must be defined by ArduinoPlatform::knxUart
-// (combined with other flags (HWSERIAL_NONE for stm32) - avoid allocation of RX/TX buffers for all serial lines)
-// #define KNX_NO_DEFAULT_UART
+
 
 #endif
 

@@ -2,21 +2,7 @@
 #include "arduino_platform.h"
 #include "knx/bits.h"
 
-/*#ifndef PROG_BTN_PRESS_MIN_MILLIS
-    #define PROG_BTN_PRESS_MIN_MILLIS 50
-#endif
 
-#ifndef PROG_BTN_PRESS_MAX_MILLIS
-    #define PROG_BTN_PRESS_MAX_MILLIS 500
-#endif*/
-
-/*#if MASK_VERSION == 0x07B0
-    //KnxFacade<Stm32Platform, BauSystemB> knx(buttonEvent);
-    //KnxFacade knx(buttonEvent);
-    KnxFacade knx;
-#else
-    #error "Mask version not supported on ARDUINO_ARCH_STM32"
-#endif*/
 GPIO_PinState _ledPinActiveOn = KNX_LED_ACTIVE_ON;
 GPIO_infoTypeDef _ledPin;
 uint16_t _saveSize = USERDATA_SAVE_SIZE;
@@ -26,11 +12,8 @@ bool _progLedState = false;
 
 BauSystemB *_bau;
 
-// void KNX_initKnxFacade(HardwareSerial* knxSerial)
 void KNX_initKnxFacade()
 {
-    // ArduinoPlatform* _platformPtr  =  new ArduinoPlatform(knxSerial);
-    //_bau = new BauSystemB(*_platformPtr);
     _bau = new BauSystemB();
 
     KNX_manufacturerId(0xfa);

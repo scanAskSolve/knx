@@ -18,26 +18,16 @@ BauSystemB::BauSystemB()
     : _memory(_deviceObj), _appProgram(_memory),
       _addrTable(_memory),
       _assocTable(_memory), _groupObjTable(_memory),
-#ifdef USE_DATASECURE
-      _appLayer(_deviceObj, _secIfObj, *this),
-#else
       _appLayer(*this),
-#endif
       _transLayer(_appLayer), _netLayer(_deviceObj, _transLayer, LayerType::device),
       _dlLayer(_deviceObj, _netLayer.getInterface(), (ITpUartCallBacks &)*this)
 
-#ifdef USE_CEMI_SERVER
-      ,
-      _cemiServer(*this)
-#endif
+
 {
     _memory.addSaveRestore(&_appProgram);
 
     _appLayer.transportLayer(_transLayer);
     _appLayer.associationTableObject(_assocTable);
-#ifdef USE_DATASECURE
-    _appLayer.groupAddressTable(_addrTable);
-#endif
     _transLayer.networkLayer(_netLayer);
     _transLayer.groupAddressTable(_addrTable);
 
@@ -45,17 +35,9 @@ BauSystemB::BauSystemB()
     _memory.addSaveRestore(&_groupObjTable); // changed order for better memory management
     _memory.addSaveRestore(&_addrTable);
     _memory.addSaveRestore(&_assocTable);
-#ifdef USE_DATASECURE
-    _memory.addSaveRestore(&_secIfObj);
-#endif
 
     _netLayer.getInterface().dataLinkLayer(_dlLayer);
-#ifdef USE_CEMI_SERVER
-    _cemiServerObject.setMediumTypeAsSupported(DptMedium::KNX_TP1);
-    _cemiServer.dataLinkLayer(_dlLayer);
-    _dlLayer.cemiServer(_cemiServer);
-    _memory.addSaveRestore(&_cemiServerObject);
-#endif
+
     // Set Mask Version in Device Object depending on the BAU
     _deviceObj.maskVersion(0x07B0);
 
@@ -68,14 +50,6 @@ BauSystemB::BauSystemB()
     prop->write(3, (uint16_t)OT_ASSOC_TABLE);
     prop->write(4, (uint16_t)OT_GRP_OBJ_TABLE);
     prop->write(5, (uint16_t)OT_APPLICATION_PROG);
-#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-    prop->write(6, (uint16_t)OT_SECURITY);
-    prop->write(7, (uint16_t)OT_CEMI_SERVER);
-#elif defined(USE_DATASECURE)
-    prop->write(6, (uint16_t)OT_SECURITY);
-#elif defined(USE_CEMI_SERVER)
-    prop->write(6, (uint16_t)OT_CEMI_SERVER);
-#endif
 }
 
 void BauSystemB::readMemory()
@@ -207,9 +181,6 @@ void BauSystemB::doMasterReset(EraseCode eraseCode, uint8_t channel)
     _addrTable.masterReset(eraseCode, channel);
     _assocTable.masterReset(eraseCode, channel);
     _groupObjTable.masterReset(eraseCode, channel);
-#ifdef USE_DATASECURE
-    _secIfObj.masterReset(eraseCode, channel);
-#endif
 }
 
 void BauSystemB::restartRequestIndication(Priority priority, HopCountType hopType, uint16_t asap, const SecurityControl &secCtrl, RestartType restartType, EraseCode eraseCode, uint8_t channel)
@@ -286,22 +257,6 @@ void BauSystemB::propertyDescriptionReadIndication(Priority priority, HopCountTy
         break;
     case 5: // would be app_program 2
         nullptr;
-#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-    case 6:
-        _secIfObj.(pid, propertyIndex, writeEnable, type, numberOfElements, access);
-        break;
-    case 7:
-        _cemiServerObject.readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
-        break;
-#elif defined(USE_CEMI_SERVER)
-    case 6:
-        _cemiServerObject.readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
-        break;
-#elif defined(USE_DATASECURE)
-    case 6:
-        _secIfObj.readPropertyDescription(pid, propertyIndex, writeEnable, type, numberOfElements, access);
-        break;
-#endif
     }
 
     applicationLayer().propertyDescriptionReadResponse(AckRequested, priority, hopType, asap, secCtrl, objectIndex, pid, propertyIndex,
@@ -331,22 +286,6 @@ void BauSystemB::propertyValueWriteIndication(Priority priority, HopCountType ho
         break;
     case 5: // would be app_program 2
         nullptr;
-#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-    case 6:
-        _secIfObj.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-        break;
-    case 7:
-        _cemiServerObject.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-        break;
-#elif defined(USE_CEMI_SERVER)
-    case 6:
-        _cemiServerObject.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-        break;
-#elif defined(USE_DATASECURE)
-    case 6:
-        _secIfObj.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-        break;
-#endif
     }
     propertyValueReadIndication(priority, hopType, asap, secCtrl, objectIndex, propertyId, numberOfElements, startIndex);
 }
@@ -374,16 +313,6 @@ void BauSystemB::propertyValueExtWriteIndication(Priority priority, HopCountType
     case OT_APPLICATION_PROG:
         _appProgram.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
         break;
-#ifdef USE_DATASECURE
-    case OT_SECURITY:
-        _secIfObj->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-        break;
-#endif
-#ifdef USE_CEMI_SERVER
-    case OT_CEMI_SERVER:
-        _cemiServerObject->writeProperty((PropertyID)propertyId, startindex, data, numberofelements);
-        break;
-#endif
     default:
         // numberOfElements = 0;
         returnCode = ReturnCodes::AddressVoid;
@@ -446,42 +375,6 @@ void BauSystemB::propertyValueReadIndication(Priority priority, HopCountType hop
         break;
     case 5: // would be app_program 2
         nullptr;
-#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-    case 6:
-        elementSize = _secifobj.propertySize((PropertyID)propertyId);
-        if (startIndex > 0)
-            size = elementSize * numberOfElements;
-        else
-            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
-
-        break;
-    case 7:
-        elementSize = _cemiServerObject.propertySize((PropertyID)propertyId);
-        if (startIndex > 0)
-            size = elementSize * numberOfElements;
-        else
-            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
-
-        break;
-#elif defined(USE_CEMI_SERVER)
-    case 6:
-        elementSize = _cemiServerObject.propertySize((PropertyID)propertyId);
-        if (startIndex > 0)
-            size = elementSize * numberOfElements;
-        else
-            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
-
-        break;
-#elif defined(USE_DATASECURE)
-    case 6:
-        elementSize = _secifobj.propertySize((PropertyID)propertyId);
-        if (startIndex > 0)
-            size = elementSize * numberOfElements;
-        else
-            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
-
-        break;
-#endif
     default:
         elementCount = 0;
     }
@@ -505,22 +398,6 @@ void BauSystemB::propertyValueReadIndication(Priority priority, HopCountType hop
         break;
     case 5: // would be app_program 2
         nullptr;
-#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-    case 6:
-        _secIfObj.readProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
-        break;
-    case 7:
-        _cemiServerObject.readProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
-        break;
-#elif defined(USE_CEMI_SERVER)
-    case 6:
-        _cemiServerObject.writeProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
-        break;
-#elif defined(USE_DATASECURE)
-    case 6:
-        _secIfObj.writeProperty((PropertyID)propertyId, startIndex, numberOfElements, data);
-        break;
-#endif
     }
     if (elementCount == 0)
         size = 0;
@@ -578,26 +455,7 @@ void BauSystemB::propertyValueExtReadIndication(Priority priority, HopCountType 
             size = sizeof(uint16_t); // size of propert array entry 0 which is the size
         break;
 
-#ifdef USE_DATASECURE
-    case OT_SECURITY:
-        elementSize = _secIfObj.propertySize((PropertyID)propertyId);
-        if (startIndex > 0)
-            size = elementSize * numberOfElements;
-        else
-            size = sizeof(uint16_t); // size of propert array entry 0 which is the size
-        break;
 
-    else
-#endif
-#ifdef USE_CEMI_SERVER
-        case OT_CEMI_SERVER:
-        elementSize = _cemiServerObject.propertySize((PropertyID)propertyId);
-        if (startIndex > 0)
-            size = elementSize * numberOfElements;
-        else size = sizeof(uint16_t); // size of propert array entry 0 which is the size
-        break;
-
-#endif
     default:
         elementCount = 0;
     }
@@ -620,16 +478,6 @@ void BauSystemB::propertyValueExtReadIndication(Priority priority, HopCountType 
     case OT_APPLICATION_PROG:
         _appProgram.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
         break;
-#ifdef USE_DATASECURE
-    case OT_SECURITY:
-        _secIfObj.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
-        break;
-#endif
-#ifdef USE_CEMI_SERVER
-    case OT_CEMI_SERVER:
-        _cemiServerObject.readProperty((PropertyID)propertyId, startIndex, elementCount, data);
-        break;
-#endif
     }
 
     if (elementCount == 0)
@@ -717,62 +565,6 @@ void BauSystemB::functionPropertyCommandIndication(Priority priority, HopCountTy
         break;
     case 5: // would be app_program 2
         nullptr;
-#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-    case 6:
-        if (_secIfObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _secIfObj.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 7:
-        if (_cemiserverobject.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _cemiserverobject.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#elif defined(USE_CEMI_SERVER)
-    case 6:
-        if (_cemiserverobject.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _cemiserverobject.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#elif defined(USE_DATASECURE)
-    case 6:
-        if (_secIfObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _secIfObj.command((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionProperty != 0)
-                if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#endif
     default:
         if (_functionProperty != 0)
             if (_functionProperty(objectIndex, propertyId, length, data, resultData, resultLength))
@@ -862,62 +654,6 @@ void BauSystemB::functionPropertyStateIndication(Priority priority, HopCountType
         break;
     case 5: // would be app_program 2
         nullptr;
-#if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-    case 6:
-        if (_secIfObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _secIfObj.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-    case 7:
-        if (_cemiServerObject.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _cemiServerObject.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#elif defined(USE_CEMI_SERVER)
-    case 6:
-        if (_cemiServerObject.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _cemiServerObject.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#elif defined(USE_DATASECURE)
-    case 6:
-        if (_secIfObj.property((PropertyID)propertyId)->Type() == PDT_FUNCTION)
-        {
-            _secIfObj.state((PropertyID)propertyId, data, length, resultData, resultLength);
-            handled = true;
-        }
-        else
-        {
-            if (_functionPropertyState != 0)
-                if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
-                    handled = true;
-        }
-        break;
-#endif
     default:
         if (_functionPropertyState != 0)
             if (_functionPropertyState(objectIndex, propertyId, length, data, resultData, resultLength))
@@ -1139,90 +875,6 @@ void BauSystemB::functionPropertyExtCommandIndication(Priority priority, HopCoun
             resultData[0] = ReturnCodes::DataTypeConflict;
         }
         break;
-#ifdef USE_DATASECURE
-    case OT_SECURITY:
-        propType = _secIfObj.property((PropertyID)propertyId)->Type();
-
-        if (propType == PDT_FUNCTION)
-        {
-            // The first byte is reserved and 0 for PDT_FUNCTION
-            uint8_t reservedByte = data[0];
-            if (reservedByte != 0x00)
-            {
-                resultData[0] = ReturnCodes::DataVoid;
-            }
-            else
-            {
-                resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
-                _secIfObj.command((PropertyID)propertyId, data, length, resultData, resultLength);
-                // resultLength was modified by the callee
-            }
-        }
-        else if (propType == PDT_CONTROL)
-        {
-            uint8_t count = 1;
-            // write the event
-            _secIfObj.writeProperty((PropertyID)propertyId, 1, data, count);
-            if (count == 1)
-            {
-                // Read the current state (one byte only) for the response
-                _secIfObj.readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
-                resultLength = count ? 2 : 1;
-                resultData[0] = count ? ReturnCodes::Success : ReturnCodes::DataVoid;
-            }
-            else
-            {
-                resultData[0] = ReturnCodes::AddressVoid;
-            }
-        }
-        else
-        {
-            resultData[0] = ReturnCodes::DataTypeConflict;
-        }
-        break;
-#endif
-#ifdef USE_CEMI_SERVER
-    case OT_CEMI_SERVER:
-        propType = _cemiServerObject.property((PropertyID)propertyId)->Type();
-
-        if (propType == PDT_FUNCTION)
-        {
-            // The first byte is reserved and 0 for PDT_FUNCTION
-            uint8_t reservedByte = data[0];
-            if (reservedByte != 0x00)
-            {
-                resultData[0] = ReturnCodes::DataVoid;
-            }
-            else
-            {
-                resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
-                _cemiServerObject.command((PropertyID)propertyId, data, length, resultData, resultLength);
-                // resultLength was modified by the callee
-            }
-        }
-        else if (propType == PDT_CONTROL)
-        {
-            uint8_t count = 1;
-            // write the event
-            _cemiServerObject.writeProperty((PropertyID)propertyId, 1, data, count);
-            if (count == 1)
-            {
-                // Read the current state (one byte only) for the response
-                _cemiServerObject.readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
-                resultLength = count ? 2 : 1;
-                resultData[0] = count ? ReturnCodes::Success : ReturnCodes::DataVoid;
-            }
-            else
-            {
-                resultData[0] = ReturnCodes::AddressVoid;
-            }
-        }
-        else
-        {
-            resultData[0] = ReturnCodes::DataTypeConflict;
-        }
-        break;
-#endif
     default:
         resultData[0] = ReturnCodes::GenericError;
     }
@@ -1398,75 +1050,6 @@ void BauSystemB::functionPropertyExtStateIndication(Priority priority, HopCountT
         }
         break;
 
-#ifdef USE_DATASECURE
-    case OT_SECURITY:
-        propType = _secIfObj.property((PropertyID)propertyId)->Type();
-
-        if (propType == PDT_FUNCTION)
-        {
-            // The first byte is reserved and 0 for PDT_FUNCTION
-            uint8_t reservedByte = data[0];
-            if (reservedByte != 0x00)
-            {
-                resul / tData[0] = ReturnCodes::DataVoid;
-            }
-            else
-            {
-                resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
-                _secIfObj.state((PropertyID)propertyId, data, length, resultData, resultLength);
-                // resultLength was modified by the callee
-            }
-        }
-        else if (propType == PDT_CONTROL)
-        {
-            uint8_t count = 1;
-            // Read the current state (one byte only) for the response
-            _secIfObj.readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
-            resultLength = count ? 2 : 1;
-            resultData[0] = count ? ReturnCodes::Success : ReturnCodes::DataVoid;
-        }
-        else
-        {
-            resultData[0] = ReturnCodes::DataTypeConflict;
-        }
-        break;
-
-    else
-#endif
-#ifdef USE_CEMI_SERVER
-        case OT_CEMI_SERVER:
-        propType = _cemiServerObject.property((PropertyID)propertyId)->Type();
-
-        if (propType == PDT_FUNCTION)
-        {
-            // The first byte is reserved and 0 for PDT_FUNCTION
-            uint8_t reservedByte = data[0];
-            if (reservedByte != 0x00)
-            {
-                resultData[0] = ReturnCodes::DataVoid;
-            }
-            else
-            {
-                resultLength = sizeof(resultData); // tell the callee the maximum size of the buffer
-                _cemiServerObject.state((PropertyID)propertyId, data, length, resultData, resultLength);
-                // resultLength was modified by the callee
-            }
-        }
-        else if (propType == PDT_CONTROL)
-        {
-            uint8_t count = 1;
-            // Read the current state (one byte only) for the response
-            _cemiServerObject.readProperty((PropertyID)propertyId, 1, count, &resultData[1]);
-            resultLength = count ? 2 : 1;
-            resultData[0] = count ? ReturnCodes::Success : ReturnCodes::DataVoid;
-        }
-        else
-        {
-            resultData[0] = ReturnCodes::DataTypeConflict;
-        }
-        break;
-
-#endif
     default:
         resultData[0] = ReturnCodes::GenericError;
     }
@@ -1660,28 +1243,6 @@ void BauSystemB::propertyValueRead(ObjectType objectType, uint8_t objectInstance
         *data = new uint8_t[size];
         _appProgram.readProperty((PropertyID)propertyId, startIndex, elementCount, *data);
         break;
-#ifdef USE_DATASECURE
-    case OT_SECURITY:
-        elementSize = _secIfObj->propertySize((PropertyID)propertyId);
-        if (startIndex > 0)
-            size = elementSize * numberOfElements;
-        else
-            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
-        *data = new uint8_t[size];
-        _secIfObj->readProperty((PropertyID)propertyId, startIndex, elementCount, *data);
-        break;
-#endif
-#ifdef USE_CEMI_SERVER
-    case OT_CEMI_SERVER:
-        elementSize = _cemiServerObject.propertySize((PropertyID)propertyId);
-        if (startIndex > 0)
-            size = elementSize * numberOfElements;
-        else
-            size = sizeof(uint16_t); // size of property array entry 0 which contains the current number of elements
-        *data = new uint8_t[size];
-        _cemiServerObject.readProperty((PropertyID)propertyId, startIndex, elementCount, *data);
-        break;
-#endif
     default:
         elementCount = 0;
         *data = nullptr;
@@ -1714,15 +1275,6 @@ void BauSystemB::propertyValueWrite(ObjectType objectType, uint8_t objectInstanc
     case OT_APPLICATION_PROG:
         _appProgram.writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
         break;
-#ifdef USE_DATASECURE
-    case OT_SECURITY:
-        _secIfObj->writeProperty((PropertyID)propertyId, startIndex, data, numberOfElements);
-        break;
-#endif
-#ifdef USE_CEMI_SERVER
-    case OT_CEMI_SERVER:
-        _cemiServerObject->writeProperty((PropertyID)propertyId, startindex, data, numberofelements);
-#endif
     default:
         numberOfElements = 0;
     }
@@ -1783,19 +1335,6 @@ void BauSystemB::groupValueReadLocalConfirm(AckType ack, uint16_t asap, Priority
 
 void BauSystemB::groupValueReadIndication(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl)
 {
-#ifdef USE_DATASECURE
-    DataSecurity requiredGoSecurity;
-
-    // Get security flags from Security Interface Object for this group object
-    requiredGoSecurity = _secIfObj.getGroupObjectSecurity(asap);
-
-    if (secCtrl.dataSecurity != requiredGoSecurity)
-    {
-        print("GroupValueRead: access denied due to wrong security flags\r\n");
-        return;
-    }
-#endif
-
     GroupObject &go = _groupObjTable.get(asap);
 
     if (!go.communicationEnable() || !go.readEnable())
@@ -1830,18 +1369,6 @@ void BauSystemB::groupValueWriteLocalConfirm(AckType ack, uint16_t asap, Priorit
 
 void BauSystemB::groupValueWriteIndication(uint16_t asap, Priority priority, HopCountType hopType, const SecurityControl &secCtrl, uint8_t *data, uint8_t dataLength)
 {
-#ifdef USE_DATASECURE
-    DataSecurity requiredGoSecurity;
-
-    // Get security flags from Security Interface Object for this group object
-    requiredGoSecurity = _secIfObj.getGroupObjectSecurity(asap);
-
-    if (secCtrl.dataSecurity != requiredGoSecurity)
-    {
-        print("GroupValueWrite: access denied due to wrong security flags\r\n");
-        return;
-    }
-#endif
     GroupObject &go = _groupObjTable.get(asap);
 
     if (!go.communicationEnable() || !go.writeEnable())
@@ -2114,12 +1641,7 @@ void BauSystemB::sendNextGroupTelegram()
         SecurityControl goSecurity;
         goSecurity.toolAccess = false; // Secured group communication never uses the toolkey. ETS knows all keys, also the group keys.
 
-#ifdef USE_DATASECURE
-        // Get security flags from Security Interface Object for this group object
-        goSecurity.dataSecurity = _secIfObj.getGroupObjectSecurity(asap);
-#else
         goSecurity.dataSecurity = DataSecurity::None;
-#endif
 
         if (flag == WriteRequest && go.transmitEnable())
         {
@@ -2160,10 +1682,6 @@ bool BauSystemB::configured()
 
     _configured = _groupObjTable.loadState() == LS_LOADED && _addrTable.loadState() == LS_LOADED && _assocTable.loadState() == LS_LOADED && _appProgram.loadState() == LS_LOADED;
 
-#ifdef USE_DATASECURE
-    _configured &= _secIfObj.loadState() == LS_LOADED;
-#endif
-
     return _configured;
 }
 
@@ -2174,13 +1692,6 @@ void BauSystemB::loop()
     _transLayer.loop();
     sendNextGroupTelegram();
     nextRestartState();
-#ifdef USE_DATASECURE
-    _appLayer.loop();
-#endif
-
-#ifdef USE_CEMI_SERVER
-    _cemiServer.loop();
-#endif
 }
 
 bool BauSystemB::isAckRequired(uint16_t address, bool isGrpAddr)
@@ -2205,70 +1716,6 @@ bool BauSystemB::isAckRequired(uint16_t address, bool isGrpAddr)
 
     return false;
 }
-
-// InterfaceObject *BauSystemB::getInterfaceObject(uint8_t idx)
-// {
-//     switch (idx)
-//     {
-//     case 0:
-//         return &_deviceObj;
-//     case 1:
-//         return &_addrTable;
-//     case 2:
-//         return &_assocTable;
-//     case 3:
-//         return &_groupObjTable;
-//     case 4:
-//         return &_appProgram;
-//     case 5: // would be app_program 2
-//         return nullptr;
-// #if defined(USE_DATASECURE) && defined(USE_CEMI_SERVER)
-//     case 6:
-//         return &_secIfObj;
-//     case 7:
-//         return &_cemiServerObject;
-// #elif defined(USE_CEMI_SERVER)
-//     case 6:
-//         return &_cemiServerObject;
-// #elif defined(USE_DATASECURE)
-//     case 6:
-//         return &_secIfObj;
-// #endif
-//     default:
-//         return nullptr;
-//     }
-// }
-
-// InterfaceObject *BauSystemB::getInterfaceObject(ObjectType objectType, uint8_t objectInstance)
-// {
-//     // We do not use it right now.
-//     // Required for coupler mode as there are multiple router objects for example
-//     (void)objectInstance;
-
-//     switch (objectType)
-//     {
-//     case OT_DEVICE:
-//         return &_deviceObj;
-//     case OT_ADDR_TABLE:
-//         return &_addrTable;
-//     case OT_ASSOC_TABLE:
-//         return &_assocTable;
-//     case OT_GRP_OBJ_TABLE:
-//         return &_groupObjTable;
-//     case OT_APPLICATION_PROG:
-//         return &_appProgram;
-// #ifdef USE_DATASECURE
-//     case OT_SECURITY:
-//         return &_secIfObj;
-// #endif
-// #ifdef USE_CEMI_SERVER
-//     case OT_CEMI_SERVER:
-//         return &_cemiServerObject;
-// #endif
-//     default:
-//         return nullptr;
-//     }
-// }
 
 bool BauSystemB::enabled()
 {
