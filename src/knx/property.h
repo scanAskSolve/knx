@@ -260,6 +260,7 @@ struct PropertyDescription
 class ApplicationProgramObject;
 class DeviceObject;
 class TableObject;
+class GroupObjectTableObject;
 
 class RouterObject;
 class Property
@@ -289,6 +290,12 @@ public:
              uint8_t (*writeCallbackTable)(TableObject *, uint16_t, uint8_t, const uint8_t *));
     Property(TableObject *io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
              uint8_t access, uint8_t (*readCallbackTable)(TableObject *, uint16_t, uint8_t, uint8_t *));
+
+    Property(GroupObjectTableObject *io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+             uint8_t access, uint8_t (*readCallbackTableGroupObjectTableObject)(GroupObjectTableObject *, uint16_t, uint8_t, uint8_t *),
+             uint8_t (*writeCallbackTableGroupObjectTableObject)(GroupObjectTableObject *, uint16_t, uint8_t, const uint8_t *));
+    Property(GroupObjectTableObject *io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+             uint8_t access, uint8_t (*readCallbackTableGroupObjectTableObject)(GroupObjectTableObject *, uint16_t, uint8_t, uint8_t *));
 
     ~Property();
     PropertyID Id() const;
@@ -345,6 +352,10 @@ public:
     TableObject *_interfaceObjectTable = nullptr;
     uint8_t (*_readCallbackTable)(TableObject *, uint16_t, uint8_t, uint8_t *) = nullptr;
     uint8_t (*_writeCallbackTable)(TableObject *, uint16_t, uint8_t, const uint8_t *) = nullptr;
+
+    GroupObjectTableObject *_interfaceObjectTableGroupObjectTableObject = nullptr;
+    uint8_t (*_readCallbackTableGroupObjectTableObject)(GroupObjectTableObject *, uint16_t, uint8_t, uint8_t *) = nullptr;
+    uint8_t (*_writeCallbackTableGroupObjectTableObject)(GroupObjectTableObject *, uint16_t, uint8_t, const uint8_t *) = nullptr;
 
     bool _callback = false;
 };

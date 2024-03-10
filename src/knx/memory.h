@@ -6,6 +6,7 @@
 #include "Print_Function.h"
 #include "device_object.h"
 #include "table_object.h"
+#include "group_object_table_object.h"
 
 #define MAXSAVE 5
 #define MAXTABLEOBJ 4
@@ -44,6 +45,7 @@ public:
   void saveMemory();
   virtual void addSaveRestore(DeviceObject *obj);
   void addSaveRestore(TableObject *obj);
+  void addSaveRestore(GroupObjectTableObject *obj);
 
   uint8_t *allocMemory(size_t size);
   void freeMemory(uint8_t *ptr);
@@ -73,8 +75,10 @@ public:
   DeviceObject &_deviceObject;
   DeviceObject *_saveRestores[MAXSAVE] = {0};
   TableObject *_tableObjects[MAXTABLEOBJ] = {0};
+  GroupObjectTableObject *_groupObjectTableObjects[MAXTABLEOBJ] = {0};
   uint8_t _saveCount = 0;
   uint8_t _tableObjCount = 0;
+  uint8_t _groupObjectTableObjCount = 0;
   MemoryBlock *_freeList = nullptr;
   MemoryBlock *_usedList = nullptr;
   uint16_t _metadataSize = 6 + LEN_HARDWARE_TYPE; // accounting for 3x pushWord and pushByteArray of length LEN_HARDWARE_TYPE

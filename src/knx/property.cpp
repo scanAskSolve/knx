@@ -187,6 +187,21 @@ Property::Property(TableObject *io, PropertyID id, bool writeEnable, PropertyDat
 {
     _callback = true;
 }
+Property::Property(GroupObjectTableObject *io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+                   uint8_t access, uint8_t (*readCallbackTableGroupObjectTableObject)(GroupObjectTableObject *, uint16_t, uint8_t, uint8_t *),
+                   uint8_t (*writeCallbackTableGroupObjectTableObject)(GroupObjectTableObject *, uint16_t, uint8_t, const uint8_t *))
+    : _id(id), _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access),
+      _interfaceObjectTableGroupObjectTableObject(io), _readCallbackTableGroupObjectTableObject(readCallbackTableGroupObjectTableObject), _writeCallbackTableGroupObjectTableObject(writeCallbackTableGroupObjectTableObject)
+{
+    _callback = true;
+}
+Property::Property(GroupObjectTableObject *io, PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements,
+                   uint8_t access, uint8_t (*readCallbackTableGroupObjectTableObject)(GroupObjectTableObject *, uint16_t, uint8_t, uint8_t *))
+    : _id(id),
+      _writeEnable(writeEnable), _type(type), _maxElements(maxElements), _access(access), _interfaceObjectTableGroupObjectTableObject(io), _readCallbackTableGroupObjectTableObject(readCallbackTableGroupObjectTableObject)
+{
+    _callback = true;
+}
 
 // uint8_t Property::read(uint16_t start, uint8_t count, uint8_t *data) const override
 // {

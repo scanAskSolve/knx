@@ -216,6 +216,16 @@ void Memory::addSaveRestore(TableObject *obj)
     _metadataSize += obj->saveSize();
     _metadataSize += 2; // for size
 }
+void Memory::addSaveRestore(GroupObjectTableObject *obj)
+{
+    if (_groupObjectTableObjCount >= MAXTABLEOBJ)
+        return;
+
+    _groupObjectTableObjects[_groupObjectTableObjCount] = obj;
+    _groupObjectTableObjCount += 1;
+    _metadataSize += obj->saveSize();
+    _metadataSize += 2; // for size
+}
 
 uint8_t *Memory::allocMemory(size_t size)
 {
