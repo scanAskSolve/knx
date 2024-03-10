@@ -1,4 +1,4 @@
-#include <knx_facade.h>
+#include <knx.h>
 
 // create named references for easy access to group objects
 #define SWITCH1 KNX_getGroupObject(1)

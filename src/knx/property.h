@@ -311,17 +311,6 @@ public:
     uint8_t write(uint32_t value);
     uint8_t write(const uint8_t *value);
 
-    // virtual uint8_t* save(uint8_t* buffer);
-    // virtual const uint8_t* restore(const uint8_t* buffer);
-    // virtual uint16_t saveSize();
-
-    //-----------------------------------------------------------------------
-    /*static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access);
-    static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint8_t value);
-    static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint16_t value);
-    static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, uint32_t value);
-    static Property* DataProperty(PropertyID id, bool writeEnable, PropertyDataType type, uint16_t maxElements, uint8_t access, const uint8_t* value);*/
-    // void ~DataProperty();
     uint8_t read(uint16_t start, uint8_t count, uint8_t *data) const;
     uint8_t write(uint16_t start, uint8_t count, const uint8_t *data);
     virtual uint8_t *save(uint8_t *buffer);
@@ -330,18 +319,17 @@ public:
     const uint8_t *data();
     const uint8_t *data(uint16_t elementIndex);
     //-----------------------------------------------------------------------
-    // protected:
+
     PropertyID _id;
     bool _writeEnable;
     PropertyDataType _type;
     uint16_t _maxElements;
     uint8_t _access;
     //-----------------------------------------------------------------------
-    // private:
+
     uint16_t _currentElements = 0;
     uint8_t *_data = nullptr;
 
-private:
     RouterObject *_interfaceObject = nullptr;
     void (*_commandCallback)(RouterObject *, uint8_t *, uint8_t, uint8_t *, uint8_t &) = nullptr;
     void (*_stateCallback)(RouterObject *, uint8_t *, uint8_t, uint8_t *, uint8_t &) = nullptr;

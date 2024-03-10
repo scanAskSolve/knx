@@ -57,15 +57,12 @@ enum ObjectType
   OT_RF_MEDIUM = 19
 };
 
-typedef void (*BeforeTablesUnloadCallback)();
 
 /**
  * This class provides common functionality for interface objects that are configured by ETS with MemorWrite.
  */
-// class TableObject : public InterfaceObject
 class TableObject
 {
-  // friend class Memory;
 
 public:
   /**
@@ -86,10 +83,7 @@ public:
   virtual const uint8_t *restore(const uint8_t *buffer);
   virtual uint16_t saveSize();
 
-  static void beforeTablesUnloadCallback(BeforeTablesUnloadCallback func);
-  static BeforeTablesUnloadCallback beforeTablesUnloadCallback();
 
-  // protected:
   /**
    * This method is called before the interface object enters a new ::LoadState.
    * If there is a error changing the state newState should be set to ::LS_ERROR and errorCode()
@@ -109,9 +103,6 @@ public:
 
   void initializeProperties(size_t propertiesSize, Property **properties);
 
-  static BeforeTablesUnloadCallback _beforeTablesUnload;
-
-  // private:
   uint32_t tableReference();
   bool allocTable(uint32_t size, bool doFill, uint8_t fillByte);
   void loadEvent(const uint8_t *data);
@@ -131,7 +122,7 @@ public:
   LoadState _state = LS_UNLOADED;
   Memory &_memory;
   uint8_t *_data = 0;
-  static uint8_t _tableUnloadCount;
+  uint8_t _tableUnloadCount;
 
   /**
    * used to store size of data() in allocTable(), needed for calculation of crc in PID_MCB_TABLE.
@@ -140,7 +131,6 @@ public:
    */
   uint32_t _size = 0;
 
-public:
   uint16_t interfaceSaveSize();
   void interfaceInitializeProperties(size_t propertiesSize, Property **properties);
   Property *property(PropertyID id);

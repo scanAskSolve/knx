@@ -4,18 +4,6 @@
 #include "bits.h"
 #include "memory.h"
 
-BeforeTablesUnloadCallback TableObject::_beforeTablesUnload = 0;
-uint8_t TableObject::_tableUnloadCount = 0;
-
-void TableObject::beforeTablesUnloadCallback(BeforeTablesUnloadCallback func)
-{
-    _beforeTablesUnload = func;
-}
-
-BeforeTablesUnloadCallback TableObject::beforeTablesUnloadCallback()
-{
-    return _beforeTablesUnload;
-}
 
 TableObject::TableObject(Memory &memory)
     : _memory(memory)
@@ -35,8 +23,6 @@ void TableObject::beforeStateChange(LoadState &newState)
     if (newState == LS_UNLOADED)
     {
         _tableUnloadCount++;
-        if (_beforeTablesUnload != 0)
-            _beforeTablesUnload();
     }
 }
 
