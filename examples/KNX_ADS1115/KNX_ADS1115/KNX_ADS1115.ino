@@ -306,35 +306,38 @@ void loop() {
   if (!KNX_configured())
     return;
 
-  if (ADS.isBusy() == false){
+  if(KNX_progMode() == 0){
+    if (ADS.isBusy() == false){
 
-    if ((HAL_GetTick() - now) >= Auto_Mode_delay) {
-      switch(Now_Read_State){
-        case 0:
-          if(ADC_Process(ADC_CH1) == 0){
-            now = HAL_GetTick();
-          }
-          break;
-        case 1:
-          if(ADC_Process(ADC_CH2) == 0){
-            now = HAL_GetTick();
-          }
-          break;
-        case 2:
-          if(ADC_Process(ADC_CH3) == 0){
-            now = HAL_GetTick();
-          }
-          break;
-        case 3:
-          if(ADC_Process(ADC_CH4) == 0){
-            now = HAL_GetTick();
-          }
-          break;
+      if ((HAL_GetTick() - now) >= Auto_Mode_delay) {
+        switch(Now_Read_State){
+          case 0:
+            if(ADC_Process(ADC_CH1) == 0){
+              now = HAL_GetTick();
+            }
+            break;
+          case 1:
+            if(ADC_Process(ADC_CH2) == 0){
+              now = HAL_GetTick();
+            }
+            break;
+          case 2:
+            if(ADC_Process(ADC_CH3) == 0){
+              now = HAL_GetTick();
+            }
+            break;
+          case 3:
+            if(ADC_Process(ADC_CH4) == 0){
+              now = HAL_GetTick();
+            }
+            break;
+        }
+        Now_Read_State++;
+        Now_Read_State = (Now_Read_State == 4) ? 0 : Now_Read_State;
       }
-      Now_Read_State++;
-      Now_Read_State = (Now_Read_State == 4) ? 0 : Now_Read_State;
     }
   }
+
 
 }
 
