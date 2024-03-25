@@ -1,10 +1,14 @@
 #include <knx.h>
-
+#include "ADS1X15.h"
 // create named references for easy access to group objects
 #define SWITCH1 KNX_getGroupObject(1)
 long lastsend = 0;
 bool LED_S = 0;
 bool flag = 0;
+
+
+ADS1115 ADS(0x48);
+long f = 0;
 
 HardwareSerial Serial2(USART2);   // PA3  (RX)  PA2  (TX)
 
@@ -53,6 +57,7 @@ void TEST_Function(){
 
 
 void setup() {
+  SystemClock_Config();
   MX_USART1_UART_Init();
   
   //MX_USART2_UART_Init();
@@ -66,7 +71,6 @@ void setup() {
  
   // read adress table, association table, groupobject table and parameters from eeprom
   KNX_readMemory();
-
   // print values of parameters if device is already configured
   if (KNX_configured()) {
     // register callback for reset GO
@@ -107,6 +111,15 @@ void setup() {
   KNX_start();
   
   print("knx.start\r\n");
+
+
+  Wire.begin();
+
+  ADS.begin();
+  ADS.setGain(4);
+  f = ADS.toVoltage();      //  voltage factor
+  ADS.requestADC(0);
+  print("EDA\r\n");
 }
 
 void loop() {
@@ -117,6 +130,26 @@ void loop() {
   if (!KNX_configured())
     return;
   TEST_Function();
+
+  if (ADS.isBusy() == false)
+  {
+    int16_t val_0 = ADS.getValue();
+    //  request a new one
+    ADS.requestADC(0);
+    print(" Analog0: ");
+    print(val_0);
+    print(" Voltage0: ");
+    v = val_0 * ADS.toVoltage()
+    print(v);
+    
+    float test = 3.33;
+    print(" TEST0: ");
+    print(v);
+    
+    print("\r\n");
+  }
+  //  simulate other tasks...
+  delay(100);
 
 }
 
@@ -287,6 +320,50 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
   /* USER CODE END USART2_MspInit 1 */
   }
 
+}
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
+void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL16;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 /*void HAL_GPIO_EXTI_IRQHandler(uint16_t GPIO_Pin){
   if(GPIO_Pin == GPIO_PIN_0){
