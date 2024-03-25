@@ -1,14 +1,75 @@
 #include <knx.h>
 #include "ADS1X15.h"
+#include "Stdbool.h"
 // create named references for easy access to group objects
-#define SWITCH1 KNX_getGroupObject(1)
-long lastsend = 0;
-bool LED_S = 0;
-bool flag = 0;
+#define CH1_Value                     KNX_getGroupObject(1)
+#define CH2_Value                     KNX_getGroupObject(2)
+#define CH3_Value                     KNX_getGroupObject(3)
+#define CH4_Value                     KNX_getGroupObject(4)
+#define CH1_Upper_Limit_Flag          KNX_getGroupObject(5)
+#define CH1_Upper_Warning_Limit_Flag  KNX_getGroupObject(6)
+#define CH1_Lower_Warning_Limit_Flag  KNX_getGroupObject(7)
+#define CH1_Lower_Limit_Flag          KNX_getGroupObject(8)
+#define CH2_Upper_Limit_Flag          KNX_getGroupObject(9)
+#define CH2_Upper_Warning_Limit_Flag  KNX_getGroupObject(10)
+#define CH2_Lower_Warning_Limit_Flag  KNX_getGroupObject(11)
+#define CH2_Lower_Limit_Flag          KNX_getGroupObject(12)
+#define CH3_Upper_Limit_Flag          KNX_getGroupObject(13)
+#define CH3_Upper_Warning_Limit_Flag  KNX_getGroupObject(14)
+#define CH3_Lower_Warning_Limit_Flag  KNX_getGroupObject(15)
+#define CH3_Lower_Limit_Flag          KNX_getGroupObject(16)
+#define CH4_Upper_Limit_Flag          KNX_getGroupObject(17)
+#define CH4_Upper_Warning_Limit_Flag  KNX_getGroupObject(18)
+#define CH4_Lower_Warning_Limit_Flag  KNX_getGroupObject(19)
+#define CH4_Lower_Limit_Flag          KNX_getGroupObject(20)
 
+// Offset: 0, Size: 1 Bit, Text: CH1 Enable Select
+#define APP_CH1_Enable KNX_paramBit(0, 0)
+// Offset: 0, BitOffset: 1, Size: 1 Bit, Text: CH2 Enable Select
+#define APP_CH2_Enable KNX_paramBit(0, 1)
+// Offset: 0, BitOffset: 2, Size: 1 Bit, Text: CH3 Enable Select
+#define APP_CH3_Enable KNX_paramBit(0, 2)
+// Offset: 0, BitOffset: 3, Size: 1 Bit, Text: CH4 Enable Select
+#define APP_CH4_Enable KNX_paramBit(0, 3)
+
+#define PT_Enable_bit_Disable 0
+#define PT_Enable_bit_Enable 1
+
+
+#define PT_Manual_Auto_bit_Disable 0
+#define PT_Manual_Auto_bit_Enable 1
+
+#define PT_Auto_Mode_delay_1s 0
+#define PT_Auto_Mode_delay_3s 1
+#define PT_Auto_Mode_delay_5s 2
+#define PT_Auto_Mode_delay_10s 3
+
+
+
+struct ADS_Setting{
+    bool Enable;
+    uint8_t Upper_Limit;
+    uint8_t Upper_Warning_Limit;
+    uint8_t Lower_Warning_Limit;
+    uint8_t Lower_Limit;
+    uint8_t requestADC_value;
+};
+
+
+
+long lastsend = 0;
+long now = 0;
+
+bool Transmit_Mode = 0;
+int Auto_Mode_delay = 0;
+int Now_Read_State = 0;
 
 ADS1115 ADS(0x48);
-long f = 0;
+ADS_Setting ADC_CH1;
+ADS_Setting ADC_CH2;
+ADS_Setting ADC_CH3;
+ADS_Setting ADC_CH4;
+
 
 HardwareSerial Serial2(USART2);   // PA3  (RX)  PA2  (TX)
 
@@ -18,43 +79,7 @@ UART_HandleTypeDef huart2;
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
-
-void TEST_Function(){
-  long now = HAL_GetTick();
-  if ((now - lastsend) < 100) 
-    return;
-
-  lastsend = now;
-
-  // write new value to groupobject
-  if(flag == 0){
-    uint8_t RR = KNX_paramByte(0);
-    RR >>= 7;
-    RR &= 0x01;
-
-    SWITCH1.valueNoSend(RR);
-    //SWITCH1.valueNoSend((knx.paramByte(0) >> 7) & 0x01);
-    flag=1;
-  }
-
-    bool LED_NOW = SWITCH1.value();
-    if(LED_NOW != LED_S){
-    LED_S = LED_NOW;
-    if(LED_S)
-      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
-    else
-      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
-
-    print("LED_S: ");
-    print(LED_S);
-    print("\r\n");
-
-  }
-
-    
-}
-
-
+bool ADC_Process(ADS_Setting ADS_Setting_CH);
 
 void setup() {
   SystemClock_Config();
@@ -74,12 +99,35 @@ void setup() {
   // print values of parameters if device is already configured
   if (KNX_configured()) {
     // register callback for reset GO
-      print("configured START\\");
+      print("configured START\r\n");
 
-      //goCurrent.dataPointType(DPT_Value_Temp);
-      //SWITCH.callback(switchCallback);
-      //LED.dataPointType(DPT_Switch);
-      SWITCH1.dataPointType(DPT_Switch);
+      CH1_Value.dataPointType(DPT_Scaling);
+      CH2_Value.dataPointType(DPT_Scaling);
+      CH3_Value.dataPointType(DPT_Scaling);
+      CH4_Value.dataPointType(DPT_Scaling);
+
+      
+      CH1_Upper_Limit_Flag.dataPointType(DPT_Alarm);
+      CH1_Upper_Warning_Limit_Flag.dataPointType(DPT_Alarm);
+      CH1_Lower_Warning_Limit_Flag.dataPointType(DPT_Alarm);
+      CH1_Lower_Limit_Flag.dataPointType(DPT_Alarm);
+      
+      CH2_Upper_Limit_Flag.dataPointType(DPT_Alarm);
+      CH2_Upper_Warning_Limit_Flag.dataPointType(DPT_Alarm);
+      CH2_Lower_Warning_Limit_Flag.dataPointType(DPT_Alarm);
+      CH2_Lower_Limit_Flag.dataPointType(DPT_Alarm);
+
+      
+      CH3_Upper_Limit_Flag.dataPointType(DPT_Alarm);
+      CH3_Upper_Warning_Limit_Flag.dataPointType(DPT_Alarm);
+      CH3_Lower_Warning_Limit_Flag.dataPointType(DPT_Alarm);
+      CH3_Lower_Limit_Flag.dataPointType(DPT_Alarm);
+
+        
+      CH4_Upper_Limit_Flag.dataPointType(DPT_Alarm);
+      CH4_Upper_Warning_Limit_Flag.dataPointType(DPT_Alarm);
+      CH4_Lower_Warning_Limit_Flag.dataPointType(DPT_Alarm);
+      CH4_Lower_Limit_Flag.dataPointType(DPT_Alarm);
   
     print("knx.paramByte(0): ");
     print(KNX_paramByte(0));
@@ -97,6 +145,135 @@ void setup() {
     print(KNX_paramByte(4));
     print("\r\n");
 
+
+    if(APP_CH1_Enable == PT_Enable_bit_Enable){
+      ADC_CH1.Enable = PT_Enable_bit_Enable;
+      ADC_CH1.Upper_Limit = KNX_paramByte(1);
+      ADC_CH1.Upper_Warning_Limit = KNX_paramByte(2);
+      ADC_CH1.Lower_Warning_Limit = KNX_paramByte(3);
+      ADC_CH1.Lower_Limit = KNX_paramByte(4);
+      ADC_CH1.requestADC_value = 0;
+      
+      print("ADC_CH1.Enable\r\n"); 
+      print("ADC_CH1.Upper_Limit = ");
+      print(ADC_CH1.Upper_Limit);
+      print("\r\n");
+      print("ADC_CH1.Upper_Warning_Limit = ");
+      print(ADC_CH1.Upper_Warning_Limit);
+      print("\r\n");
+      print("ADC_CH1.Lower_Warning_Limit = ");
+      print(ADC_CH1.Lower_Warning_Limit);
+      print("\r\n");
+      print("ADC_CH1.Lower_Limit = ");
+      print(ADC_CH1.Lower_Limit);
+      print("\r\n");
+    }
+    else{
+      ADC_CH1.Enable = PT_Enable_bit_Disable;
+    }
+    if(APP_CH2_Enable == PT_Enable_bit_Enable){
+      ADC_CH2.Enable = PT_Enable_bit_Enable;
+      
+      ADC_CH2.Upper_Limit = KNX_paramByte(5);
+      ADC_CH2.Upper_Warning_Limit = KNX_paramByte(6);
+      ADC_CH2.Lower_Warning_Limit = KNX_paramByte(7);
+      ADC_CH2.Lower_Limit = KNX_paramByte(8);
+      ADC_CH2.requestADC_value = 1;
+      print("ADC_CH2.Enable\r\n");      
+      print("ADC_CH2.Enable\r\n"); 
+      print("ADC_CH2.Upper_Limit = ");
+      print(ADC_CH2.Upper_Limit);
+      print("\r\n");
+      print("ADC_CH2.Upper_Warning_Limit = ");
+      print(ADC_CH2.Upper_Warning_Limit);
+      print("\r\n");
+      print("ADC_CH2.Lower_Warning_Limit = ");
+      print(ADC_CH2.Lower_Warning_Limit);
+      print("\r\n");
+      print("ADC_CH2.Lower_Limit = ");
+      print(ADC_CH2.Lower_Limit);
+      print("\r\n"); 
+    }
+    else{
+      ADC_CH2.Enable = PT_Enable_bit_Disable;
+    }
+    if(APP_CH3_Enable == PT_Enable_bit_Enable){
+      ADC_CH3.Enable = PT_Enable_bit_Enable;
+      ADC_CH3.Upper_Limit = KNX_paramByte(9);
+      ADC_CH3.Upper_Warning_Limit = KNX_paramByte(10);
+      ADC_CH3.Lower_Warning_Limit = KNX_paramByte(11);
+      ADC_CH3.Lower_Limit = KNX_paramByte(12);
+      ADC_CH3.requestADC_value = 2;
+      print("ADC_CH3.Enable\r\n");       
+      print("ADC_CH3.Enable\r\n"); 
+      print("ADC_CH3.Upper_Limit = ");
+      print(ADC_CH3.Upper_Limit);
+      print("\r\n");
+      print("ADC_CH3.Upper_Warning_Limit = ");
+      print(ADC_CH3.Upper_Warning_Limit);
+      print("\r\n");
+      print("ADC_CH3.Lower_Warning_Limit = ");
+      print(ADC_CH3.Lower_Warning_Limit);
+      print("\r\n");
+      print("ADC_CH3.Lower_Limit = ");
+      print(ADC_CH3.Lower_Limit);
+      print("\r\n");
+    }
+    else{
+      ADC_CH3.Enable = PT_Enable_bit_Disable;
+    }
+    if(APP_CH4_Enable == PT_Enable_bit_Enable){
+      ADC_CH4.Enable = PT_Enable_bit_Enable;
+      ADC_CH4.Upper_Limit = KNX_paramByte(13);
+      ADC_CH4.Upper_Warning_Limit = KNX_paramByte(14);
+      ADC_CH4.Lower_Warning_Limit = KNX_paramByte(15);
+      ADC_CH4.Lower_Limit = KNX_paramByte(16);
+      ADC_CH4.requestADC_value = 3;
+      print("ADC_CH4.Enable\r\n");       
+      print("ADC_CH4.Enable\r\n"); 
+      print("ADC_CH4.Upper_Limit = ");
+      print(ADC_CH4.Upper_Limit);
+      print("\r\n");
+      print("ADC_CH4.Upper_Warning_Limit = ");
+      print(ADC_CH4.Upper_Warning_Limit);
+      print("\r\n");
+      print("ADC_CH4.Lower_Warning_Limit = ");
+      print(ADC_CH4.Lower_Warning_Limit);
+      print("\r\n");
+      print("ADC_CH4.Lower_Limit = ");
+      print(ADC_CH4.Lower_Limit);
+      print("\r\n");
+    }
+    else{
+      ADC_CH4.Enable = PT_Enable_bit_Disable;
+    }
+
+
+    Transmit_Mode = (KNX_paramByte(0) >> 3) & 0x01;
+    if(Transmit_Mode == PT_Manual_Auto_bit_Enable){
+      print("Transmit_Mode = PT_Manual_Auto_bit_Enable\r\n");
+      switch((KNX_paramByte(0) >> 1) & 0x03){
+        case 0:
+          Auto_Mode_delay = 1000;
+          break;
+        case 1:
+          Auto_Mode_delay = 3000;
+          break;
+        case 2:
+          Auto_Mode_delay = 5000;
+          break;
+        case 3:
+          Auto_Mode_delay = 10000;
+          break;
+      }
+      print("Auto_Mode_delay = ");
+      print((KNX_paramByte(0) >> 1) & 0x03);
+    }
+    else{
+      print("Transmit_Mode = PT_Manual_Auto_bit_Disable");
+      Auto_Mode_delay = 1000;
+    }
+    print("\r\n");
   }
   print("configured PASS\r\n");
 
@@ -116,10 +293,9 @@ void setup() {
   Wire.begin();
 
   ADS.begin();
-  ADS.setGain(4);
-  f = ADS.toVoltage();      //  voltage factor
-  ADS.requestADC(0);
+  ADS.setGain(8);
   print("EDA\r\n");
+  now = HAL_GetTick();
 }
 
 void loop() {
@@ -129,29 +305,136 @@ void loop() {
   // only run the application code if the device was configured with ETS
   if (!KNX_configured())
     return;
-  TEST_Function();
 
-  if (ADS.isBusy() == false)
-  {
-    int16_t val_0 = ADS.getValue();
-    //  request a new one
-    ADS.requestADC(0);
-    print(" Analog0: ");
-    print(val_0);
-    print(" Voltage0: ");
-    v = val_0 * ADS.toVoltage()
-    print(v);
-    
-    float test = 3.33;
-    print(" TEST0: ");
-    print(v);
-    
-    print("\r\n");
+  if (ADS.isBusy() == false){
+
+    if ((HAL_GetTick() - now) >= Auto_Mode_delay) {
+      switch(Now_Read_State){
+        case 0:
+          if(ADC_Process(ADC_CH1) == 0){
+            now = HAL_GetTick();
+          }
+          break;
+        case 1:
+          if(ADC_Process(ADC_CH2) == 0){
+            now = HAL_GetTick();
+          }
+          break;
+        case 2:
+          if(ADC_Process(ADC_CH3) == 0){
+            now = HAL_GetTick();
+          }
+          break;
+        case 3:
+          if(ADC_Process(ADC_CH4) == 0){
+            now = HAL_GetTick();
+          }
+          break;
+      }
+      Now_Read_State++;
+      Now_Read_State = (Now_Read_State == 4) ? 0 : Now_Read_State;
+    }
   }
-  //  simulate other tasks...
-  delay(100);
 
 }
+
+
+
+bool ADC_Process(ADS_Setting ADS_Setting_CH){
+  if(ADS_Setting_CH.Enable == PT_Enable_bit_Enable){
+    ADS.requestADC(ADS_Setting_CH.requestADC_value);
+    delay(50);
+    int16_t val_0 = ADS.getValue();
+    print("Voltage");
+    print(ADS_Setting_CH.requestADC_value);
+    print(": ");
+    float v = val_0 * ADS.toVoltage();
+    print(v);
+    uint8_t percent = (uint8_t)((v/0.47029)*100);
+    //ADS_Setting_CH.Send_Value = (uint8_t)((v/0.47029)*100);
+    print(" percent: ");
+    print(percent);
+    print("\r\n");
+
+    if(ADS_Setting_CH.requestADC_value == 0){
+      CH1_Value.value(percent);
+
+      if(percent >= ADS_Setting_CH.Upper_Warning_Limit){
+        bool REG = 1;
+        if(percent >= ADS_Setting_CH.Upper_Limit)
+          CH1_Upper_Limit_Flag.value(REG);
+        else
+          CH1_Upper_Warning_Limit_Flag.value(REG);
+      }
+      else if(percent <= ADS_Setting_CH.Lower_Warning_Limit){
+        bool REG = 1;
+        if(percent <= ADS_Setting_CH.Lower_Limit)
+          CH1_Lower_Limit_Flag.value(REG);
+        else
+          CH1_Lower_Warning_Limit_Flag.value(REG);
+      }
+    }
+    else if(ADS_Setting_CH.requestADC_value == 1){
+      CH2_Value.value(percent);
+
+      if(percent >= ADS_Setting_CH.Upper_Warning_Limit){
+        bool REG = 1;
+        if(percent >= ADS_Setting_CH.Upper_Limit)
+          CH2_Upper_Limit_Flag.value(REG);
+        else
+          CH2_Upper_Warning_Limit_Flag.value(REG);
+      }
+      else if(percent <= ADS_Setting_CH.Lower_Warning_Limit){
+        bool REG = 1;
+        if(percent <= ADS_Setting_CH.Lower_Limit)
+          CH2_Lower_Limit_Flag.value(REG);
+        else
+          CH2_Lower_Warning_Limit_Flag.value(REG);
+      }
+    }
+    else if(ADS_Setting_CH.requestADC_value == 2){
+      CH3_Value.value(percent);
+
+      if(percent >= ADS_Setting_CH.Upper_Warning_Limit){
+        bool REG = 1;
+        if(percent >= ADS_Setting_CH.Upper_Limit)
+          CH3_Upper_Limit_Flag.value(REG);
+        else
+          CH3_Upper_Warning_Limit_Flag.value(REG);
+      }
+      else if(percent <= ADS_Setting_CH.Lower_Warning_Limit){
+        bool REG = 1;
+        if(percent <= ADS_Setting_CH.Lower_Limit)
+          CH3_Lower_Limit_Flag.value(REG);
+        else
+          CH3_Lower_Warning_Limit_Flag.value(REG);
+      }
+    }
+    else if(ADS_Setting_CH.requestADC_value == 3){
+      CH4_Value.value(percent);
+
+      if(percent >= ADS_Setting_CH.Upper_Warning_Limit){
+        bool REG = 1;
+        if(percent >= ADS_Setting_CH.Upper_Limit)
+          CH4_Upper_Limit_Flag.value(REG);
+        else
+          CH4_Upper_Warning_Limit_Flag.value(REG);
+      }
+      else if(percent <= ADS_Setting_CH.Lower_Warning_Limit){
+        bool REG = 1;
+        if(percent <= ADS_Setting_CH.Lower_Limit)
+          CH4_Lower_Limit_Flag.value(REG);
+        else
+          CH4_Lower_Warning_Limit_Flag.value(REG);
+      }
+    }
+    return 0;
+  }
+  else{
+    return 1;
+  }
+}
+      
 
 static void MX_GPIO_Init(void)
 {

@@ -191,7 +191,7 @@ void print(unsigned long long num, int base)
 void print(double num)
 {
     char array[20] = {0};
-    sprintf(array, "%f", num);
+    sprintf(array, "%.3f", num);
     HAL_UART_Transmit(Port, (uint8_t *)array, Cal_Real_length(array), 1000);
 }
 
