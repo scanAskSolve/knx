@@ -38,10 +38,10 @@ public:
 
   const uint8_t *restore(const uint8_t *buffer);
 
-protected:
+//protected:
   void beforeStateChange(LoadState &newState) override;
 
-private:
+//private:
   // Function properties
   void functionRouteTableControl(bool isCommand, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
   void functionRfEnableSbc(bool isCommand, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
@@ -55,4 +55,13 @@ private:
   bool _rfSbcRoutingEnabled = false;
   bool _ipSbcRoutingEnabled = false;
   uint16_t *_filterTableGroupAddresses = 0;
+
+  static void routeTableCommandCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+  static void routeTableStateCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+
+  static void rfEnableSbcCommandCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+  static void rfEnableSbcStateCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+  static void ipEnableSbcCommandCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+  static void ipEnableSbcStateCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength);
+
 };

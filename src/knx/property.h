@@ -347,4 +347,6 @@ public:
     uint8_t (*_writeCallbackTable)(TableObject *, uint16_t, uint8_t, const uint8_t *) = nullptr;
 
     bool _callback = false;
+
+
 };

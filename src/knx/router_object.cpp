@@ -24,6 +24,38 @@ enum RouteTableServices
     SetGroupAddress = 0x04,   // 4 bytes: start address and end address
 };
 
+
+// 定義命令回調函式
+void RouterObject:: routeTableCommandCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) {
+    obj->functionRouteTableControl(true, data, length, resultData, resultLength);
+}
+
+// 定義狀態回調函式
+void RouterObject:: routeTableStateCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) {
+    obj->functionRouteTableControl(false, data, length, resultData, resultLength);
+}
+
+// 定義命令回調函式 for RF
+void RouterObject:: rfEnableSbcCommandCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) {
+    obj->functionRfEnableSbc(true, data, length, resultData, resultLength);
+}
+
+// 定義狀態回調函式 for RF
+void RouterObject:: rfEnableSbcStateCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) {
+    obj->functionRfEnableSbc(false, data, length, resultData, resultLength);
+}
+
+// 定義命令回調函式 for IP
+void RouterObject:: ipEnableSbcCommandCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) {
+    obj->functionIpEnableSbc(true, data, length, resultData, resultLength);
+}
+
+// 定義狀態回調函式 for IP
+void RouterObject:: ipEnableSbcStateCallback(RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) {
+    obj->functionIpEnableSbc(false, data, length, resultData, resultLength);
+}
+
+
 RouterObject::RouterObject(Memory &memory)
     : TableObject(memory)
 {
@@ -87,15 +119,9 @@ void RouterObject::initialize(CouplerModel model, uint8_t objIndex, DptMedium me
             new Property(
                 this, PID_ROUTETABLE_CONTROL,
                 // Command Callback of PID_ROUTETABLE_CONTROL
-                [](RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) -> void
-                {
-                    obj->functionRouteTableControl(true, data, length, resultData, resultLength);
-                },
+                routeTableCommandCallback,
                 // State Callback of PID_ROUTETABLE_CONTROL
-                [](RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) -> void
-                {
-                    obj->functionRouteTableControl(false, data, length, resultData, resultLength);
-                })};
+                routeTableStateCallback)};
     uint8_t tablePropertiesCount = sizeof(tableProperties) / sizeof(Property *);
 
     size_t allPropertiesCount = fixedPropertiesCount;
@@ -139,30 +165,18 @@ void RouterObject::initialize(CouplerModel model, uint8_t objIndex, DptMedium me
         allProperties[i++] = new Property(
             this, PID_RF_ENABLE_SBC,
             // Command Callback of PID_RF_ENABLE_SBC
-            [](RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) -> void
-            {
-                obj->functionRfEnableSbc(true, data, length, resultData, resultLength);
-            },
+            rfEnableSbcCommandCallback,
             // State Callback of PID_RF_ENABLE_SBC
-            [](RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) -> void
-            {
-                obj->functionRfEnableSbc(false, data, length, resultData, resultLength);
-            });
+            rfEnableSbcStateCallback);
     }
     else if (mediumType == DptMedium::KNX_IP)
     {
         allProperties[i++] = new Property(
             this, PID_IP_ENABLE_SBC,
             // Command Callback of PID_IP_ENABLE_SBC
-            [](RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) -> void
-            {
-                obj->functionIpEnableSbc(true, data, length, resultData, resultLength);
-            },
+            ipEnableSbcCommandCallback,
             // State Callback of PID_IP_ENABLE_SBC
-            [](RouterObject *obj, uint8_t *data, uint8_t length, uint8_t *resultData, uint8_t &resultLength) -> void
-            {
-                obj->functionIpEnableSbc(false, data, length, resultData, resultLength);
-            });
+            ipEnableSbcStateCallback);
     }
 
     if (useTable)
