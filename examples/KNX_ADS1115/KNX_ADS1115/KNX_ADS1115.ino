@@ -273,9 +273,9 @@ void setup() {
   print("configured PASS\r\n");
 
   // pin or GPIO the programming led is connected to. Default is LED_BUILTIN
-  KNX_ledPin(GPIOC, GPIO_PIN_13);
+  KNX_ledPin(GPIOB, GPIO_PIN_13);
   // is the led active on HIGH or low? Default is LOW
-  KNX_ledPinActiveOn(GPIO_PIN_SET);
+  KNX_ledPinActiveOn(GPIO_PIN_RESET);
   // pin or GPIO programming button is connected to. Default is 0
   KNX_buttonPin(GPIOA, GPIO_PIN_0);
 
@@ -376,7 +376,10 @@ bool ADC_Process(ADS_Setting ADS_Setting_CH) {
 
     if (ADS_Setting_CH.requestADC_value == 0) {
       if (!NO_SENSOR) {
-        CH1_Value.value(percent);
+        CH1_Value.value(percent);    
+        print("KNXpercent: ");
+        print(percent);
+        print("\r\n");
 
 
         if (percent >= ADS_Setting_CH.Upper_Warning_Limit) {
@@ -466,7 +469,7 @@ static void MX_GPIO_Init(void) {
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
@@ -476,7 +479,7 @@ static void MX_GPIO_Init(void) {
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PA0 */
   GPIO_InitStruct.Pin = GPIO_PIN_0;
